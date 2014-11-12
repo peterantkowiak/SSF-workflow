@@ -1,0 +1,13 @@
+
+Roadmap to our project:
+
+- Identify literature and other sources of information
+
+- List the necessary steps of our project
+
+    load environmental data into R
+    load telemetry data into R
+    fit functions for step length and angle to the data
+    draw random points from the fitted distributions
+    Analyze for differences between selected and ignored points
+
