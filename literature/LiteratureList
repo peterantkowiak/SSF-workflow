@@ -11,6 +11,12 @@ Simulates movement paths based on a step selection function (SSF) model
 there is a Resource Selection Function Package (ResourceSelection) in R:
 http://cran.r-project.org/web/packages/ResourceSelection/ResourceSelection.pdf
 
-The "hab package":
+The "hab" package:
 http://ase-research.org/basille/hab/
 http://ase-research.org/R/hab/hab.pdf
+
+Paper Article: The concept of animals' trajectories from a data analysis perspective
+http://www.sciencedirect.com/science/article/pii/S1574954108000654
+
+Tutorial on the "adehabitat" package:
+http://www.inside-r.org/packages/cran/adehabitatLT/docs/as.ltraj
