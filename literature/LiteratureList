@@ -10,3 +10,7 @@ Simulates movement paths based on a step selection function (SSF) model
 
 there is a Resource Selection Function Package (ResourceSelection) in R:
 http://cran.r-project.org/web/packages/ResourceSelection/ResourceSelection.pdf
+
+The "hab package":
+http://ase-research.org/basille/hab/
+http://ase-research.org/R/hab/hab.pdf
