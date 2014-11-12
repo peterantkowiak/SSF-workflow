@@ -6,4 +6,5 @@ http://download.springer.com/static/pdf/280/art%253A10.1007%252Fs10980-008-9220-
 http://www.spatialecology.com/gme/movementssfsim1.htm
 Simulates movement paths based on a step selection function (SSF) model
 
-
+there is a Resource Selection Function Package (ResourceSelection) in R:
+http://cran.r-project.org/web/packages/ResourceSelection/ResourceSelection.pdf
