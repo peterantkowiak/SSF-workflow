@@ -3,8 +3,21 @@ Roadmap to our project:
 
 - Identify literature and other sources of information
     
-    GME
-    Package hab http://ase-research.org/basille/hab/
+    GME 
+        -> no source code available, only functionality descriptions. Therefore not very useful.
+        
+    Package hab http://ase-research.org/basille/hab/ 
+        -> extension of the adehabitat package
+        -> Useful functions in hab: 
+            as.ltraj - turns dataset (the animal's path) into an ltraj object
+            plot.ltraj - plots trajectories (ltraj objects) of animals through an area
+            rdSteps - draws random steps according to given distributions of stepwidth and turning angle
+            subset.ltraj - chooses subset of ltraj object based on conditions
+            
+            What are infolocs?
+            What are ltraj objects? / What does the dataset need to look like?
+            How to introduce the environmental data into the model?
+            
     Robin
     Simone
     
