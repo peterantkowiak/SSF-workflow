@@ -15,6 +15,7 @@ Roadmap to our project:
     fit functions for step length and angle to the data
     choose number of random steps
     draw random points from the fitted distributions
+    get attributes for visited and random points from environmental layers
     Analyze for differences between selected and ignored points
     Apply different SSF's and compare
 
