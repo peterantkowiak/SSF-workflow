@@ -23,7 +23,7 @@ Roadmap to our project:
     
 - List the necessary steps of our project
     
-    "hab" package should be able to do this:
+    "hab" or "adehabitat" package should be able to do this:
     
         load telemetry data into R
         fit functions for step length and angle to the data
