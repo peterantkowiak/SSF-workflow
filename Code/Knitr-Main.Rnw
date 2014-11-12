@@ -1,0 +1,178 @@
+\documentclass[11pt, a4paper]{article} %or article has only section and below, book and report also have chapter: http://texblog.org/2007/07/09/documentclassbook-report-article-or-letter/
+
+\usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
+
+\usepackage{caption}				% provides commands for handling caption sizes etc.
+%\usepackage[a4paper, left=25mm, right=20mm, top=25mm, bottom=20mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
+
+\usepackage{etoolbox}    % for conditional evaluations!
+\usepackage[bottom]{footmisc}  % I love footnotes! And they should be down at the bottom of the page!
+\usepackage{graphicx}        % when using figures and alike
+\usepackage[hidelinks]{hyperref}		% for hyperreferences (links within the document: references, figures, tables, citations)
+
+\usepackage{euler}     % a math font, only for equations and alike; call BEFORE changing the main font; alternatives: mathptmx, fourier, 
+\usepackage{gentium} % for a different font; you can also try: cantarell, charter, libertine, gentium, bera, ... http://tex.stackexchange.com/questions/59403/what-font-packages-are-installed-in-tex-live
+
+%------------------------------------------------------------------------------------------------------
+%------- text size settings --------------
+\setlength{\textwidth}{16cm}% 
+\setlength{\textheight}{25cm} %23 
+%(these values were used to fill the page more fully and thus reduce the number of pages!)
+\setlength{\topmargin}{-1.5cm} %0
+\setlength{\footskip}{1cm} %
+%\setlength{\hoffset}{0cm} %
+\setlength{\oddsidemargin}{1cm}%
+\setlength{\evensidemargin}{-.5cm}%
+\setlength{\parskip}{0cm} % Abstand zwischen Absätzen
+% ----------------------------------------------------------------
+\renewcommand{\textfraction}{0.1} % allows more space to graphics in float
+\renewcommand{\topfraction}{0.85}
+%\renewcommand{\bottomfraction}{0.65}
+\renewcommand{\floatpagefraction}{0.70}
+
+
+\frenchspacing %http://texwelt.de/wissen/fragen/1154/was-ist-french-spacing-was-macht-frenchspacing
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------
+
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+%%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
+<<setup, include=FALSE, cache=FALSE, echo=F>>=
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE, width=90)
+@
+
+
+\title{This is an example document to change at your whim.}
+
+\author{I\thanks{Here, University of Freiburg} \and me\thanks{There, University of Freiburg} \and myself\thanks{Lost, somewhere midair}}
+% for more control, multiple affiliations, line breaks and alike, use the authblk package!!
+
+\date{\today} % !!use package isodate for more control of date formatting!!
+
+\maketitle
+
+%------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------
+
+\abstract{This is a very simple \LaTeX~template to get started.}
+
+\tableofcontents
+
+\section{Introduction}%------------------------------------------------------------------------------------------------------
+This section explains why the rest of this document exists.
+
+\section{Methods}%------------------------------------------------------------------------------------------------------
+
+Every method should contain a figure of study organism, site or yourself in front of some picturesque landscape (see Fig.~\ref{fig:lizard}).
+
+\begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
+% see also here: http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Captions
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{Leiocephalus-personatus-maskenleguan.jpg} %figure from Wikipedia
+\caption{\emph{Leiocephalus personatus} is a species of curly-tailed lizard first described by Edward Drinker Cope in 1862. This specimen was photographed in the reptile zoo of Neu-Ulm, Germany. \small{\url{http://en.wikipedia.org/wiki/Template:POTD/2014-08-27}}}
+\label{fig:lizard}
+\end{figure}
+
+
+\begin{verbatim}
+# This is how I could document code:
+runif(100)
+# but it only contains the code and can also run over the line, as shown here ...
+# convenient for short, but not for long pieces of code
+# any symbol is plotted "as is", even if it is \LaTeX: *+#&ß\/
+\end{verbatim}
+
+Alternatively, in Sweave, I can actually use R-code and have it evaluated by R and results returned and pasted into the \LaTeX-document! Like so:
+<<>>=
+runif(10)
+@
+Or I can only have the code returned, but \textbf{not} evaluated (useful if it takes a long time, or if results are produced externally beforehand):
+<<eval=FALSE>>=
+runif(10)
+@
+Similarly, I can have the code evaluated but the call not returned:
+<<echo=FALSE>>=
+runif(10)
+@
+To combine both, simply add both options, separated by a ``,''.
+
+You can also put an R-expression into the text. For example, the mean of 10 random number between 0 and 1 is (in this simulation) \Sexpr{round(mean(runif(10)), 3)}, rounded to 3 digits. This value will change every time you compile this document.
+
+Finally, you can first do the computations, store them (in R objects) and then refer to them in the text.
+
+<<echo=FALSE>>=
+X <- runif(10)
+Y <- X + rnorm(10, sd=1) # try a small value for sd to test the conditional expression below
+(ct <- cor.test(X, Y))
+@
+So, the correlation between X and Y is    \Sexpr{ if(ct$p.value < 0.05) paste0("significant, with a correlation coefficient of r=", round(ct$estimate, 3)) else paste0("not significant, and the mean of Y is ", round(mean(Y), 3)) }.
+
+\bigskip
+
+\noindent So that's all cool, and the only thing we also could wish for is to produce figures and insert them into the text automatically:
+
+<<>>=
+hist(rnorm(100), col="grey", border="white", las=1)
+@
+
+We may want to ``hide'' the figure generating text and show the result in a float-environment with a proper caption. To do so, we only have to wrap the above code in a figure environment, like so:
+\begin{verbatim}
+\begin{figure}
+\centering
+#<<label=fig2plot, echo=FALSE, fig=TRUE>>=
+hist(rnorm(100), col="grey", border="white", las=1)
+#@
+\caption{This is an example figure, computed and immediately returned.}
+\end{figure}
+\end{verbatim}
+Notice that I only put the \texttt{\#} in to prevent R from evaluating the code. In a real document, you would NOT do that.
+
+Now one minor issue is that you cannot readily change the size of this figure. The best way to do this is to split the figure-generating process up into two part: one generates the figure and saves it as PDF, then we use standard \LaTeX\/to load this figure. Like so:\footnote{Obviously in the document you would have to remove the \#s.}
+\begin{verbatim}
+#<<anexamplehistogram, echo=FALSE, dev="pdf">>=
+hist(rnorm(100), col="cornflowerblue", border="white", las=1)
+#@
+
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{anexamplehistogram}
+\caption{This is an example figure, exported as PDF and then, on loading, 
+  scaled to half the text's width.}
+\end{figure}
+\end{verbatim}
+<<anexamplehistogram, echo=FALSE, dev="pdf", fig.show="hide">>=
+hist(rnorm(100), col="cornflowerblue", border="white", las=1)
+@
+\begin{figure}
+\centering
+\includegraphics[width=0.5\textwidth]{anexamplehistogram}
+\captionsetup{width=0.8\textwidth}
+\caption{This is an example figure, exported as PDF and then, on loading, scaled to half the text's width.}
+\end{figure}
+
+
+\medskip
+
+I leave it to you to do the same thing for tables, using R's xtable command, as illustrated in the Sweave demo of Friedrich Leisch (\url{users.stat.umn.edu/~geyer/Sweave/foo.pdf}).
+
+
+All this was Sweave. More recently, knitr made its entrance, and has increased the flexibility of Sweave. It is VERY similar and you have to tell RStudio in the options, whether you are sweaving or knitting. For minimal examples and comparisons, also using markdown rather than \LaTeX\/and PDF or html as output, see here: \url{http://yihui.name/knitr/demo/minimal/}.
+
+
+\section{Results} %------------------------------------------------------------------------------------------------------
+
+
+\section{Diskussion}%------------------------------------------------------------------------------------------------------
+
+\section{Acknowledgements}%------------------------------------------------------------------------------------------------------
+Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
+
+
+
+
+\end{document}
