@@ -17,6 +17,13 @@ Roadmap to our project:
             What are infolocs?
             What are ltraj objects? / What does the dataset need to look like?
             How to introduce the environmental data into the model?
+    
+    Package adehabitat
+	-> Info:
+	    class asc for basic raster data, class kasc for multi-layer maps
+	-> useful functions
+	    import.asc
+	    as.kasc
             
     Robin
     Simone
