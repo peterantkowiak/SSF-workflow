@@ -21,9 +21,17 @@ Roadmap to our project:
     Package adehabitat
 	-> Info:
 	    class asc for basic raster data, class kasc for multi-layer maps
+	    demo(rastermaps)
 	-> useful functions
-	    import.asc
-	    as.kasc
+	    import.asc - import raster maps
+	    as.kasc - create multi-layer maps
+	    kasc2spixdf - convert to classes of the package
+	    area2asc - polygon map to raster map
+	    
+    Package move
+    
+    Package sp
+    
             
     Robin
     Simone

@@ -72,3 +72,12 @@ blo <- rdSteps(puechcirc, rand.dis = rand, reproducible = TRUE)
 ## Check that 3) is the same as 1)
 all.equal(bla, blo)
 
+
+
+
+# Functions for handling raster maps in adehabitat ------------------------
+
+
+
+demo(rastermaps)
+
