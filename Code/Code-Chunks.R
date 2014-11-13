@@ -5,7 +5,11 @@
 
 # installing the necessary packages
 
-install.packages("adehabitat") # includes packages adehabitatHR, ...HS, ...LT, ...MA
+install.packages("adehabitat") 
+install.packages("adehabitatHR")
+install.packages("adehabitatHS")
+install.packages("adehabitatLT")
+install.packages("adehabitatMA")
 install.packages("tkrplot")
 install.packages("hab", repos = "http://ase-research.org/R/", type = "source")
 install.packages("hab", repos = "http://ase-research.org/R/")
