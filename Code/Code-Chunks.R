@@ -1,18 +1,31 @@
 
 
-### installing the necessary packages
+# Installing and loading the necessary packages ---------------------------
 
-install.packages("adehabitat")
+
+# installing the necessary packages
+
+install.packages("adehabitat") # includes packages adehabitatHR, ...HS, ...LT, ...MA
 install.packages("tkrplot")
 install.packages("hab", repos = "http://ase-research.org/R/", type = "source")
 install.packages("hab", repos = "http://ase-research.org/R/")
 
 
 # loading the packages
-require(adehabitat, hab, adehabitatMA)
+require(adehabitat)
+require(hab)
+require(adehabitatMA)
+
 data(puechabonsp)
 
-# running the example from hab.pdf
+
+
+
+# running the examples from hab.pdf ---------------------------------------
+
+
+# function as.ltraj
+
 data(puechabonsp)
 locs <- puechabonsp$relocs
 xy <- coordinates(locs)
@@ -25,8 +38,33 @@ all.equal(ltr1, ltr2)
 
 
 
+# function rdSteps
+
 data(puechcirc)
-head(puechcirc)
+#head(puechcirc)
 
 
+## Simple example to check the distributions of step lengths and turning
+## angles
+bla <- rdSteps(puechcirc)
+boxplot(bla$rel.angle ~ bla$case)
+boxplot(bla$dist ~ bla$case)
+
+## Reproducibility and alternative random distributions
+## 1) Default: using the same ltraj for the random distributions:
+bla <- rdSteps(puechcirc, reproducible = TRUE)
+
+## 2) Explicitly use the same ltraj for the random distributions:
+bli <- rdSteps(puechcirc, rand.dis = puechcirc, reproducible = TRUE)
+
+## Check that 2) is the same as 1)
+all.equal(bla, bli)
+
+## 3) Explicitly uses random distributions in a data.frame:
+rand <- subset(ld(puechcirc), !(is.na(x) | is.na(dx) | is.na(rel.angle)) &
+dist <= Inf, select = c("dist", "rel.angle", "id"))
+blo <- rdSteps(puechcirc, rand.dis = rand, reproducible = TRUE)
+
+## Check that 3) is the same as 1)
+all.equal(bla, blo)
 
