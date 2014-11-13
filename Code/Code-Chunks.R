@@ -11,8 +11,8 @@ install.packages("adehabitatHS")
 install.packages("adehabitatLT")
 install.packages("adehabitatMA")
 install.packages("tkrplot")
-install.packages("hab", repos = "http://ase-research.org/R/", type = "source")
-install.packages("hab", repos = "http://ase-research.org/R/")
+install.packages("hab", repos = "http://ase-research.org/R/") # regular
+install.packages("hab", repos = "http://ase-research.org/R/", type = "source") # for self-compiling
 
 
 # loading the packages
