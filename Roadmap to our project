@@ -23,15 +23,21 @@ Roadmap to our project:
 	    class asc for basic raster data, class kasc for multi-layer maps
 	    demo(rastermaps)
 	-> useful functions
-	    import.asc - import raster maps
+	    import.asc - import raster maps in ArcInfo ASCII format
 	    as.kasc - create multi-layer maps
 	    kasc2spixdf - convert to classes of the package
 	    area2asc - polygon map to raster map
+	    as.traj - 
+	    
 	    
     Package move
     
     Package sp
     
+    Package raster
+	-> handling raster data
+	-> useful functions
+	    rasterize - assign points (coordinates) to grid cells
             
     Robin
     Simone

@@ -14,14 +14,22 @@ install.packages("tkrplot")
 install.packages("hab", repos = "http://ase-research.org/R/") # regular
 install.packages("hab", repos = "http://ase-research.org/R/", type = "source") # for self-compiling
 
+install.packages("move")
+install.packages("raster")
+install.packages("rgdal")
+#install.packages("")
 
 # loading the packages
 require(adehabitat)
 require(hab)
 require(adehabitatMA)
 
-data(puechabonsp)
+require(move)
+require(raster)
 
+
+data(puechabonsp)
+data(bauges) # chamois dataset from france
 
 
 

@@ -26,17 +26,17 @@ The "hab" package:
 http://ase-research.org/basille/hab/
 http://ase-research.org/R/hab/hab.pdf
 
-Manual for the "adehabitat" package:
+The "adehabitat" package:
 http://cran.r-project.org/web/packages/adehabitat/adehabitat.pdf
 
 Tutorial on the "adehabitat" package:
 http://www.inside-r.org/packages/cran/adehabitatLT/docs/as.ltraj
 
-Visualize animal movement data with package "move":
+The "move" package for visualizing animal movement data:
 http://cran.r-project.org/web/packages/move/move.pdf
 http://computational-ecology.com/main-move.html
 
-there is a Resource Selection Function Package (ResourceSelection) in R:
+The "ResourceSelection" Package: there is a Resource Selection Function Package:
 http://cran.r-project.org/web/packages/ResourceSelection/ResourceSelection.pdf
 
 Package "sp":
