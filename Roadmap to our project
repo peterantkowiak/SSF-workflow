@@ -29,6 +29,25 @@ Roadmap to our project:
 	    area2asc - polygon map to raster map
 	    as.traj - 
 	    
+Developement of adehabitat
+	The R package adehabitat provides over 250 functions for the analysis of habitat selection by animals, 
+	including functions for
+
+    habitat selection and ecological niche analysis
+    home range estimation
+    animal trajectory analysis
+    working with raster maps along with trajectory data
+
+The functions are divided into four packages:
+
+    HR: Home Range Estimation
+    HS: Analysis of Habitat Selection by Animals
+    LT: Analysis of Animal Movements
+    MA: Tools to Deal with Raster Maps
+
+They are developed by Clement Calenge with contributions from Mathieu Basille (HS, MA), Stephane Dray (LT), Scott Fortmann-Roe (HR), and Manuela Royer (LT).
+	Website -> https://www.movebank.org/node/14620	
+	
 	    
     Package move
     
