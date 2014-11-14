@@ -53,7 +53,7 @@ xy <- coordinates(locs)
 df <- as.data.frame(locs)
 id <- df[,1]
 da <- as.POSIXct(strptime(as.character(df$Date), "%y%m%d"))
-ltr1 <- adehabitatLT:::as.ltraj(xy, da, id = id)
+ltr1 <- adehabitatLT:::as.ltraj(xy, da, id = id) 
 ltr2 <- as.ltraj(xy, da, id = id)
 all.equal(ltr1, ltr2)
 
@@ -67,6 +67,87 @@ all.equal(ltr1, ltr2)
 # $relocs = SpatialPointsDataFrame
 
 # These object classes are defined in package "sp"
+
+## How to combine the two objects: ???
+
+
+# Preparing the raster data -----------------------------------------------
+
+require(sp)
+
+## SpatialPixelsDataFrame
+# defines a spatial grid with attribute data
+
+data(meuse.grid)
+# meuse.grid is a data frame with 3103 obs of 7 variables. 
+
+head(meuse.grid)
+?meuse.grid
+str(meuse.grid)
+# the columns are: x, y, part.a, part.b, dist, soil, ffreq
+# x and y are the coordinates given as numeric vectors
+# all other columns are arbitrary data that can be given as numeric vectors or factors
+
+## How to create a SpatialPixelsDataFrame:
+m = SpatialPixelsDataFrame(points = meuse.grid[c("x", "y")], data = meuse.grid)
+m
+
+# checking whether Transformation worked
+class(m)
+summary(m)
+
+## Alternative for loading data:
+
+csv = read.csv(file =, header = T, sep =, dec =) # to be filled in
+SPDF.grid = as.data.frame(csv, stringsAsFactors = T) # to be filled in
+
+n = SpatialPixelsDataFrame(points = SPDF.grid[c("x", "y")], data = SPDF.grid)
+n
+
+# options for SpatialPixelsDataFrame function ???
+# use other file formats than .csv as input
+
+
+
+# Preparing the waypoint data -------------------------------------------------
+
+require(sp)
+
+## SpatialPointsDataFrame
+
+data(meuse)
+head(meuse)
+head(meuse.grid)
+str(meuse) # is a data frame with x and y coordinates and other arbitrary variables, e.g. date
+
+SpatialPointsDataFrame(coords, data, coords.nrs = numeric(0), proj4string = CRS(as.character(NA)), match.ID = TRUE, bbox = NULL)
+
+o = SpatialPointsDataFrame(coords = meuse[,c("x","y")], data = meuse)
+
+names(o)
+o
+str(o)
+
+
+
+# Putting it together -----------------------------------------------------
+
+
+
+meuseSDF <- list(m,o)
+# this creates the full dataset consisting of a map (SpatialPixelsDataFrame) and the waypoints (SpatialPointsDataFrame).
+
+str(meuseSDF)
+
+
+head(puechabonsp$map)
+head(puechabonsp$relocs)
+
+
+
+data(meuse.grid)
+
+str(meuse.grid)
 
 
 str(puechabonsp)
@@ -131,9 +212,6 @@ blo <- rdSteps(puechcirc, rand.dis = rand, reproducible = TRUE)
 all.equal(bla, blo)
 
 
-
-
-# Functions for handling raster maps in adehabitat ------------------------
 
 
 
