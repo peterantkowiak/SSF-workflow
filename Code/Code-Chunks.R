@@ -27,16 +27,14 @@ require(adehabitatHR)
 require(adehabitatHS)
 require(adehabitatLT)
 
-
-
 #require(move)
 #require(raster)
 #require(rgdal)
 #require(tkrplot)
 #require(raster)
+#require(sp)
 
 #demo(rastermaps)
-
 
 
 #data(puechabonsp)
@@ -63,7 +61,12 @@ all.equal(ltr1, ltr2)
 
 # loading data ------------------------------------------------------------
 
+## as.ltraj handles datasets consisting of two components:
 
+# $map = SpatialPixelsDataFrame
+# $relocs = SpatialPointsDataFrame
+
+# These object classes are defined in package "sp"
 
 
 str(puechabonsp)
@@ -71,9 +74,11 @@ head(puechabonsp$relocs)
 
 puechabonsp
 
+locs
 str(locs)
 
 xy
+str(xy)
 df$Date
 da
 id
@@ -82,6 +87,9 @@ head(df)
 df[,1]
 ltr1
 ltr2
+head(ltr2)
+ltr2 <- as.ltraj(xy, da, id = id)
+
 
 
 ?puechabonsp
@@ -91,8 +99,8 @@ ltr2
 
 
 
+# Function rdSteps --------------------------------------------------------
 
-# function rdSteps
 
 data(puechcirc)
 #head(puechcirc)
