@@ -20,16 +20,27 @@ install.packages("rgdal")
 #install.packages("")
 
 # loading the packages
-require(adehabitat)
+# require(adehabitat) # keep fingers off this package. It is outdated.
 require(hab)
 require(adehabitatMA)
+require(adehabitatHR)
+require(adehabitatHS)
+require(adehabitatLT)
 
-require(move)
-require(raster)
 
 
-data(puechabonsp)
-data(bauges) # chamois dataset from france
+#require(move)
+#require(raster)
+#require(rgdal)
+#require(tkrplot)
+#require(raster)
+
+#demo(rastermaps)
+
+
+
+#data(puechabonsp)
+#data(bauges) # chamois dataset from france
 
 
 
@@ -47,6 +58,37 @@ da <- as.POSIXct(strptime(as.character(df$Date), "%y%m%d"))
 ltr1 <- adehabitatLT:::as.ltraj(xy, da, id = id)
 ltr2 <- as.ltraj(xy, da, id = id)
 all.equal(ltr1, ltr2)
+
+
+
+# loading data ------------------------------------------------------------
+
+
+
+
+str(puechabonsp)
+head(puechabonsp$relocs)
+
+puechabonsp
+
+str(locs)
+
+xy
+df$Date
+da
+id
+head(df)
+
+df[,1]
+ltr1
+ltr2
+
+
+?puechabonsp
+
+
+
+
 
 
 
@@ -86,6 +128,4 @@ all.equal(bla, blo)
 # Functions for handling raster maps in adehabitat ------------------------
 
 
-
-demo(rastermaps)
 
