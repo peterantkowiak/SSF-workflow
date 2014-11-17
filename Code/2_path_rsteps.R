@@ -1,19 +1,25 @@
 # installing packages -----------------------------------------------------
 
-install.packages("adehabitat")
-install.packages("tkrplot")
+# install.packages("adehabitat")
+
+# install.packages("hab")
 install.packages("hab", repos = "http://ase-research.org/R/", type = "source")
-install.packages("hab", repos = "http://ase-research.org/R/")
+# install.packages("hab", repos = "http://ase-research.org/R/")
 
 install.packages("adehabitatMA")
 install.packages("adehabitatHR")
 install.packages("adehabitatHS")
 install.packages("adehabitatLT") # will be installed when insatlling adehabitatHR
+install.packages("tkrplot")
 
+
+require(hab)
 require(adehabitatMA)
 require(adehabitatLT)  # includes "ade4"
 require(adehabitatHS)
-require(adehabitat)
+require(tkrplot)
+
+# require(adehabitat)  # not necessary to load
 
 
 
@@ -42,7 +48,7 @@ View(df)
 
 ltr1 <- adehabitatLT:::as.ltraj(xy, da, id = id)
 ltr2 <- hab:::as.ltraj(xy, da, id = id)
-ltr3 <- adehabitat:::as.ltraj(xy, da, id = id)  # diffrent use than hab and LT !!!
+ltr3 <- adehabitat:::as.ltraj(xy, da, id = id)  # different use than hab and LT !!!
 
 # keep on trying to do your own burst
 # test.ltr <- adehabitatLT:::as.ltraj(xy, da, id = id, burst = c(id,da))
@@ -52,7 +58,7 @@ all.equal(ltr1, ltr3)   # see the difference - what is the difference
 
 head(ltr2[[1]])  ## finally the way, how to access the data stored in a list !!
 
-# as.ltraj from "adehabitat" ------------------------------------------------
+# as.ltraj from "adehabitat" , need to install the package! ------------------------------------------------
 
 
 data(puechabon)
@@ -91,14 +97,15 @@ data(puechcirc)
 
 # the data we modified with as.ltraj
 plot(ltr2)
-plot(ltr2, id = "Brock")
+plot(ltr2, id = "Chou")
 plot(ltr2, perani=TRUE)  # dont see any changes
 
 
-# the data prpared from the author
+# the data prepared from the author, its basically the same data set but reduced to only 3 burst including 2 indiviuals 
 data(puechcirc)
 puechcirc
 
+# this is the way how to access your data from this weird "list" 
 head(puechcirc[[1]])
 
 plot(puechcirc, perani=TRUE) # one plot per id
@@ -107,6 +114,7 @@ plot(puechcirc)   # one plot per burst
 
 # plotNAltraj -------------------------------------------------------------
 
+# produces plots showing the NAs ??
 data(puechcirc)
 adehabitatLT:::plotNAltraj(puechcirc)
 plotNAltraj(puechcirc, perani = TRUE, addlines = FALSE, mfrow = c(1,2), ppar = list(pch = 15, cex = 0.5))
