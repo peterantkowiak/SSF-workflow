@@ -201,7 +201,7 @@ plot(r) # outcomment this if you just quickly want to run the script. Takes a mi
 
 getValues()
 as.matrix()
-extract()
+extract() # can we extract data by just giving coordinates?
 coordinates()
 as.data.frame()
 
