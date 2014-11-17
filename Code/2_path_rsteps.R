@@ -124,19 +124,20 @@ plotNAltraj(ltr2)
 
 # random steps ------------------------------------------------------------
 
+# with the prepared data puechcirc
+
 ## Load the data
 data(puechcirc)
 
 ##
-## Simple example to check the distributions of step lengths and turning
-## angles
-bla <- rdSteps(puechcirc)
+## Simple example to check the distributions of step lengths and turning angles
+bla <- rdSteps(puechcirc)  # imediately gives me a table with all the information I need!
 head(bla)
 
-boxplot(bla$rel.angle ~ bla$case)
+boxplot(bla$rel.angle ~ bla$case)  # case=1 is the true data based on the measured coordinates 
 boxplot(bla$dist ~ bla$case)
 
-## Reproducibility and alternative random distributions
+## Reproducibility and alternative random distributions 
 ## 1) Default: using the same ltraj for the random distributions:
 bla <- rdSteps(puechcirc, reproducible = TRUE)
 
@@ -144,9 +145,12 @@ bla <- rdSteps(puechcirc, reproducible = TRUE)
 bli <- rdSteps(puechcirc, rand.dis = puechcirc, reproducible = TRUE)
 
 boxplot(bli$rel.angle ~ bli$case)
+boxplot(bli$dist ~ bli$case)
+
 
 ## Check that 2) is the same as 1)
 all.equal(bla, bli)
+
 
 ## 3) Explicitly uses random distributions in a data.frame:
 rand <- subset(ld(puechcirc), !(is.na(x) | is.na(dx) | is.na(rel.angle)) & dist <= Inf, select = c("dist", "rel.angle", "id"))
@@ -155,6 +159,9 @@ blo <- rdSteps(puechcirc, rand.dis = rand, reproducible = TRUE)
 ## Check that 3) is the same as 1)
 all.equal(bla, blo)
 
+
+
+# compare random steps and true data --------------------------------------
 
 
 
