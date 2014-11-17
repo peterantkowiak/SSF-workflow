@@ -178,6 +178,11 @@ ltr2 <- as.ltraj(xy, da, id = id)
 
 
 
+# importing tiffs ---------------------------------------------------------
+
+require(raster)
+require(rgdal)
+
 
 
 # Function rdSteps --------------------------------------------------------
