@@ -81,4 +81,24 @@ They are developed by Clement Calenge with contributions from Mathieu Basille (H
 	incl. assumptions of our model?
 	
 	
+manually define bursts / according to habitat -> flag them
+
+implement bursts
+more options for rdSteps first
+fitting a function to the observed data
+
+mixture distributions for rdSteps?
+
+
+-----------Stats--------------
+stats: lme4::glmer(used~...
+stats: mclogit::mclogit()
+!include strata
+
+
+
+
+
+	
+	
 
