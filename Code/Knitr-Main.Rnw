@@ -58,9 +58,8 @@ options(replace.assign=TRUE, width=90)
 %------------------------------------------------------------------------------------------------------
 %------------------------------------------------------------------------------------------------------
 
-\abstract{This is a very simple \LaTeX~template to get started.}
-
 \tableofcontents
+
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
 This section explains why the rest of this document exists.
