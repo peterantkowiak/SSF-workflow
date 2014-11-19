@@ -24,13 +24,14 @@ write.OGR()
 XY <- coordinates(cougarsSPDF)  # coordinates are stored in my SPDF
 cougars2 <- as.data.frame(cougarsSPDF)
 catID <- as.character(cougars2[,1])
-cougars2[,1] <- as.factor(cougars2[,1]) # does not really help but know its a Factor just as the name in puechabonsp
+cougars2[,1] <- as.factor(cougars2[,1]) # does not really help but now its a Factor just as the name in puechabonsp
 date = as.POSIXct(strptime(as.character(cougars2$LMT_DATE), "%d/%m/%Y"))
 
 summary(cougars2)
 unique(cougars2$cat)
 # [1] 10286 10287 10288 10289 10290 10291 10293
 
+# try to either combine date with the time in one column or do an ltraj of Type I without time stamps
 
 cougarsLTR <- adehabitatLT:::as.ltraj(XY[catID=="10286",], date = date[catID=="10286"], id="10286")
 

@@ -1,7 +1,8 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}
-\contentsline {section}{\numberline {2}Praparations}{2}{section.2}
+\contentsline {section}{\numberline {2}Preparations}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}Packages - what we need}{2}{subsection.2.1}
 \contentsline {section}{\numberline {3}Load raster data (ESRI, *.tif, *.shp)}{2}{section.3}
-\contentsline {section}{\numberline {4}Extract coordinates for comparison of used and random points}{4}{section.4}
+\contentsline {section}{\numberline {4}Extract coordinates for comparison of used and random points}{2}{section.4}
 \contentsline {section}{\numberline {5}Load telemetry data (*.csv, ESRI)}{4}{section.5}
 \contentsline {section}{\numberline {6}Create a Spatial Points Data Frame}{4}{section.6}
 \contentsline {section}{\numberline {7}Create a ltraj object}{4}{section.7}
