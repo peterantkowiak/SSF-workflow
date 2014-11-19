@@ -36,6 +36,7 @@
 %------------------------------------------------------------------------------------------------------
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 %\SweaveOpts{concordance=TRUE}
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
@@ -46,9 +47,9 @@ options(replace.assign=TRUE, width=90)
 @
 
 
-\title{This is an example document to change at your whim.}
+\title{A tutorial for Step Selection Function}
 
-\author{I\thanks{Here, University of Freiburg} \and me\thanks{There, University of Freiburg} \and myself\thanks{Lost, somewhere midair}}
+\author{P. Antkowiak\thanks{M.Sc. programme "GIS und Umweltmodellierung" at University of Freiburg} \and C. Wilhelm\thanks{M.Sc. programme "Wildlife, Biodiversity and Vegetation" at University of Freiburg} \and H. Tripke\thanks{M.Sc. programme "Wildlife, Biodiversity and Vegetation" at University of Freiburg}}
 % for more control, multiple affiliations, line breaks and alike, use the authblk package!!
 
 \date{\today} % !!use package isodate for more control of date formatting!!
@@ -62,21 +63,74 @@ options(replace.assign=TRUE, width=90)
 
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
-This section explains why the rest of this document exists.
-
-\section{Methods}%------------------------------------------------------------------------------------------------------
-
-Every method should contain a figure of study organism, site or yourself in front of some picturesque landscape (see Fig.~\ref{fig:lizard}).
+This tutorial is for all those who would like to use Step Selection function (SSF) for their telemtry data...
 
 \begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
 % see also here: http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Captions
-\captionsetup{width=0.6\textwidth}
+\captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=0.6\textwidth]{Leiocephalus-personatus-maskenleguan.jpg} %figure from Wikipedia
-\caption{\emph{Leiocephalus personatus} is a species of curly-tailed lizard first described by Edward Drinker Cope in 1862. This specimen was photographed in the reptile zoo of Neu-Ulm, Germany. \small{\url{http://en.wikipedia.org/wiki/Template:POTD/2014-08-27}}}
-\label{fig:lizard}
+\includegraphics[width=1\textwidth]{Flowchart.pdf} %our perfect workflow!
+\caption{\emph{Conducting a SSF using existing R-packages:} this figures provides an overview of the necessary steps necessary to conduct a SSF. The steps are separated in subsections, which the turtorial explains in detail.   \small{\url{http://en.wikipedia.org/wiki/Template:POTD/2014-08-27}}}
+\label{fig:Flowchart}
 \end{figure}
 
+\section{Praparations}
+Before you can actually start using the tutorial for conducting SSF you need to load a bunch of packages in R. Some of them require others so that you have to add all these to your library:
+
+
+
+
+\section{Load raster data (ESRI, *.tif, *.shp)}%------------------------------------------------------------------------------------------------------
+
+Every method should contain a figure of study organism, site or yourself in front of some picturesque landscape (see Fig.~\ref{fig:lizard}).
+
+<<eval=FALSE>>=
+# installing packages -----------------------------------------------------
+
+# install.packages("adehabitat")
+
+# install.packages("hab")
+install.packages("hab", repos = "http://ase-research.org/R/", type = "source")
+# install.packages("hab", repos = "http://ase-research.org/R/")
+
+install.packages("adehabitatMA")
+install.packages("adehabitatHR")
+install.packages("adehabitatHS")
+install.packages("adehabitatLT") # will be installed when insatlling adehabitatHR
+install.packages("tkrplot")
+
+
+require(hab)
+require(adehabitatMA)
+require(adehabitatLT)  # includes "ade4"
+require(adehabitatHS)
+require(tkrplot)
+
+# require(adehabitat)  # not necessary to load
+@
+
+
+\section{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
+
+
+\section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
+
+\section{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
+
+\section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
+
+
+\section{Compute random steps}
+
+\section{Final SSF model}
+
+
+Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
+
+\newpage
+\section{still useful code from Carsten}
+
+% I left this in there cause we might need the help when adding our code...
 
 \begin{verbatim}
 # This is how I could document code:
@@ -85,6 +139,9 @@ runif(100)
 # convenient for short, but not for long pieces of code
 # any symbol is plotted "as is", even if it is \LaTeX: *+#&ß\/
 \end{verbatim}
+
+# any symbol is plotted "as is", even if it is \LaTeX: *+#&ß\/
+
 
 Alternatively, in Sweave, I can actually use R-code and have it evaluated by R and results returned and pasted into the \LaTeX-document! Like so:
 <<>>=
@@ -161,17 +218,5 @@ I leave it to you to do the same thing for tables, using R's xtable command, as 
 
 
 All this was Sweave. More recently, knitr made its entrance, and has increased the flexibility of Sweave. It is VERY similar and you have to tell RStudio in the options, whether you are sweaving or knitting. For minimal examples and comparisons, also using markdown rather than \LaTeX\/and PDF or html as output, see here: \url{http://yihui.name/knitr/demo/minimal/}.
-
-
-\section{Results} %------------------------------------------------------------------------------------------------------
-
-
-\section{Diskussion}%------------------------------------------------------------------------------------------------------
-
-\section{Acknowledgements}%------------------------------------------------------------------------------------------------------
-Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
-
-
-
 
 \end{document}

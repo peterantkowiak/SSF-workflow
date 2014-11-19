@@ -32,11 +32,11 @@ library("adehabitatMA")
 
 locs <- puechabonsp$relocs
 head(puechabonsp)
-fred <- data(puechabonsp)
 puechabonsp$map
+
 map <- puechabonsp$map
 locs <- puechabonsp$relocs
-locs <- puechabonsp$relocs
+
 xy <- coordinates(locs)
 df <- as.data.frame(locs)
 id <- df[,1]
