@@ -54,7 +54,7 @@ adehabitatLT:::plotNAltraj(cougarsLTR)
 
 # create random steps ------------------------------------------------------
 
-couONE.step <- rdSteps(cougarsONE)
+couONE.step <- rdSteps(cougarsONE)  
 
 
 ########################
