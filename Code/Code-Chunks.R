@@ -57,6 +57,8 @@ ltr1 <- adehabitatLT:::as.ltraj(xy, da, id = id)
 ltr2 <- as.ltraj(xy, da, id = id)
 all.equal(ltr1, ltr2)
 
+df
+ltr1
 
 
 # ltraj objects ------------------------------------------------------------
