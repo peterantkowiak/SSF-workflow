@@ -89,6 +89,7 @@ fitting a function to the observed data
 
 mixture distributions for rdSteps?
 
+distinguish between individuals?
 
 -----------Stats--------------
 stats: lme4::glmer(used~...
