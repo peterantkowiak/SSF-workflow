@@ -73,25 +73,36 @@ all.equal(ltr1, ltr2)
 
 # Preparing the raster data -----------------------------------------------
 
-require(sp)
 
-
-
-###################################
 
 install.packages("RArcInfo")
 require(RArcInfo)
 require(raster)
 require(rgdal)
 
+require(sp)
+
 #############
 
 ?raster
 getwd()
-setwd("/home/Peter/")
-r <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/Crown Closure/CrownClosure/p6p_cc/w001001.adf") 
+#setwd("/home/Peter/")
 
-plot(r) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+ruggedness <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf") 
+# plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+landcover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf") 
+# plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+canopycover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf") 
+# plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+disthighway <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf") 
+# plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+distroad <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf") 
+plot(distroad) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
 
 
 # rDF <- as.data.frame(r) # memory overflow
@@ -169,7 +180,8 @@ n
 
 require(sp)
 
-read.csv("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/")
+cougars = read.csv("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/UTMsREDUCED.csv", head=T)
+head(cougars)
 
 ## SpatialPointsDataFrame
 
