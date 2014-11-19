@@ -4,7 +4,7 @@
 
 # install.packages("hab")
 install.packages("hab", repos = "http://ase-research.org/R/", type = "source")
-# install.packages("hab", repos = "http://ase-research.org/R/")
+install.packages("hab", repos = "http://ase-research.org/R/")
 
 install.packages("adehabitatMA")
 install.packages("adehabitatHR")
