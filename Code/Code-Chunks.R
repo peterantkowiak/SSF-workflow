@@ -45,7 +45,7 @@ require(adehabitatLT)
 # running the examples from hab.pdf ---------------------------------------
 
 
-# function as.ltraj
+# function as.ltraj -------------------------------------------
 
 data(puechabonsp)
 locs <- puechabonsp$relocs
@@ -57,8 +57,26 @@ ltr1 <- adehabitatLT:::as.ltraj(xy, da, id = id)
 ltr2 <- as.ltraj(xy, da, id = id)
 all.equal(ltr1, ltr2)
 
-df
-ltr1
+#--------------
+
+XY <- coordinates(cougarsSPDF)  # coordinates are stored in my SPDF
+cougars2 <- as.data.frame(cougarsSPDF)
+catID <-cougars2[,3]
+#catID <- as.character(cougars2[,1])
+#cougars2[,1] <- as.factor(cougars2[,1]) # does not really help but know its a Factor just as the name in puechabonsp
+dat = as.POSIXct(strptime(as.character(cougars2$LMT_DATE), "%d/%m/%Y"))
+
+#summary(cougars2)
+#unique(cougars2$cat)
+
+# [1] 10286 10287 10288 10289 10290 10291 10293
+
+# option 1 to solve it: ignore date
+cougarsLTR <- adehabitatLT:::as.ltraj(XY, date = dat, id=catID, burst=catID, typeII=F)
+
+# option 2 (to be finished): include hours in the data. Maybe choose other column as id
+cougarsLTR2 <- adehabitatLT:::as.ltraj(XY, date = dat, id=cougars2[,3])
+
 
 
 # ltraj objects ------------------------------------------------------------
