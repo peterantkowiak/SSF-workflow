@@ -178,10 +178,57 @@ ltr2 <- as.ltraj(xy, da, id = id)
 
 
 
-# importing tiffs ---------------------------------------------------------
+# importing other gis data ---------------------------------------------------------
 
+
+install.packages("RArcInfo")
+require(RArcInfo)
 require(raster)
 require(rgdal)
+
+#############
+
+?raster
+getwd()
+setwd("/home/Peter/")
+r <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/Crown Closure/CrownClosure/p6p_cc/w001001.adf") 
+
+plot(r) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+
+# rDF <- as.data.frame(r) # memory overflow
+
+
+getValues()
+as.matrix()
+extract() # can we extract data by just giving coordinates?
+coordinates()
+as.data.frame()
+
+###################
+get.arcdata(datadir, coverage, filename="arc.adf")
+
+##################
+library(rgdal)
+dpath<-"/home/vrubio/tmp/GLiPHAmaps/global/poultry/totcor/glbpod1t0503m/hdr.adf"
+x <- new("GDALReadOnlyDataset", dpath)
+getDriver(x)
+getDriverLongName(getDriver(x))
+
+library(RColorBrewer)
+xx<-asSGDF_GROD(x, output.dim=c(200, 200))
+spplot(xx, "band1", 
+       at=c(0, 10, 50, 100, 200, 500, 1000, 2500, max(xx$band1,
+                                                      na.rm=TRUE)),
+       col.regions=brewer.pal(8,"Oranges") )
+
+If you require a higher resolution try to increase the values of
+output.dim=c(200, 200) but be careful because it can take a lot of
+memory.
+
+#################
+#tiffs
+
 
 
 

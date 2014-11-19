@@ -76,4 +76,29 @@ They are developed by Clement Calenge with contributions from Mathieu Basille (H
         get attributes for visited and random points from environmental layers
         Analyze for differences between selected and ignored points
         Apply different SSF's and compare
+        
+- Write up what we did
+	incl. assumptions of our model?
+	
+	
+manually define bursts / according to habitat -> flag them
+
+implement bursts
+more options for rdSteps first
+fitting a function to the observed data
+
+mixture distributions for rdSteps?
+
+
+-----------Stats--------------
+stats: lme4::glmer(used~...
+stats: mclogit::mclogit()
+!include strata
+
+
+
+
+
+	
+	
 
