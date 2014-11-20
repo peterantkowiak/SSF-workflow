@@ -169,6 +169,15 @@ head(cougars.steps)
 str(cougars.steps)
 View(cougars.steps)
 
+with(cougars.steps, plot(dist, rel.angle))
+# check for correlation between steplength and angle
+
+
+# calculate new coordinates
+cougars.steps$new_x <- cougars.steps$x + cougars.steps$dx
+cougars.steps$new_y <- cougars.steps$y + cougars.steps$dy
+
+
 ### examples rdSteps ######
 
 data(puechcirc)
@@ -205,7 +214,7 @@ all.equal(bla, blo)
 
 
 #install.packages("RArcInfo")
-require(RArcInfo)
+#require(RArcInfo)
 require(raster)
 require(rgdal)
 
@@ -236,15 +245,16 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 # Raster extraction ---------------------------------
 
 #sp <- SpatialPoints(xy)
-cougarsRugged <- extract(ruggedness, cougarsSPDF, method='simple', sp=T, df=T) 
+# cougarsRugged <- extract(ruggedness, cougarsSPDF, method='simple', sp=T, df=T) 
 # method = 'bilinear' interpolates values from four nearest cells. sp returns Spatial object, df a data frame.
 
 
 # first convert the cougars.steps into a SpatialPointsDataFrame
-cougars.steps.SPDF = SpatialPointsDataFrame(coords = cougars.steps[,c("x","y")], data = cougars.steps)
+cougars.steps.SPDF = SpatialPointsDataFrame(coords = cougars.steps[,c("new_x","new_y")], data = cougars.steps)
 
 
 cougars.steps.Rugged <- extract(ruggedness, cougars.steps.SPDF, method='simple', sp=T, df=T) 
+
 
 head(cougars.steps.Rugged)
 View(cougars.steps.Rugged)
@@ -374,6 +384,31 @@ ltr2 <- as.ltraj(xy, da, id = id)
 
 
 
+# Model --------------------------------------------
+
+
+##lmer
+
+
+library(lme4)
+
+# model 1
+csR <- as.data.frame(cougars.steps.Rugged)
+
+
+
+model1 = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=csR)
+
+summary(model1)
+library(effects)
+plot(allEffects(model1))
+
+
+
+
+model1 = glmer(response ~ ruggedness + canopycover + (1|ID/strata), 
+              cougars.final.DF,
+               family = binomial)
 
 
 
