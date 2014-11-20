@@ -134,6 +134,7 @@ The data for the analysis should be safed in a simple *.csv format. Depending on
 
 \section{Compute random steps}
 
+The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
 \section{Final SSF model}
 

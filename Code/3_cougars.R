@@ -24,22 +24,22 @@ write.OGR()
 # create ltraj object ------------------------------------------------------
 
 XY <- coordinates(cougarsSPDF)  # coordinates are stored in my SPDF
-cougars2 <- as.data.frame(cougarsSPDF)
-catID <- as.character(cougars2[,1])
+cougarsDF <- base:::as.data.frame(cougarsSPDF)
+# catID <- as.character(cougars2[,1])
 # cougars2[,1] <- as.factor(cougars2[,1]) # does not really help but now its a Factor just as the name in puechabonsp
 
 # it is VERY important to get date and time in the same column! If not the burst cannot be assigned with a unique value:
-date = as.POSIXct(strptime(paste(cougars2$LMT_DATE, cougars2$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
+date = as.POSIXct(strptime(paste(cougarsDF$LMT_DATE, cougarsDF$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
 
-summary(cougars2)
-unique(cougars2$cat) # 
+summary(cougarsDF)
+unique(cougarsDF$cat) # 
 # [1] 10286 10287 10288 10289 10290 10291 10293
 
 
-cougarsLTR <- adehabitatLT:::as.ltraj(XY, date, id = catID) 
+cougarsLTR <- adehabitatLT:::as.ltraj(XY, date, id = cougarsDF$cat) 
 
 # only for one individual:
-cougarsONE <- adehabitatLT:::as.ltraj(XY[catID=="10286",], date = date[catID=="10286"], id="10286")
+cougarsONE <- adehabitatLT:::as.ltraj(XY[cougarsDF$cat=="10286",], date = date[cougarsDF$cat=="10286"], id="10286")
 
 all.equal(cougarsLTR, cougarsONE)
 
@@ -71,11 +71,50 @@ adehabitatLT:::plotNAltraj(cougarsLTR)
 # create random steps ------------------------------------------------------
 
 couONE.step <- rdSteps(cougarsONE)  
+couSTEP <- rdSteps(cougarsLTR)
 
 
+# add your changes in coordinates in one column  --------------------------
+
+couONE.step$new_x <- couONE.step$x + couONE.step$dx
+couONE.step$new_y <- couONE.step$y + couONE.step$dy
+
+
+# create your step selection function / model -----------------------------
+
+install.packages("lme4")
 ########################
 ##############################
 #####################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# just more code from the examples ----------------------------------------
 
 
 data(puechabonsp)
