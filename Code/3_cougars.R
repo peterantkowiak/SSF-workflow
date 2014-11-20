@@ -36,11 +36,27 @@ unique(cougars2$cat) #
 # [1] 10286 10287 10288 10289 10290 10291 10293
 
 
-cougarsLTR <- adehabitatLT:::as.ltraj(XY, date, id = catID)
+cougarsLTR <- adehabitatLT:::as.ltraj(XY, date, id = catID) 
+
 # only for one individual:
 cougarsONE <- adehabitatLT:::as.ltraj(XY[catID=="10286",], date = date[catID=="10286"], id="10286")
 
 all.equal(cougarsLTR, cougarsONE)
+
+
+
+## some suggestions by Peter ##
+
+# take the real cat ID instead of the y coordinate. 
+# This results in 7 trajectories - one for each animal - and makes a lot more sense than having 7843 trajectories consisting of just one point.
+catID2 <- as.character(cougars2[,3])
+# better use as.ltraj from the hab package. it is a lot faster.
+cougarsLTR2 <- hab:::as.ltraj(XY, date, id = catID2) 
+# even the plot looks nice:
+plot(cougarsLTR2)
+
+
+
 
 # plot ltraj --------------------------------------------------------------
 
