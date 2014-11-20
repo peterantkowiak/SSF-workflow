@@ -174,28 +174,28 @@ cougars.LTR.cut <- cutltraj(cougarsLTR, "foo(dt)", nextr = TRUE)
 cougars.LTR.cut 
 # very many bursts now
 
-
+## we now created new bursts if there were gaps in the 3 hour scheme.
+## However, we did not exclude relocations recorded at an even higher frequency (e.g. 15 min.)
 
 
 
 # create random steps ------------------------------------------------------
 
 #cougars.steps <- rdSteps(cougarsLTR)
-cougars.steps.c <- rdSteps(cougars.LTR.cut) # This does not work yet / we need to add something
-# problem: we don't get predicted coordinates but rather distance and angle.
-# possible solution: add and calculate rows with "newX" and "newY" and extract raster data for those coordinates.
-
-# For drawing angle and length at the same time use simult=T
+cougars.steps.c <- rdSteps(cougars.LTR.cut) 
 
 head(cougars.steps)
 str(cougars.steps)
 View(cougars.steps)
 
-with(cougars.steps, plot(dist, rel.angle))
-# check for correlation between steplength and angle
+## check for correlation between steplength and angle
+with(cougars.steps.c, plot(dist, rel.angle))
+
+# If they correlate: For drawing angle and length at the same time use simult=T
+cougars.steps.c <- rdSteps(cougars.LTR.cut, simult=T)
 
 
-# calculate new coordinates
+## calculate new coordinates
 
 #cougars.steps$new_x <- cougars.steps$x + cougars.steps$dx
 #cougars.steps$new_y <- cougars.steps$y + cougars.steps$dy
@@ -300,7 +300,6 @@ cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
 
   
 head(cougars.steps.c.SPDF)
-
 
 
 #head(cougars.steps.Rugged)
@@ -453,6 +452,10 @@ model1c = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=cscR)
 
 summary(model1)
 summary(model1c)
+## model1c less significant. why?
+# - loss of data points
+# - linear instead of quadratic term?
+# - average step length too small?
 
 library(effects)
 
