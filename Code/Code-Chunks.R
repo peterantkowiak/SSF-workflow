@@ -159,13 +159,33 @@ adehabitatLT:::plotNAltraj(cougarsONE)  # does that mean there are no NAs ?? nic
 adehabitatLT:::plotNAltraj(cougarsLTR)
 
 
+# create bursts -------------------------------------------------
+
+plotltr(cougarsLTR, "dt/3600") # 1 hour intervals 
+plotltr(cougarsLTR, "dt/3600/3") # 3 hour intervals
+# converting the time lag between relocations into days and plotting
+
+foo = function(dt) {return(dt> (3800*3))} # intervals of 3:10 h
+# set a function that time lag between relocs is <100 days
+
+cougars.LTR.cut <- cutltraj(cougarsLTR, "foo(dt)", nextr = TRUE)
+# look if time lag between relocs is > 3:10 h
+
+cougars.LTR.cut 
+# very many bursts now
+
+
+
+
+
 # create random steps ------------------------------------------------------
 
-cougars.steps <- rdSteps(cougarsLTR) # This does not work yet / we need to add something
+#cougars.steps <- rdSteps(cougarsLTR)
+cougars.steps.c <- rdSteps(cougars.LTR.cut) # This does not work yet / we need to add something
 # problem: we don't get predicted coordinates but rather distance and angle.
 # possible solution: add and calculate rows with "newX" and "newY" and extract raster data for those coordinates.
 
-# For drawing angle and length at the same time use
+# For drawing angle and length at the same time use simult=T
 
 head(cougars.steps)
 str(cougars.steps)
@@ -176,8 +196,12 @@ with(cougars.steps, plot(dist, rel.angle))
 
 
 # calculate new coordinates
-cougars.steps$new_x <- cougars.steps$x + cougars.steps$dx
-cougars.steps$new_y <- cougars.steps$y + cougars.steps$dy
+
+#cougars.steps$new_x <- cougars.steps$x + cougars.steps$dx
+#cougars.steps$new_y <- cougars.steps$y + cougars.steps$dy
+
+cougars.steps.c$new_x <- cougars.steps.c$x + cougars.steps.c$dx
+cougars.steps.c$new_y <- cougars.steps.c$y + cougars.steps.c$dy
 
 
 ### examples rdSteps ######
@@ -252,29 +276,35 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 
 
 # first convert the cougars.steps into a SpatialPointsDataFrame
-cougars.steps.SPDF = SpatialPointsDataFrame(coords = cougars.steps[,c("new_x","new_y")], data = cougars.steps)
+
+#cougars.steps.SPDF = SpatialPointsDataFrame(coords = cougars.steps[,c("new_x","new_y")], data = cougars.steps)
+cougars.steps.c.SPDF = SpatialPointsDataFrame(coords = cougars.steps.c[,c("new_x","new_y")], data = cougars.steps.c)
+
+#cougars.steps.Rugged <- extract(ruggedness, cougars.steps.SPDF, method='simple', sp=T, df=T) 
+cougars.steps.c.Rugged <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=T, df=T) 
+# method = 'simple' extracts value from nearest cell. method = 'bilinear' interpolates from the four nearest cells.
 
 
-cougars.steps.Rugged <- extract(ruggedness, cougars.steps.SPDF, method='simple', sp=T, df=T) 
+#head(cougars.steps.Rugged)
+#View(cougars.steps.Rugged)
+
+head(cougars.steps.c.Rugged)
+View(cougars.steps.c.Rugged)
 
 
-head(cougars.steps.Rugged)
-View(cougars.steps.Rugged)
-## for the ruggedness value, there is no difference between actual value and strata. Either, the resolution of the raster is too low or i made a mistake when extracting.
-
-names(ruggedness)
-head(cougars)
-head(cougarsRugged)
+#names(ruggedness)
+#head(cougars)
+#head(cougarsRugged)
 
 
 # rDF <- as.data.frame(r) # memory overflow
 
 
-getValues()
-as.matrix()
-extract() # can we extract data by just giving coordinates?
-coordinates()
-as.data.frame()
+#getValues()
+#as.matrix()
+#extract() # can we extract data by just giving coordinates?
+#coordinates()
+#as.data.frame()
 
 ###################
 get.arcdata(datadir, coverage, filename="arc.adf")
@@ -396,25 +426,30 @@ library(lme4)
 
 # model 1
 csR <- as.data.frame(cougars.steps.Rugged)
+cscR <- as.data.frame(cougars.steps.c.Rugged)
 
 
 
 model1 = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=csR)
+model1c = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=cscR)
 
 summary(model1)
+summary(model1c)
+
 library(effects)
+
 plot(allEffects(model1))
+plot(allEffects(model1c))
 
 
-
-# Use this function for rescaling
+# Rescaling function ------------------------------------------
 
 cs. <- function(x) scale(x,scale=TRUE,center=TRUE) #to rescale your variable
 
-my.fit1 = glmer(response ~ cs.(ruggedness) + (1|id/strata), data = my.df, …..)
+model1rc = glmer(case ~ cs.(w001001) + (1|id/strata), data = cscR)
 
-
-
+summary(model1rc)
+plot(allEffects(model1rc))
 
 # model1 = glmer(response ~ ruggedness + canopycover + (1|ID/strata), cougars.final.DF,family = binomial)
 

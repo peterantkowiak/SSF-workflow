@@ -31,13 +31,13 @@ data(puechabonsp)
 puechabonsp
 
 splocs = puechabonsp$relocs
-locs = as.data.frame(locs)
-head(locs)
-da <- as.character(locs$Date)
+splocs = as.data.frame(splocs)
+head(splocs)
+da <- as.character(splocs$Date)
 head(da)
-da <- as.POSIXct(strptime(as.character(locs$Date),"%y%m%d"))
+da <- as.POSIXct(strptime(as.character(splocs$Date),"%y%m%d"))
 head(da)
-puech <- as.ltraj(xy = locs[,c("X","Y")], date = da, id = locs$Name)
+puech <- as.ltraj(xy = splocs[,c("x","y")], date = da, id = splocs$Name)
 puech
 # created class ltraj -> type II and irregular (time is known but no constant time lag)
 # list containing 4 dataframes (4 bursts -> 4 different animals)
