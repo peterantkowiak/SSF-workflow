@@ -407,10 +407,16 @@ plot(allEffects(model1))
 
 
 
+# Use this function for rescaling
 
-model1 = glmer(response ~ ruggedness + canopycover + (1|ID/strata), 
-              cougars.final.DF,
-               family = binomial)
+cs. <- function(x) scale(x,scale=TRUE,center=TRUE) #to rescale your variable
+
+my.fit1 = glmer(response ~ cs.(ruggedness) + (1|id/strata), data = my.df, …..)
+
+
+
+
+# model1 = glmer(response ~ ruggedness + canopycover + (1|ID/strata), cougars.final.DF,family = binomial)
 
 
 
