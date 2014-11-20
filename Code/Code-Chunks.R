@@ -165,6 +165,8 @@ cougars.steps <- rdSteps(cougarsLTR) # This does not work yet / we need to add s
 # problem: we don't get predicted coordinates but rather distance and angle.
 # possible solution: add and calculate rows with "newX" and "newY" and extract raster data for those coordinates.
 
+# For drawing angle and length at the same time use
+
 head(cougars.steps)
 str(cougars.steps)
 View(cougars.steps)
