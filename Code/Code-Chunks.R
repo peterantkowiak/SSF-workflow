@@ -90,7 +90,7 @@ names(cougarsSPDF)
 # create ltraj object ------------------------------------------------------
 
 XY <- coordinates(cougarsSPDF)  # coordinates are stored in my SPDF
-cougarsDF <- as.data.frame(cougarsSPDF)
+cougarsDF <- base:::as.data.frame(cougarsSPDF)
 # catID <- as.character(cougarsDF[,3])
 # cougars2[,1] <- as.factor(cougars2[,1]) # does not really help but now its a Factor just as the name in puechabonsp
 
@@ -102,7 +102,7 @@ unique(cougarsDF$cat) #
 # [1] 10286 10287 10288 10289 10290 10291 10293
 
 
-cougarsLTR <- hab:::as.ltraj(XY, date, id = cougarsDF[,3]) 
+cougarsLTR <- hab:::as.ltraj(XY, date, id = cougarsDF[,1]) 
 # cougarsLTR <- hab:::as.ltraj(XY, date, id = catID) 
 
 
@@ -111,6 +111,8 @@ plot(cougarsLTR)
 
 # only for one individual:
 # cougarsONE <- adehabitatLT:::as.ltraj(XY[catID=="10286",], date = date[catID=="10286"], id="10286")
+
+plot(cougarsLTR, id=10289)
 
 #all.equal(cougarsLTR, cougarsONE)
 
