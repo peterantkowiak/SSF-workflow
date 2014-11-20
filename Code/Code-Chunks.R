@@ -159,7 +159,9 @@ adehabitatLT:::plotNAltraj(cougarsLTR)
 
 # create random steps ------------------------------------------------------
 
-cougars.steps <- rdSteps(cougarsLTR) 
+cougars.steps <- rdSteps(cougarsLTR) # This does not work yet / we need to add something
+# problem: we don't get predicted coordinates but rather distance and angle.
+# possible solution: add and calculate rows with "newX" and "newY" and extract raster data for those coordinates.
 
 head(cougars.steps)
 str(cougars.steps)
