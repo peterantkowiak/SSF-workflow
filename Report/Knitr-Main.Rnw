@@ -36,6 +36,7 @@
 %------------------------------------------------------------------------------------------------------
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 %\SweaveOpts{concordance=TRUE}
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
@@ -64,14 +65,16 @@ options(replace.assign=TRUE, width=90)
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
 In addition to Resources Selection Functions (RSF) a more detailed anlysis for telemetry data can be conducted by using Step Selection Function (SSF). The use of latter is providing answers to th actual selection of animals on their habitat rather than analysing the use of a habitat only. (DO WE WANT TO CITE, HERE FOR EXAMPLE Simone and friends). So far most of the SSF were done in GIS to use spatial data together with mathematics equations. However, more and more packages are provided in R and thus becomes a valuable alternative. \
-This tutorial provides an overview on how to implement SSF with R. The main package we will use in the following is the package \textbf{adehabitatLT}. All single steps that need to be taken care of are summarized in (Figure~\ref{fig:Flowchart}).
+This tutorial provides an overview on how to implement SSF with R. The main package we will use in the following is the package \textbf{adehabitatLT}. All single steps that need to be taken care of are summarized in (Figure~\ref{fig:Flowchart}).\
+In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Latin name}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
+Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
 
 
 \begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
 % see also here: http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Captions
-\captionsetup{width=1\textwidth}
+\captionsetup{width=0.8\textwidth}
 \centering
-\includegraphics[width=1\textwidth]{Flowchart.pdf} %our perfect workflow!
+\includegraphics[width=0.8\textwidth]{Flowchart.pdf} %our perfect workflow!
 \caption{\emph{Conducting a SSF using existing R-packages:} this figures provides an overview of the steps necessary to conduct a SSF. The steps are separated in subsections, which the turtorial will guide you through.}
 \label{fig:Flowchart}
 \end{figure}
@@ -86,34 +89,79 @@ Before you can actually start using the tutorial for conducting SSF you need to 
 
 <<eval=FALSE>>=
 # installing packages -----------------------------------------------------
-
-# install.packages("adehabitat")
-
-# install.packages("hab")
-install.packages("hab", repos = "http://ase-research.org/R/", type = "source")
-# install.packages("hab", repos = "http://ase-research.org/R/")
-
-install.packages("adehabitatMA")
+## for implementing SSF
+# install.packages("adehabitat") # outdated version, not needed for this tutorial
 install.packages("adehabitatHR")
 install.packages("adehabitatHS")
-install.packages("adehabitatLT") # will be installed when insatlling adehabitatHR
+install.packages("adehabitatLT")
+install.packages("adehabitatMA")
 install.packages("tkrplot")
+install.packages("hab", repos = "http://ase-research.org/R/") # regular
+install.packages("hab", repos = "http://ase-research.org/R/", type = "source") # for self-compiling
 
+# for handling ratser data
+install.packages("move")
+install.packages("raster")
+install.packages("rgdal")
+#install.packages("")
 
+# loading the packages
+# require(adehabitat) # keep fingers off this package. It is outdated.
 require(hab)
 require(adehabitatMA)
-require(adehabitatLT)  # includes "ade4"
+require(adehabitatHR)
 require(adehabitatHS)
-require(tkrplot)
+require(adehabitatLT)
 
-# require(adehabitat)  # not necessary to load
+## for i dont know
+
+#require(move)
+#require(raster)
+#require(rgdal)
+#require(tkrplot)
+#require(raster)
+#require(sp)
+@
+
+\section{Spatial covariates}%----------------------------------------------------------------------------------------------------------------------------
+This section explains the use of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (probably ESRI (*.adf) or *.tif) and for time reasons already clipped to your area. How you can do this in R please read the GIS instructions from the other group ;)   
+
+\subsection{Load raster data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
+With a simple function stored in the package \textbf{raster} you are able to upload any ratser file into R. Examplarily we are using the ratser data for ruggedness and canopy cover for the study area.  
+
+
+<<eval=FALSE>>=
+#install.packages("RArcInfo")
+#require(RArcInfo)
+require(raster)
+require(rgdal)
+
+require(sp)
+
+
+#?raster
+#getwd()
+#setwd("/home/Peter/")
+
+ruggedness <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf") 
+# plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+landcover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf") 
+# plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+canopycover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf") 
+# plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+disthighway <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf") 
+# plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+distroad <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf") 
+plot(distroad) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
 @
 
 
-\section{Load raster data (ESRI, *.tif, *.shp)}%------------------------------------------------------------------------------------------------------
-
-
-\section{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
+\subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
 Peter is successfully doing this step!!
 
 \section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
@@ -139,103 +187,9 @@ The function \textbf{rdSteps} removes the first and the last data point. That's 
 \section{Final SSF model}
 
 
+\section{Acknowledgements}
 Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
 
 
-
-
-
-
-\newpage
-\section{still useful code from Carsten}
-
- I left this in there cause we might need the help when adding our code...
-
-\begin{verbatim}
-# This is how I could document code:
-runif(100)
-# but it only contains the code and can also run over the line, as shown here ...
-# convenient for short, but not for long pieces of code
-# any symbol is plotted "as is", even if it is \LaTeX: *+#&ß\/
-\end{verbatim}
-
-# any symbol is plotted "as is", even if it is \LaTeX: *+#&ß\/
-
-
-Alternatively, in Sweave, I can actually use R-code and have it evaluated by R and results returned and pasted into the \LaTeX-document! Like so:
-<<>>=
-runif(10)
-@
-Or I can only have the code returned, but \textbf{not} evaluated (useful if it takes a long time, or if results are produced externally beforehand):
-<<eval=FALSE>>=
-runif(10)
-@
-Similarly, I can have the code evaluated but the call not returned:
-<<echo=FALSE>>=
-runif(10)
-@
-To combine both, simply add both options, separated by a ``,''.
-
-You can also put an R-expression into the text. For example, the mean of 10 random number between 0 and 1 is (in this simulation) \Sexpr{round(mean(runif(10)), 3)}, rounded to 3 digits. This value will change every time you compile this document.
-
-Finally, you can first do the computations, store them (in R objects) and then refer to them in the text.
-
-<<echo=FALSE>>=
-X <- runif(10)
-Y <- X + rnorm(10, sd=1) # try a small value for sd to test the conditional expression below
-(ct <- cor.test(X, Y))
-@
-So, the correlation between X and Y is    \Sexpr{ if(ct$p.value < 0.05) paste0("significant, with a correlation coefficient of r=", round(ct$estimate, 3)) else paste0("not significant, and the mean of Y is ", round(mean(Y), 3)) }.
-
-\bigskip
-
-\noindent So that's all cool, and the only thing we also could wish for is to produce figures and insert them into the text automatically:
-
-<<>>=
-hist(rnorm(100), col="grey", border="white", las=1)
-@
-
-We may want to ``hide'' the figure generating text and show the result in a float-environment with a proper caption. To do so, we only have to wrap the above code in a figure environment, like so:
-\begin{verbatim}
-\begin{figure}
-\centering
-#<<label=fig2plot, echo=FALSE, fig=TRUE>>=
-hist(rnorm(100), col="grey", border="white", las=1)
-#@
-\caption{This is an example figure, computed and immediately returned.}
-\end{figure}
-\end{verbatim}
-Notice that I only put the \texttt{\#} in to prevent R from evaluating the code. In a real document, you would NOT do that.
-
-Now one minor issue is that you cannot readily change the size of this figure. The best way to do this is to split the figure-generating process up into two part: one generates the figure and saves it as PDF, then we use standard \LaTeX\/to load this figure. Like so:\footnote{Obviously in the document you would have to remove the \#s.}
-\begin{verbatim}
-#<<anexamplehistogram, echo=FALSE, dev="pdf">>=
-hist(rnorm(100), col="cornflowerblue", border="white", las=1)
-#@
-
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{anexamplehistogram}
-\caption{This is an example figure, exported as PDF and then, on loading, 
-  scaled to half the text's width.}
-\end{figure}
-\end{verbatim}
-<<anexamplehistogram, echo=FALSE, dev="pdf", fig.show="hide">>=
-hist(rnorm(100), col="cornflowerblue", border="white", las=1)
-@
-\begin{figure}
-\centering
-\includegraphics[width=0.5\textwidth]{anexamplehistogram}
-\captionsetup{width=0.8\textwidth}
-\caption{This is an example figure, exported as PDF and then, on loading, scaled to half the text's width.}
-\end{figure}
-
-
-\medskip
-
-I leave it to you to do the same thing for tables, using R's xtable command, as illustrated in the Sweave demo of Friedrich Leisch (\url{users.stat.umn.edu/~geyer/Sweave/foo.pdf}).
-
-
-All this was Sweave. More recently, knitr made its entrance, and has increased the flexibility of Sweave. It is VERY similar and you have to tell RStudio in the options, whether you are sweaving or knitting. For minimal examples and comparisons, also using markdown rather than \LaTeX\/and PDF or html as output, see here: \url{http://yihui.name/knitr/demo/minimal/}.
 
 \end{document}

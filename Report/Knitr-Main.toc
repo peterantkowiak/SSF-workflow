@@ -1,11 +1,12 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}
 \contentsline {section}{\numberline {2}Preparations}{2}{section.2}
 \contentsline {subsection}{\numberline {2.1}Packages - what we need}{2}{subsection.2.1}
-\contentsline {section}{\numberline {3}Load raster data (ESRI, *.tif, *.shp)}{2}{section.3}
-\contentsline {section}{\numberline {4}Extract coordinates for comparison of used and random points}{2}{section.4}
-\contentsline {section}{\numberline {5}Load telemetry data (*.csv, ESRI)}{4}{section.5}
-\contentsline {section}{\numberline {6}Create a Spatial Points Data Frame}{4}{section.6}
-\contentsline {section}{\numberline {7}Create a ltraj object}{4}{section.7}
-\contentsline {section}{\numberline {8}Compute random steps}{4}{section.8}
-\contentsline {section}{\numberline {9}Final SSF model}{4}{section.9}
-\contentsline {section}{\numberline {10}still useful code from Carsten}{5}{section.10}
+\contentsline {section}{\numberline {3}Spatial covariates}{4}{section.3}
+\contentsline {subsection}{\numberline {3.1}Load raster data (ESRI, *.tif, (*.shp))}{4}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Extract coordinates for comparison of used and random points}{4}{subsection.3.2}
+\contentsline {section}{\numberline {4}Load telemetry data (*.csv, ESRI)}{4}{section.4}
+\contentsline {section}{\numberline {5}Create a Spatial Points Data Frame}{5}{section.5}
+\contentsline {section}{\numberline {6}Create a ltraj object}{5}{section.6}
+\contentsline {section}{\numberline {7}Compute random steps}{5}{section.7}
+\contentsline {section}{\numberline {8}Final SSF model}{5}{section.8}
+\contentsline {section}{\numberline {9}Acknowledgements}{5}{section.9}
