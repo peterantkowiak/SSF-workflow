@@ -281,8 +281,26 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 cougars.steps.c.SPDF = SpatialPointsDataFrame(coords = cougars.steps.c[,c("new_x","new_y")], data = cougars.steps.c)
 
 #cougars.steps.Rugged <- extract(ruggedness, cougars.steps.SPDF, method='simple', sp=T, df=T) 
-cougars.steps.c.Rugged <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=T, df=T) 
+#cougars.steps.c.Rugged <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=T, df=T) 
+
 # method = 'simple' extracts value from nearest cell. method = 'bilinear' interpolates from the four nearest cells.
+
+ruggedness.extr <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=F, df=T) 
+landcover.extr <- extract(landcover, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+canopycover.extr <- extract(canopycover, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+disthighway.extr <- extract(disthighway, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+distroad.extr <- extract(distroad, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+
+
+cougars.steps.c.SPDF$ruggedness <- ruggedness.extr[,2]
+cougars.steps.c.SPDF$landcover <- landcover.extr[,2]
+cougars.steps.c.SPDF$canopycover <- canopycover.extr[,2]
+cougars.steps.c.SPDF$disthighway <- disthighway.extr[,2]
+cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
+
+  
+head(cougars.steps.c.SPDF)
+
 
 
 #head(cougars.steps.Rugged)
@@ -446,7 +464,7 @@ plot(allEffects(model1c))
 
 cs. <- function(x) scale(x,scale=TRUE,center=TRUE) #to rescale your variable
 
-model1rc = glmer(case ~ cs.(w001001) + (1|id/strata), data = cscR)
+model1rc = glmer(case ~ cs.(w001001) + (1|id/strata), data = cscR, family = binomial)
 
 summary(model1rc)
 plot(allEffects(model1rc))
