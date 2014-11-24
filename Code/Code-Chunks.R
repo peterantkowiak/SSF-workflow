@@ -445,32 +445,52 @@ library(lme4)
 csR <- as.data.frame(cougars.steps.Rugged)
 cscR <- as.data.frame(cougars.steps.c.Rugged)
 
-
+cscR.all <- as.data.frame(cougars.steps.c.SPDF)
 
 model1 = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=csR)
 model1c = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=cscR)
+model1c.all = glmer(case ~ ruggedness + landcover + canopycover + disthighway + distroad + (1|id/strata), family = binomial, data=cscR.all)
+
 
 summary(model1)
 summary(model1c)
-## model1c less significant. why?
+summary(model1c.all)
+
+## model1c less significant than model1. why?
 # - loss of data points
 # - linear instead of quadratic term?
 # - average step length too small?
+
 
 library(effects)
 
 plot(allEffects(model1))
 plot(allEffects(model1c))
+plot(allEffects(model1c.all))
 
 
 # Rescaling function ------------------------------------------
 
 cs. <- function(x) scale(x,scale=TRUE,center=TRUE) #to rescale your variable
 
+
 model1rc = glmer(case ~ cs.(w001001) + (1|id/strata), data = cscR, family = binomial)
+model1rc.q = glmer(case ~ cs.(w001001) + I(cs.(w001001)^2)  + (1|id/strata), data = cscR, family = binomial)
+model1c.all.c = glmer(case ~ cs.(ruggedness) + landcover + cs.(canopycover) + cs.(disthighway) + cs.(distroad) + (1|id/strata), family = binomial, data=cscR.all)
 
 summary(model1rc)
 plot(allEffects(model1rc))
+
+summary(model1rc.q)
+plot(allEffects(model1rc.q))
+
+summary(model1c.all.c)
+plot(allEffects(model1c.all.c))
+
+
+# quadratic
+# more parameters
+
 
 # model1 = glmer(response ~ ruggedness + canopycover + (1|ID/strata), cougars.final.DF,family = binomial)
 
