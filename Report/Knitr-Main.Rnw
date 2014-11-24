@@ -189,7 +189,9 @@ In our example, the locations of the cougars were recorded every 3 hours, starti
 
 <<eval=FALSE>>=
 plotltr(xmpl.ltr, "dt/3600") 
+# time log 1 hour
 plotltr(xmpl.ltr, "dt/3600/3")
+# time log 3 hours
 @
 
 Because we want to keep relocations which are only a few minutes "wrong", we need a function which defines \texttt{dt}, which is the time interval between successive relocations (measured in seconds).
