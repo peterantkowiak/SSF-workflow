@@ -67,6 +67,11 @@ options(replace.assign=TRUE, width=90)
 In addition to Resources Selection Functions (RSF) a more detailed anlysis for telemetry data can be conducted by using Step Selection Function (SSF). The use of latter is providing answers to th actual selection of animals on their habitat rather than analysing the use of a habitat only. (DO WE WANT TO CITE, HERE FOR EXAMPLE Simone and friends). So far most of the SSF were done in GIS to use spatial data together with mathematics equations. However, more and more packages are provided in R and thus becomes a valuable alternative. \
 This tutorial provides an overview on how to implement SSF with R. The main package we will use in the following is the package \textbf{adehabitatLT}. All single steps that need to be taken care of are summarized in (Figure~\ref{fig:Flowchart}).\
 In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Latin name}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
+
+\[
+\displaystyle w(x) = exp(\beta\1 x1 + \beta\2 x\2 + ... + \beta\px\p)
+\]
+\
 Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
 
 
@@ -113,6 +118,7 @@ require(adehabitatHR)
 require(adehabitatHS)
 require(adehabitatLT)
 
+
 ## for i dont know
 
 #require(move)
@@ -121,7 +127,30 @@ require(adehabitatLT)
 #require(tkrplot)
 #require(raster)
 #require(sp)
+
 @
+
+
+
+\section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
+The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
+\begin{enumerate}
+\item{coordinates}
+\item{ID}
+\item{date and/or time}
+\item{...}
+\end{enumerate}
+
+
+
+\section{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
+
+\section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
+ 
+
+\section{Compute random steps}
+
+The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
 \section{Spatial covariates}%----------------------------------------------------------------------------------------------------------------------------
 This section explains the use of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (probably ESRI (*.adf) or *.tif) and for time reasons already clipped to your area. How you can do this in R please read the GIS instructions from the other group ;)   
@@ -163,26 +192,6 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 
 \subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
 Peter is successfully doing this step!!
-
-\section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
-The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
-\begin{enumerate}
-\item{coordinates}
-\item{ID}
-\item{date and/or time}
-\item{...}
-\end{enumerate}
-
-
-
-\section{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
-
-\section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
- 
-
-\section{Compute random steps}
-
-The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
 \section{Final SSF model}
 
