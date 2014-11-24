@@ -297,7 +297,7 @@ distroad.extr <- extract(distroad, cougars.steps.c.SPDF, method='simple', sp=F, 
 
 cougars.steps.c.SPDF$ruggedness <- ruggedness.extr[,2]
 #cougars.steps.c.SPDF$landcover <- landcover.extr[,2]
-cougars.steps.c.SPDF$landcover <- as.factor(ifelse(landcover.extr[,2] < 6,"forest","open"))         
+cougars.steps.c.SPDF$landcover <- as.factor(ifelse(landcover.extr[,2] < 6,"forest","pasture"))         
 cougars.steps.c.SPDF$canopycover <- canopycover.extr[,2]
 cougars.steps.c.SPDF$disthighway <- disthighway.extr[,2]
 cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
