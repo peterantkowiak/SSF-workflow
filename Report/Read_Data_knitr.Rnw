@@ -187,43 +187,138 @@ The function \texttt{as.ltraj} requires at least three arguments to work:
 \item{"id" (the animal id)}
 \end{enumerate}
 
-Both coordinates and animal id can easily be acquired from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and therefore
-
-# And finally extract date and time:
-date <- as.POSIXct(strptime(paste(xmpl.df$LMT_DATE, xmpl.df$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
+Both coordinates and animal id can easily be adopted from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and you therefore need to convert it first:
+<<eval=FALSE>>=
+date <- as.POSIXct(strptime(paste(xmpl.spdf$LMT_DATE, xmpl.spdf$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
 @
-It is VERY important to get date and time in the same column! If not the burst cannot be assigned with a unique value:
+It is necessary to combine date and time in one POSIXct value. If your dataset already features a POSIXct timestamp, you can skip this step.
 
-
-
-
-cougarsLTR <- hab:::as.ltraj(xmpl.spdf@coords, date, id = xmpl.spdf$cat) 
-
-# cougarsLTR <- hab:::as.ltraj(XY, date, id = catID) 
-
-
-plot(cougarsLTR)
-
-
-# only for one individual:
-# cougarsONE <- adehabitatLT:::as.ltraj(XY[catID=="10286",], date = date[catID=="10286"], id="10286")
-
-plot(cougarsLTR, id=10289)
-
-#all.equal(cougarsLTR, cougarsONE)
-
+Now you can proceed and actually create the ltraj object by executing the following command:
+<<eval=FALSE>>=
+xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date, id = xmpl.spdf$cat) 
 @
+Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its "adehabitatLT" sibling. Unlike the \texttt{xmpl.spdf@coords} promt which works for any SPDF object, the \texttt{xmpl.spdf$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
+
+You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
+<<eval=FALSE>>=
+str(xmpl.ltr)
+@
+When scrolling through the output you will first notice that it consists of 7 elements - the number of individuals in the example dataset. This is because \texttt{as.ltraj()} automatically splits the dataset into subsets one for each individual. We will refine these subsets in the next chapter. Furthermore, the ltraj contains information on the distances and turning angles between consecutive locations.
+To get a visual impression of your data you can plot the trajectory for all or for one particular animal:
+<<eval=FALSE>>=
+plot(xmpl.ltr)
+unique(xmpl.spdf$cat) # prompts a list of all cat ID's. Choose one that you are interested in!
+plot(xmpl.ltr, id=10289)
+@
+
+\section{Creating bursts}
 
 
 \section{Compute random steps}
 
 The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
+
+
 \section{Spatial covariates}%----------------------------------------------------------------------------------------------------------------------------
-This section explains the use of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (probably ESRI (*.adf) or *.tif) and for time reasons already clipped to your area. How you can do this in R please read the GIS instructions from the other group ;)   
+This section explains the handling of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (ESRI *.adf or georeferenced *.tif). These should have the same coordinate system as your telemetry data and should (for time reasons) already be clipped to your study area and. For instructions how to do this in R, please read the GIS instructions from the other group ;)   
 
 \subsection{Load raster data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
-With a simple function stored in the package \textbf{raster} you are able to upload any ratser file into R. Examplarily we are using the ratser data for ruggedness and canopy cover for the study area.  
+
+With a simple function stored in the package \textbf{raster} you are able to upload any raster file into R. Examplarily we use raster data on the following parameters for the study area:
+\begin{enumerate}
+\item{ruggedness of the terrain}
+\item{land cover}
+\item{canopy cover}
+\item{distance to the nearest highway}
+\item{distance to the nearest road}
+\end{enumerate}
+
+
+<<eval=FALSE>>=
+require(raster)
+require(rgdal)
+
+require(sp)
+
+
+#?raster
+#getwd()
+#setwd("/home/Peter/")
+
+ruggedness <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf") 
+# plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+landcover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf") 
+# plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+canopycover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf") 
+# plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+disthighway <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf") 
+# plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+distroad <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf") 
+plot(distroad) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+
+@
+
+
+<<eval=FALSE>>=
+
+# Raster extraction ---------------------------------
+
+#sp <- SpatialPoints(xy)
+# cougarsRugged <- extract(ruggedness, cougarsSPDF, method='simple', sp=T, df=T) 
+# method = 'bilinear' interpolates values from four nearest cells. sp returns Spatial object, df a data frame.
+
+
+# first convert the cougars.steps into a SpatialPointsDataFrame
+
+#cougars.steps.SPDF = SpatialPointsDataFrame(coords = cougars.steps[,c("new_x","new_y")], data = cougars.steps)
+cougars.steps.c.SPDF = SpatialPointsDataFrame(coords = cougars.steps.c[,c("new_x","new_y")], data = cougars.steps.c)
+
+#cougars.steps.Rugged <- extract(ruggedness, cougars.steps.SPDF, method='simple', sp=T, df=T) 
+#cougars.steps.c.Rugged <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=T, df=T) 
+
+# method = 'simple' extracts value from nearest cell. method = 'bilinear' interpolates from the four nearest cells.
+
+ruggedness.extr <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=F, df=T) 
+landcover.extr <- extract(landcover, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+canopycover.extr <- extract(canopycover, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+disthighway.extr <- extract(disthighway, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+distroad.extr <- extract(distroad, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
+
+
+
+
+
+cougars.steps.c.SPDF$ruggedness <- ruggedness.extr[,2]
+#cougars.steps.c.SPDF$landcover <- landcover.extr[,2]
+cougars.steps.c.SPDF$landcover1 <- as.factor(
+    ifelse(landcover.extr[,2] == 0,"NA",
+    ifelse(landcover.extr[,2] < 5, "forest", 
+    ifelse(landcover.extr[,2] < 8, "open","NA"))))         
+cougars.steps.c.SPDF$canopycover <- canopycover.extr[,2]
+cougars.steps.c.SPDF$disthighway <- disthighway.extr[,2]
+cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
+
+  
+head(cougars.steps.c.SPDF)
+
+#head(cougars.steps.Rugged)
+#View(cougars.steps.Rugged)
+
+#head(cougars.steps.c.Rugged)
+#View(cougars.steps.c.Rugged)
+
+
+#names(ruggedness)
+#head(cougars)
+#head(cougarsRugged)
+
+@
+
 
 
 <<eval=FALSE>>=
