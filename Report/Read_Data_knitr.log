@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.6-1.40.14 (TeX Live 2014/dev) (format=pdflatex 2014.11.3)  24 NOV 2014 12:59
+This is pdfTeX, Version 3.1415926-2.6-1.40.14 (TeX Live 2014/dev) (format=pdflatex 2014.11.3)  24 NOV 2014 20:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -543,20 +543,20 @@ LaTeX Font Info:    Redeclaring math accent \hat on input line 254.
 ) (./Read_Data_knitr.aux)
 \openout1 = `Read_Data_knitr.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 87.
-LaTeX Font Info:    ... okay on input line 87.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 87.
-LaTeX Font Info:    ... okay on input line 87.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 87.
-LaTeX Font Info:    ... okay on input line 87.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 87.
-LaTeX Font Info:    ... okay on input line 87.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 87.
-LaTeX Font Info:    ... okay on input line 87.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 87.
-LaTeX Font Info:    ... okay on input line 87.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 87.
-LaTeX Font Info:    ... okay on input line 87.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 92.
+LaTeX Font Info:    ... okay on input line 92.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -590,7 +590,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
 \AtBeginShipoutBox=\box27
-Package hyperref Info: Link coloring OFF on input line 87.
+Package hyperref Info: Link coloring OFF on input line 92.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -600,98 +600,85 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
 \c@section@level=\count108
 )
-LaTeX Info: Redefining \ref on input line 87.
-LaTeX Info: Redefining \pageref on input line 87.
-LaTeX Info: Redefining \nameref on input line 87.
+LaTeX Info: Redefining \ref on input line 92.
+LaTeX Info: Redefining \pageref on input line 92.
+LaTeX Info: Redefining \nameref on input line 92.
 
 (./Read_Data_knitr.out) (./Read_Data_knitr.out)
 \@outlinefile=\write3
 \openout3 = `Read_Data_knitr.out'.
 
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 87.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 92.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/m/n on input line 87.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/m/n on input line 92.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmr/m/n on input line 87.
+(Font)                  OT1/cmr/bx/n --> OT1/cmr/m/n on input line 92.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 87.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 87.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 92.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/cmr/bx/n on input line 87.
+(Font)                  OT1/cmr/bx/n --> OT1/cmr/bx/n on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmr/bx/n on input line 87.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 87.
+(Font)                  OT1/cmr/bx/n --> OT1/cmr/bx/n on input line 92.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 87.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 87.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 87.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 92.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/cmr/m/it on input line 87.
+(Font)                  OT1/cmr/m/it --> OT1/cmr/m/it on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/cmr/m/it on input line 87.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 87.
+(Font)                  OT1/cmr/bx/it --> OT1/cmr/m/it on input line 92.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 87.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 87.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 87.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 92.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/m/it --> OT1/cmr/bx/it on input line 87.
-
-! Undefined control sequence.
-l.88 \SweaveOpts
-                {concordance=TRUE}
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-[1
-
-{/usr/share/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}]
-LaTeX Font Info:    Try loading font information for U+eur on input line 102.
+(Font)                  OT1/cmr/m/it --> OT1/cmr/bx/it on input line 92.
+LaTeX Font Info:    Try loading font information for U+eur on input line 106.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueur.fd
 File: ueur.fd 2013/01/14 v3.01 Euler Roman
 )
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 102.
+(Font)              <12> on input line 106.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 102.
+(Font)              <8> on input line 106.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 102.
-LaTeX Font Info:    Try loading font information for U+euf on input line 102.
+(Font)              <6> on input line 106.
+LaTeX Font Info:    Try loading font information for U+euf on input line 106.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 )
-LaTeX Font Info:    Try loading font information for U+eus on input line 102.
+LaTeX Font Info:    Try loading font information for U+eus on input line 106.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueus.fd
 File: ueus.fd 2013/01/14 v3.01 Euler Script
 )
-LaTeX Font Info:    Try loading font information for U+euex on input line 102.
+LaTeX Font Info:    Try loading font information for U+euex on input line 106.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/ueuex.fd
 File: ueuex.fd 2013/01/14 v3.01 Euler extra symbols
 )
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 102.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 106.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <8> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 102.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 106.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 102.
+(Font)              <9> on input line 106.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 102.
+(Font)              <5> on input line 106.
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <6> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 102.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 106.
  (./Read_Data_knitr.toc
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <10.95> on input line 3.
@@ -699,9 +686,11 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 \tf@toc=\write4
 \openout4 = `Read_Data_knitr.toc'.
 
- [2]
+ [1
+
+{/usr/share/texlive/texmf-dist/fonts/map/pdftex/updmap/pdftex.map}]
 ! Undefined control sequence.
-l.116 \displaystyle w(x) = exp(\beta\1
+l.120 \displaystyle w(x) = exp(\beta\1
                                        x1 + \beta\2 x\2 + ... + \beta\px\p)
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -710,7 +699,7 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-l.116 ...playstyle w(x) = exp(\beta\1 x1 + \beta\2
+l.120 ...playstyle w(x) = exp(\beta\1 x1 + \beta\2
                                                    x\2 + ... + \beta\px\p)
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -719,7 +708,7 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-l.116 ...style w(x) = exp(\beta\1 x1 + \beta\2 x\2
+l.120 ...style w(x) = exp(\beta\1 x1 + \beta\2 x\2
                                                    + ... + \beta\px\p)
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -728,7 +717,7 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-l.116 ...\beta\1 x1 + \beta\2 x\2 + ... + \beta\px
+l.120 ...\beta\1 x1 + \beta\2 x\2 + ... + \beta\px
                                                   \p)
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -737,7 +726,7 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-l.116 ...eta\1 x1 + \beta\2 x\2 + ... + \beta\px\p
+l.120 ...eta\1 x1 + \beta\2 x\2 + ... + \beta\px\p
                                                   )
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -745,142 +734,379 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-<Flowchart.pdf, id=84, 597.23125pt x 845.1575pt>
+<Flowchart.pdf, id=85, 597.23125pt x 845.1575pt>
 File: Flowchart.pdf Graphic file (type pdf)
  <use Flowchart.pdf>
-Package pdftex.def Info: Flowchart.pdf used on input line 126.
+Package pdftex.def Info: Flowchart.pdf used on input line 130.
 (pdftex.def)             Requested size: 364.19664pt x 515.39058pt.
-Package color Info: Redefining color shadecolor on input line 140.
+Package color Info: Redefining color shadecolor on input line 144.
 
-Overfull \hbox (12.30067pt too wide) in paragraph at lines 144--144
+Overfull \hbox (12.30067pt too wide) in paragraph at lines 148--148
 [][]\OT1/cmtt/m/it/10.95 # install.packages("adehabitat") # outdated version, n
 ot needed for this tutorial[][] 
  []
 
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 145.
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 149.
 
-Overfull \hbox (115.77705pt too wide) in paragraph at lines 151--151
+Overfull \hbox (115.77705pt too wide) in paragraph at lines 155--155
 [][]\OT1/cmtt/m/n/10.95 install.packages[][]([][]"hab"[][],[] []repos[] []=[] [
 ]"http://ase-research.org/R/"[][],[] []type[] []=[] []"source"[][])[] []\OT1/cm
 tt/m/it/10.95 # for self-compiling[][] 
  []
 
-[3] [4 <./Flowchart.pdf>]
-Package color Info: Redefining color shadecolor on input line 206.
+[2] [3 <./Flowchart.pdf>]
+Package color Info: Redefining color shadecolor on input line 210.
+Package color Info: Redefining color shadecolor on input line 226.
 
-! You can't use `macro parameter character #' in horizontal mode.
-l.214 You can usehead(xmpl) #
-                              to check, whether it worked by executing \text...
-Sorry, but I'm not programmed to handle this case;
-I'll just pretend that you didn't ask for it.
-If you're in the wrong mode, you might be able to
-return to the right one by typing `I}' or `I$' or `I\par'.
+Overfull \hbox (50.64044pt too wide) in paragraph at lines 230--230
+[][]\OT1/cmtt/m/n/10.95 xmpl.spdf[] []=[] []SpatialPointsDataFrame[][]([][]coor
+ds[] []= xmpl[,[][]c[][]([][]"easting"[][],[][]"northing"[][])],[] []data[] []=
+ xmpl)[][] 
+ []
+
+[4]
+Package color Info: Redefining color shadecolor on input line 250.
+
+Overfull \hbox (102.37863pt too wide) in paragraph at lines 252--252
+[][]\OT1/cmtt/m/n/10.95 date[] []<-[] []as.POSIXct[][]([][]strptime[][]([][]pas
+te[][](xmpl.spdf[][]$[][]LMT_DATE, xmpl.spdf[][]$[][]LMT_TIME),[] []"%d/%m/%Y  
+%H:%M:%S"[][]))[][] 
+ []
+
+Package color Info: Redefining color shadecolor on input line 260.
+
+Overfull \hbox (16.14832pt too wide) in paragraph at lines 262--262
+[][]\OT1/cmtt/m/n/10.95 xmpl.ltr[] []<-[] []hab[][]:::[][]as.ltraj[][]([][]xy[]
+ []= xmpl.spdf[][]@[][]coords[][],[] []date[] []= date,[] []id[] []= xmpl.spdf[
+][]$[][]cat)[][] 
+ []
+
+! Extra }, or forgotten $.
+<recently read> \egroup 
+                        
+l.266 ...y SPDF object, the \texttt{xmpl.spdf$cat}
+                                                   prompt is specific to you...
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.267 
+      
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+Overfull \hbox (530.53462pt too wide) in paragraph at lines 266--267
+\OT1/cmtt/m/n/10.95 xmpl.spdf$\U/eur/m/n/10.95 catpromptisspecifictoyourdataset
+:Intheexampledataset; animalID[]sarestoredasanintegervectorcalled\U/euf/m/n/10.
+95 }\U/eur/m/n/10.95 cat\U/euf/m/n/10.95 }\U/eur/m/n/10.95 :Ifthisdiffersinyour
+datasetandyoushouldchangethepromptaccordingly:$ 
+ []
+
+Package color Info: Redefining color shadecolor on input line 270.
+
+Overfull \hbox (15.90225pt too wide) in paragraph at lines 268--270
+[]\OT1/cmtt/m/n/10.95 You now may want to have a closer look at the created ltr
+aj object. Display its
+ []
+
+Package color Info: Redefining color shadecolor on input line 279.
+
+Overfull \hbox (4.40488pt too wide) in paragraph at lines 276--279
+[]\OT1/cmtt/m/n/10.95 When scrolling through the output you will first notice t
+hat it consists of 7
+ []
+
+
+Overfull \hbox (44.89175pt too wide) in paragraph at lines 276--279
+\OT1/cmtt/m/n/10.95 elements - the number of individuals in the example dataset
+. This is because as.ltraj()
+ []
+
+
+Overfull \hbox (33.39438pt too wide) in paragraph at lines 276--279
+\OT1/cmtt/m/n/10.95 automatically splits the dataset into subsets one for each 
+individual. We will refine
+ []
+
+
+Overfull \hbox (10.39963pt too wide) in paragraph at lines 276--279
+\OT1/cmtt/m/n/10.95 these subsets in the next chapter. Furthermore, the ltraj c
+ontains information on
+ []
+
+
+Overfull \hbox (62.13782pt too wide) in paragraph at lines 276--279
+\OT1/cmtt/m/n/10.95 the distances and turning angles between consecutive locati
+ons. To get a visual impression
+ []
+
+
+Overfull \hbox (4.65094pt too wide) in paragraph at lines 276--279
+\OT1/cmtt/m/n/10.95 of your data you can plot the trajectory for all or for one
+ particular animal:  [] 
+ []
+
+
+Overfull \hbox (87.03362pt too wide) in paragraph at lines 282--282
+[][]\OT1/cmtt/m/n/10.95 unique[][](xmpl.spdf[][]$[][]cat)[] []\OT1/cmtt/m/it/10
+.95 # prompts a list of all cat ID's. Choose one that you are interested in![][
+] 
+ []
 
 [5]
-Package color Info: Redefining color shadecolor on input line 245.
+Overfull \hbox (33.39438pt too wide) in paragraph at lines 293--294
+\OT1/cmtt/m/n/10.95 The function rdSteps removes the first and the last data po
+int. That's what you want. 
+ []
 
-Overfull \hbox (200.10632pt too wide) in paragraph at lines 259--259
+
+Overfull \hbox (4.65094pt too wide) in paragraph at lines 298--299
+\OT1/cmtt/m/n/10.95 This section explains the handling of spatial parameters th
+at will be tested for
+ []
+
+
+Overfull \hbox (16.14832pt too wide) in paragraph at lines 298--299
+\OT1/cmtt/m/n/10.95 selection by the target species. You should store these dat
+a in raster files (ESRI
+ []
+
+
+Overfull \hbox (21.897pt too wide) in paragraph at lines 298--299
+\OT1/cmtt/m/n/10.95 *.adf or georeferenced *.tif). These should have the same c
+oordinate system as your
+ []
+
+
+Overfull \hbox (16.14832pt too wide) in paragraph at lines 298--299
+\OT1/cmtt/m/n/10.95 telemetry data and should (for time reasons) already be cli
+pped to your study area
+ []
+
+
+Overfull \hbox (4.65094pt too wide) in paragraph at lines 298--299
+\OT1/cmtt/m/n/10.95 and. For instructions how to do this in R, please read the 
+GIS instructions from
+ []
+
+
+Overfull \hbox (33.39438pt too wide) in paragraph at lines 302--303
+\OT1/cmtt/m/n/10.95 With a simple function stored in the package raster you are
+ able to upload any raster
+ []
+
+
+Overfull \hbox (33.39438pt too wide) in paragraph at lines 302--303
+\OT1/cmtt/m/n/10.95 file into R. Examplarily we use raster data on the followin
+g parameters for the study
+ []
+
+Package color Info: Redefining color shadecolor on input line 313.
+
+Overfull \hbox (200.10632pt too wide) in paragraph at lines 325--325
 [][]\OT1/cmtt/m/n/10.95 ruggedness[] []<-[] []raster[][]([][]"/home/Peter/Dokum
 ente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf"[][])
 [][] 
  []
 
 
-Overfull \hbox (161.76656pt too wide) in paragraph at lines 260--260
+Overfull \hbox (161.76656pt too wide) in paragraph at lines 326--326
 [][]\OT1/cmtt/m/it/10.95 # plot(ruggedness) # outcomment this if you just quick
 ly want to run the script. Takes a minute to process.[][] 
  []
 
 
-Overfull \hbox (200.10632pt too wide) in paragraph at lines 262--262
+Overfull \hbox (200.10632pt too wide) in paragraph at lines 328--328
 [][]\OT1/cmtt/m/n/10.95 landcover[] []<-[] []raster[][]([][]"/home/Peter/Dokume
 nte/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf"[][])
 [][] 
  []
 
 
-Overfull \hbox (156.01787pt too wide) in paragraph at lines 263--263
+Overfull \hbox (156.01787pt too wide) in paragraph at lines 329--329
 [][]\OT1/cmtt/m/it/10.95 # plot(landcover) # outcomment this if you just quickl
 y want to run the script. Takes a minute to process.[][] 
  []
 
 
-Overfull \hbox (223.10107pt too wide) in paragraph at lines 265--265
+Overfull \hbox (223.10107pt too wide) in paragraph at lines 331--331
 [][]\OT1/cmtt/m/n/10.95 canopycover[] []<-[] []raster[][]([][]"/home/Peter/Doku
 mente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf"[
 ][])[][] 
  []
 
 
-Overfull \hbox (167.51524pt too wide) in paragraph at lines 266--266
+Overfull \hbox (167.51524pt too wide) in paragraph at lines 332--332
 [][]\OT1/cmtt/m/it/10.95 # plot(canopycover) # outcomment this if you just quic
 kly want to run the script. Takes a minute to process.[][] 
  []
 
 
-Overfull \hbox (223.10107pt too wide) in paragraph at lines 268--268
+Overfull \hbox (223.10107pt too wide) in paragraph at lines 334--334
 [][]\OT1/cmtt/m/n/10.95 disthighway[] []<-[] []raster[][]([][]"/home/Peter/Doku
 mente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf"[
 ][])[][] 
  []
 
 
-Overfull \hbox (167.51524pt too wide) in paragraph at lines 269--269
+Overfull \hbox (167.51524pt too wide) in paragraph at lines 335--335
 [][]\OT1/cmtt/m/it/10.95 # plot(disthighway) # outcomment this if you just quic
 kly want to run the script. Takes a minute to process.[][] 
  []
 
 
-Overfull \hbox (211.6037pt too wide) in paragraph at lines 271--271
+Overfull \hbox (211.6037pt too wide) in paragraph at lines 337--337
 [][]\OT1/cmtt/m/n/10.95 distroad[] []<-[] []raster[][]([][]"/home/Peter/Dokumen
 te/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf"[][
 ])[][] 
  []
 
 
-Overfull \hbox (138.7718pt too wide) in paragraph at lines 272--272
+Overfull \hbox (138.7718pt too wide) in paragraph at lines 338--338
 [][]\OT1/cmtt/m/n/10.95 plot[][](distroad)[] []\OT1/cmtt/m/it/10.95 # outcommen
 t this if you just quickly want to run the script. Takes a minute to process.[]
 [] 
  []
 
 [6]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 289.
- [7]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 289.
+Package color Info: Redefining color shadecolor on input line 345.
+
+Overfull \hbox (12.30067pt too wide) in paragraph at lines 350--350
+[][]\OT1/cmtt/m/it/10.95 # cougarsRugged <- extract(ruggedness, cougarsSPDF, me
+thod='simple', sp=T, df=T) [][] 
+ []
+
+
+Overfull \hbox (179.01262pt too wide) in paragraph at lines 351--351
+[][]\OT1/cmtt/m/it/10.95 # method = 'bilinear' interpolates values from four ne
+arest cells. sp returns Spatial object, df a data frame.[][] 
+ []
+
+
+Overfull \hbox (184.7613pt too wide) in paragraph at lines 356--356
+[][]\OT1/cmtt/m/it/10.95 #cougars.steps.SPDF = SpatialPointsDataFrame(coords = 
+cougars.steps[,c("new_x","new_y")], data = cougars.steps)[][] 
+ []
+
+
+Overfull \hbox (211.6037pt too wide) in paragraph at lines 357--357
+[][]\OT1/cmtt/m/n/10.95 cougars.steps.c.SPDF[] []=[] []SpatialPointsDataFrame[]
+[]([][]coords[] []= cougars.steps.c[,[][]c[][]([][]"new_x"[][],[][]"new_y"[][])
+],[] []data[] []= cougars.steps.c)[][] 
+ []
+
+
+Overfull \hbox (87.03362pt too wide) in paragraph at lines 359--359
+[][]\OT1/cmtt/m/it/10.95 #cougars.steps.Rugged <- extract(ruggedness, cougars.s
+teps.SPDF, method='simple', sp=T, df=T) [][] 
+ []
+
+
+Overfull \hbox (110.02837pt too wide) in paragraph at lines 360--360
+[][]\OT1/cmtt/m/it/10.95 #cougars.steps.c.Rugged <- extract(ruggedness, cougars
+.steps.c.SPDF, method='simple', sp=T, df=T) [][] 
+ []
+
+
+Overfull \hbox (207.75606pt too wide) in paragraph at lines 362--362
+[][]\OT1/cmtt/m/it/10.95 # method = 'simple' extracts value from nearest cell. 
+method = 'bilinear' interpolates from the four nearest cells.[][] 
+ []
+
+
+Overfull \hbox (56.38913pt too wide) in paragraph at lines 364--364
+[][]\OT1/cmtt/m/n/10.95 ruggedness.extr[] []<-[] []extract[][](ruggedness, coug
+ars.steps.c.SPDF,[] []method[][]=[][]'simple'[][],[] []sp[][]=F,[] []df[][]=T)[
+][] 
+ []
+
+
+Overfull \hbox (44.89175pt too wide) in paragraph at lines 365--365
+[][]\OT1/cmtt/m/n/10.95 landcover.extr[] []<-[] []extract[][](landcover, cougar
+s.steps.c.SPDF,[] []method[][]=[][]'simple'[][],[] []sp[][]=F,[] []df[][]=T)[][
+] 
+ []
+
+
+Overfull \hbox (67.8865pt too wide) in paragraph at lines 366--366
+[][]\OT1/cmtt/m/n/10.95 canopycover.extr[] []<-[] []extract[][](canopycover, co
+ugars.steps.c.SPDF,[] []method[][]=[][]'simple'[][],[] []sp[][]=F,[] []df[][]=T
+)[][] 
+ []
+
+
+Overfull \hbox (67.8865pt too wide) in paragraph at lines 367--367
+[][]\OT1/cmtt/m/n/10.95 disthighway.extr[] []<-[] []extract[][](disthighway, co
+ugars.steps.c.SPDF,[] []method[][]=[][]'simple'[][],[] []sp[][]=F,[] []df[][]=T
+)[][] 
+ []
+
+
+Overfull \hbox (33.39438pt too wide) in paragraph at lines 368--368
+[][]\OT1/cmtt/m/n/10.95 distroad.extr[] []<-[] []extract[][](distroad, cougars.
+steps.c.SPDF,[] []method[][]=[][]'simple'[][],[] []sp[][]=F,[] []df[][]=T)[][] 
+
+ []
+
+[7]
+Overfull \hbox (10.39963pt too wide) in paragraph at lines 411--412
+\OT1/cmtt/m/n/10.95 Don't forget to thank TeX and R and other opensource commun
+ities if you use their
+ []
+
+
+Overfull \hbox (102.37863pt too wide) in paragraph at lines 411--412
+\OT1/cmtt/m/n/10.95 products! The correct way to cite R is shown when typing ``
+citation()'', and ``citation("mgcv")''
+ []
+
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 415.
+[8]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 415.
  (./Read_Data_knitr.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 289.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 289.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 415.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 415.
 Package rerunfilecheck Info: File `Read_Data_knitr.out' has not changed.
-(rerunfilecheck)             Checksum: 51EBBEB801488033404920E556CA4DB3;779.
- ) 
+(rerunfilecheck)             Checksum: 06A7624FC260423B793DD5C6CBD92F6B;834.
+ )
+(\end occurred inside a group at level 1)
+
+### simple group (level 1) entered at line 266 ({)
+### bottom level 
 Here is how much of TeX's memory you used:
- 7054 strings out of 495034
- 105951 string characters out of 6181677
- 191996 words of memory out of 5000000
- 10131 multiletter control sequences out of 15000+600000
+ 7065 strings out of 495034
+ 106035 string characters out of 6181677
+ 192996 words of memory out of 5000000
+ 10132 multiletter control sequences out of 15000+600000
  15788 words of font info for 61 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 36i,11n,38p,881b,376s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/euler/eurm10.pfb>
-Output written on Read_Data_knitr.pdf (7 pages, 199863 bytes).
+ 36i,11n,38p,881b,426s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt
+10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/euler/eurm10.pfb
+>
+Output written on Read_Data_knitr.pdf (8 pages, 212499 bytes).
 PDF statistics:
- 189 PDF objects out of 1000 (max. 8388607)
- 160 compressed objects within 2 object streams
- 32 named destinations out of 1000 (max. 500000)
- 102 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 209 PDF objects out of 1000 (max. 8388607)
+ 179 compressed objects within 2 object streams
+ 42 named destinations out of 1000 (max. 500000)
+ 110 words of extra memory for PDF output out of 10000 (max. 10000000)
 

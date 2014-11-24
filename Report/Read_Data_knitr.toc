@@ -1,12 +1,13 @@
-\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
-\contentsline {section}{\numberline {2}Preparations}{3}{section.2}
-\contentsline {subsection}{\numberline {2.1}Packages - what we need}{3}{subsection.2.1}
-\contentsline {section}{\numberline {3}Loading telemetry data (*.csv, ESRI)}{5}{section.3}
-\contentsline {section}{\numberline {4}Creating a Spatial Points Data Frame}{5}{section.4}
-\contentsline {section}{\numberline {5}Create a ltraj object}{6}{section.5}
-\contentsline {section}{\numberline {6}Compute random steps}{6}{section.6}
-\contentsline {section}{\numberline {7}Spatial covariates}{6}{section.7}
-\contentsline {subsection}{\numberline {7.1}Load raster data (ESRI, *.tif, (*.shp))}{6}{subsection.7.1}
-\contentsline {subsection}{\numberline {7.2}Extract coordinates for comparison of used and random points}{6}{subsection.7.2}
-\contentsline {section}{\numberline {8}Final SSF model}{7}{section.8}
-\contentsline {section}{\numberline {9}Acknowledgements}{7}{section.9}
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
+\contentsline {section}{\numberline {2}Preparations}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}Packages - what we need}{2}{subsection.2.1}
+\contentsline {section}{\numberline {3}Loading telemetry data (*.csv, ESRI)}{4}{section.3}
+\contentsline {section}{\numberline {4}Creating a Spatial Points Data Frame}{4}{section.4}
+\contentsline {section}{\numberline {5}Creating an ltraj object}{5}{section.5}
+\contentsline {section}{\numberline {6}Creating bursts}{6}{section.6}
+\contentsline {section}{\numberline {7}Compute random steps}{6}{section.7}
+\contentsline {section}{\numberline {8}Spatial covariates}{6}{section.8}
+\contentsline {subsection}{\numberline {8.1}Load raster data (ESRI, *.tif, (*.shp))}{6}{subsection.8.1}
+\contentsline {subsection}{\numberline {8.2}Extract coordinates for comparison of used and random points}{8}{subsection.8.2}
+\contentsline {section}{\numberline {9}Final SSF model}{8}{section.9}
+\contentsline {section}{\numberline {10}Acknowledgements}{8}{section.10}
