@@ -67,6 +67,11 @@ options(replace.assign=TRUE, width=90)
 In addition to Resources Selection Functions (RSF) a more detailed anlysis for telemetry data can be conducted by using Step Selection Function (SSF). The use of latter is providing answers to th actual selection of animals on their habitat rather than analysing the use of a habitat only. (DO WE WANT TO CITE, HERE FOR EXAMPLE Simone and friends). So far most of the SSF were done in GIS to use spatial data together with mathematics equations. However, more and more packages are provided in R and thus becomes a valuable alternative. \
 This tutorial provides an overview on how to implement SSF with R. The main package we will use in the following is the package \textbf{adehabitatLT}. All single steps that need to be taken care of are summarized in (Figure~\ref{fig:Flowchart}).\
 In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Latin name}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
+
+\[
+\displaystyle w(x) = exp(\beta\1 x1 + \beta\2 x\2 + ... + \beta\px\p)
+\]
+\
 Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
 
 
@@ -113,6 +118,7 @@ require(adehabitatHR)
 require(adehabitatHS)
 require(adehabitatLT)
 
+
 ## for i dont know
 
 #require(move)
@@ -121,7 +127,97 @@ require(adehabitatLT)
 #require(tkrplot)
 #require(raster)
 #require(sp)
+
 @
+
+
+
+\section{Loading telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
+
+The data for the analysis should be saved in a simple *.csv file format. The table should have column headings in the first line and for each observation include at least the following values: 
+\begin{enumerate}
+\item{x-coordinate (easting)}
+\item{y-coordinate (northing)}
+\item{date and/or time}
+\item{animal ID}
+\end{enumerate}
+
+\noindent Note that the coordinates need to be provided in the same coordinate system and spatial projection as the raster data.
+
+Depending on your analysis you can include further values such as:
+\begin{enumerate}
+\item{ID for each record}
+\item{GPS precision}
+\item{other recording parameters such as season}
+\item{temperature / elevation at the moment of record}
+\item{other values that might be of interest in the further analysis}
+\end{enumerate}
+
+
+\noindent Use the following commands to set your working directory and read the data:
+<<eval=FALSE>>=
+
+setwd("/your/working/directory")
+xmpl = read.csv("xmpl.csv", head=T)
+@
+
+\noindent You can execute \texttt{head(xmpl)} and \texttt{str(xmpl)} to check, whether the data were successfully read.
+
+
+
+\section{Creating a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
+The functions used along the rest of the toolchain can only process data that are stored as objects of class "SpatialPointsDataFrame". This object class stores the coordinates separately and can be created using the according function from package "sp". 
+
+<<eval=FALSE>>=
+require(sp)
+
+xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")], data = xmpl)
+
+names(xmpl)
+@
+In the "coords" argument of the function you should specify the coordinate vectors for your dataset. In our example, we simply assign the two coordinate columns of the example dataset, but you can read the coordinates from a separate file if you want.
+
+
+\section{Creating an ltraj object}%------------------------------------------------------------------------------------------------------
+After storing the data in a Spatial Points Data Frame, you now need to connect the single points and turn them into a set of trajectories. This operation is carried out by the function \texttt{as.ltraj} from the "hab" package and produces objects of class "ltraj".
+The function \texttt{as.ltraj} requires at least three arguments to work:
+\begin{enumerate}
+\item{"xy" (x- and y- coordinates for each point)}
+\item{"date" (timestamp for each point, given as POSIXct class)}
+\item{"id" (the animal id)}
+\end{enumerate}
+
+Both coordinates and animal id can easily be acquired from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and therefore
+
+# And finally extract date and time:
+date <- as.POSIXct(strptime(paste(xmpl.df$LMT_DATE, xmpl.df$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
+@
+It is VERY important to get date and time in the same column! If not the burst cannot be assigned with a unique value:
+
+
+
+
+cougarsLTR <- hab:::as.ltraj(xmpl.spdf@coords, date, id = xmpl.spdf$cat) 
+
+# cougarsLTR <- hab:::as.ltraj(XY, date, id = catID) 
+
+
+plot(cougarsLTR)
+
+
+# only for one individual:
+# cougarsONE <- adehabitatLT:::as.ltraj(XY[catID=="10286",], date = date[catID=="10286"], id="10286")
+
+plot(cougarsLTR, id=10289)
+
+#all.equal(cougarsLTR, cougarsONE)
+
+@
+
+
+\section{Compute random steps}
+
+The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
 \section{Spatial covariates}%----------------------------------------------------------------------------------------------------------------------------
 This section explains the use of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (probably ESRI (*.adf) or *.tif) and for time reasons already clipped to your area. How you can do this in R please read the GIS instructions from the other group ;)   
@@ -163,26 +259,6 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 
 \subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
 Peter is successfully doing this step!!
-
-\section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
-The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
-\begin{enumerate}
-\item{coordinates}
-\item{ID}
-\item{date and/or time}
-\item{...}
-\end{enumerate}
-
-
-
-\section{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
-
-\section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
- 
-
-\section{Compute random steps}
-
-The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
 \section{Final SSF model}
 
