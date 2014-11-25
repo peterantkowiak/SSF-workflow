@@ -21,8 +21,8 @@
 \setlength{\topmargin}{-1.5cm} %0
 \setlength{\footskip}{1cm} %
 %\setlength{\hoffset}{0cm} %
-\setlength{\oddsidemargin}{1cm}%
-\setlength{\evensidemargin}{-.5cm}%
+\setlength{\oddsidemargin}{0cm}%
+\setlength{\evensidemargin}{0cm}%
 \setlength{\parskip}{0cm} % Abstand zwischen Absätzen
 % ----------------------------------------------------------------
 \renewcommand{\textfraction}{0.1} % allows more space to graphics in float
@@ -59,14 +59,6 @@
 \newpage
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
-<<<<<<< HEAD
-In addition to Resources Selection Functions (RSF) a more detailed anlysis for telemetry data can be conducted by using Step Selection Function (SSF). The use of latter is providing answers to th actual selection of animals on their habitat rather than analysing the use of a habitat only. (DO WE WANT TO CITE, HERE FOR EXAMPLE Simone and friends). So far most of the SSF were done in GIS to use spatial data together with mathematics equations. However, more and more packages are provided in R and thus becomes a valuable alternative. \
-This tutorial provides an overview on how to implement SSF with R. The main package we will use in the following is the package \textbf{adehabitatLT}. All single steps that need to be taken care of are summarized in (Figure~\ref{fig:Flowchart}).\
-In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Latin name}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 482d3025bed7e9c29fad11ee2b12cd6f1ddbea76
 
 In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}).\\
 
@@ -81,9 +73,8 @@ DO WE NEED A EQUATION??
 \displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
 \]
 \
->>>>>>> fbdcfe621d003f329a5c7d1fe40dce142ac0c74d
 Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
-\newpage
+
 
 
 \begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
@@ -103,7 +94,6 @@ Before you can actually start using the tutorial for conducting SSF you need to 
 
 \subsection{Packages - what we need}
 
-<<<<<<< HEAD
 \begin{Schunk}
 \begin{Sinput}
 > # installing packages -----------------------------------------------------
@@ -142,112 +132,14 @@ Before you can actually start using the tutorial for conducting SSF you need to 
 > 
 \end{Sinput}
 \end{Schunk}
-=======
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{# installing packages -----------------------------------------------------}
-\hlcom{## for implementing SSF}
-\hlcom{# install.packages("adehabitat") # outdated version, not needed for this tutorial}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatHR"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatHS"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatLT"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatMA"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"tkrplot"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"hab"}\hlstd{,} \hlkwc{repos} \hlstd{=} \hlstr{"http://ase-research.org/R/"}\hlstd{)} \hlcom{# regular}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"hab"}\hlstd{,} \hlkwc{repos} \hlstd{=} \hlstr{"http://ase-research.org/R/"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"source"}\hlstd{)} \hlcom{# for self-compiling}
 
-\hlcom{# for handling ratser data}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"move"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"raster"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"rgdal"}\hlstd{)}
-\hlcom{#install.packages("")}
-
-\hlcom{# loading the packages}
-\hlcom{# require(adehabitat) # keep fingers off this package. It is outdated.}
-\hlkwd{require}\hlstd{(hab)}
-\hlkwd{require}\hlstd{(adehabitatMA)}
-\hlkwd{require}\hlstd{(adehabitatHR)}
-\hlkwd{require}\hlstd{(adehabitatHS)}
-\hlkwd{require}\hlstd{(adehabitatLT)}
-
-<<<<<<< HEAD
-=======
-
->>>>>>> fbdcfe621d003f329a5c7d1fe40dce142ac0c74d
-\hlcom{## for i dont know}
-
-\hlcom{#require(move)}
-\hlcom{#require(raster)}
-\hlcom{#require(rgdal)}
-\hlcom{#require(tkrplot)}
-\hlcom{#require(raster)}
-\hlcom{#require(sp)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-<<<<<<< HEAD
-
-<<<<<<< HEAD
-\section{Spatial covariates}%----------------------------------------------------------------------------------------------------------------------------
-This section explains the use of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (probably ESRI (*.adf) or *.tif) and for time reasons already clipped to your area. How you can do this in R please read the GIS instructions from the other group ;)   
-
-\subsection{Load raster data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
-With a simple function stored in the package \textbf{raster} you are able to upload any ratser file into R. Examplarily we are using the ratser data for ruggedness and canopy cover for the study area.  
-
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{#install.packages("RArcInfo")}
-\hlcom{#require(RArcInfo)}
-\hlkwd{require}\hlstd{(raster)}
-\hlkwd{require}\hlstd{(rgdal)}
-
-\hlkwd{require}\hlstd{(sp)}
-
-
-\hlcom{#?raster}
-\hlcom{#getwd()}
-\hlcom{#setwd("/home/Peter/")}
-
-\hlstd{ruggedness} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf"}\hlstd{)}
-\hlcom{# plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{landcover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf"}\hlstd{)}
-\hlcom{# plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{canopycover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf"}\hlstd{)}
-\hlcom{# plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{disthighway} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf"}\hlstd{)}
-\hlcom{# plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{distroad} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf"}\hlstd{)}
-\hlkwd{plot}\hlstd{(distroad)} \hlcom{# outcomment this if you just quickly want to run the script. Takes a minute to process.}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-
-\subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
-Peter is successfully doing this step!!
-=======
-
-
->>>>>>> fbdcfe621d003f329a5c7d1fe40dce142ac0c74d
->>>>>>> 1fc5c63a6b8f535c076fac0f1121fa1ab78e1764
-
-\section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
-=======
 \section{All right site steps}
 
 \subsection{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
->>>>>>> 482d3025bed7e9c29fad11ee2b12cd6f1ddbea76
 The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
 \begin{enumerate}
-\item{ID}
 \item{coordinates}
+\item{ID}
 \item{date and/or time}
 \item{...}
 \end{enumerate}
@@ -256,50 +148,8 @@ The data for the analysis should be safed in a simple *.csv format. Depending on
 
 \subsection{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
 
-<<<<<<< HEAD
-\section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
-
-
-\section{Creating Bursts}%
-
-For analysing the data, there might be the need to create "sub-bursts" within your trajectory. For example, if the individuals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your \texttt{ltraj} object into smaller burst according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class \texttt{ltraj} with the same attribute "id" to one unique burst. (c. Calenge) To find out if there are more missing values, you can plot the \texttt{ltraj} object. For that, you need to define the time interval you are looking at. 
-
-
-In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals).
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{plotltr}\hlstd{(xmpl.ltr,} \hlstr{"dt/3600"}\hlstd{)}
-\hlkwd{plotltr}\hlstd{(xmpl.ltr,} \hlstr{"dt/3600/3"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-Because we want to keep relocations which are only a few minutes "wrong", we need a function which defines \texttt{dt}, which is the time interval between successive relocations (measured in seconds).
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{foo} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{dt}\hlstd{) \{}\hlkwd{return}\hlstd{(dt}\hlopt{>} \hlstd{(}\hlnum{3800}\hlopt{*}\hlnum{3}\hlstd{))\}}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-Then we split the object of class \texttt{ltraj} according to that function into smaller bursts. The bursts we had before applying this function still remain.
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{xmpl.cut} \hlkwb{<-} \hlkwd{cutltraj}\hlstd{(xmpl.ltr,} \hlstr{"foo(dt)"}\hlstd{,} \hlkwc{nextr} \hlstd{=} \hlnum{TRUE}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
-=======
 \subsection{Create a ltraj object}%------------------------------------------------------------------------------------------------------
  
->>>>>>> 482d3025bed7e9c29fad11ee2b12cd6f1ddbea76
 
 \subsection{Compute random steps}
 
@@ -344,6 +194,7 @@ With a simple function stored in the package \textbf{raster} you are able to upl
 
 \subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
 Peter is successfully doing this step!!
+
 
 \section{Final SSF model}
 

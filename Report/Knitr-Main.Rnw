@@ -21,8 +21,8 @@
 \setlength{\topmargin}{-1.5cm} %0
 \setlength{\footskip}{1cm} %
 %\setlength{\hoffset}{0cm} %
-\setlength{\oddsidemargin}{1cm}%
-\setlength{\evensidemargin}{-.5cm}%
+\setlength{\oddsidemargin}{0cm}%
+\setlength{\evensidemargin}{0cm}%
 \setlength{\parskip}{0cm} % Abstand zwischen Absätzen
 % ----------------------------------------------------------------
 \renewcommand{\textfraction}{0.1} % allows more space to graphics in float
