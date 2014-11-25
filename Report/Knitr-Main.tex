@@ -1,53 +1,4 @@
-\documentclass[11pt, a4paper]{article}\usepackage[]{graphicx}\usepackage[]{color}
-%% maxwidth is the original width if it is less than linewidth
-%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
-\makeatletter
-\def\maxwidth{ %
-  \ifdim\Gin@nat@width>\linewidth
-    \linewidth
-  \else
-    \Gin@nat@width
-  \fi
-}
-\makeatother
-
-\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
-\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
-\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
-\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
-\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
-\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
-\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
-\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
-\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
-\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
-
-\usepackage{framed}
-\makeatletter
-\newenvironment{kframe}{%
- \def\at@end@of@kframe{}%
- \ifinner\ifhmode%
-  \def\at@end@of@kframe{\end{minipage}}%
-  \begin{minipage}{\columnwidth}%
- \fi\fi%
- \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
- \colorbox{shadecolor}{##1}\hskip-\fboxsep
-     % There is no \\@totalrightmargin, so:
-     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
- \MakeFramed {\advance\hsize-\width
-   \@totalleftmargin\z@ \linewidth\hsize
-   \@setminipage}}%
- {\par\unskip\endMakeFramed%
- \at@end@of@kframe}
-\makeatother
-
-\definecolor{shadecolor}{rgb}{.97, .97, .97}
-\definecolor{messagecolor}{rgb}{0, 0, 0}
-\definecolor{warningcolor}{rgb}{1, 0, 1}
-\definecolor{errorcolor}{rgb}{1, 0, 0}
-\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
-
-\usepackage{alltt} %or article has only section and below, book and report also have chapter: http://texblog.org/2007/07/09/documentclassbook-report-article-or-letter/
+\documentclass[11pt, a4paper]{article} %or article has only section and below, book and report also have chapter: http://texblog.org/2007/07/09/documentclassbook-report-article-or-letter/
 
 \usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
 
@@ -83,11 +34,12 @@
 \frenchspacing %http://texwelt.de/wissen/fragen/1154/was-ist-french-spacing-was-macht-frenchspacing
 %------------------------------------------------------------------------------------------------------
 %------------------------------------------------------------------------------------------------------
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+\usepackage{Sweave}
 \begin{document}
+\input{Knitr-Main-concordance}
 %\SweaveOpts{concordance=TRUE}
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
-
 
 
 \title{A tutorial for Step Selection Function}
@@ -108,27 +60,28 @@
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
 
-In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed position as starting points. These alternative positions represent the available habitat beside observed positions. Finally, a comparison of spatial attribute on both describes the habitat selection made be animals \cite{thurfjell2014applications}.\\
-So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS (www.spatialecology.com/gme/). However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but different ones provide helpful functions that perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}.\\
+In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}).\\
 
 
-Figure~\ref{fig:Flowchart} provides an overview of necessary steps and potential options to conduct a SSF. The initial data need to be stored in two independant datasets: \begin{enumerate} \item {a raster file of your spatial attributes} and \item{GPS locations of your individuals asigned with a time stamp} \end{enumerate}. Main focus lays on the right site of the workflow, describing preparation of the waypoint data. After loading the table into R you need to create an so-called \texttt{ltraj} object. This data class can now be further transformed by ... Random steps shold only be calculated for equal time intervals. These can be defined by creating bursts. Each burst has an unique ID (often including an ID for the individual and the time stamp). While there are many options to adjust your waypoint data the raster data describing your spatial attributes needs not much of imput. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the fucntion \texttt{extract}. At this point waypoint and raster data will be combined and your final model can be written.   
+Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and potential options to conduct a SSF. This tutorial will guide you through each step and gives brief instructions on how to implement the functions and what to consider beforehand.
+To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
+We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. After loading the table into R you need to create an so-called \texttt{ltraj} object. This data class can now be further transformed by ... Random steps should only be calculated for equal time intervals. These can be defined by creating bursts. Each burst has an unique ID (often including an ID for the individual and the time stamp). While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
 
 
-In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Latin name}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
 DO WE NEED A EQUATION??
 \[
 \displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
 \]
 \
 Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
+\newpage
 
 
 \begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
 % see also here: http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Captions
-\captionsetup{width=0.8\textwidth}
+\captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=0.8\textwidth]{Flowchart.pdf} %our perfect workflow!
+\includegraphics[width=1\textwidth]{Flowchart.pdf} %our perfect workflow!
 \caption{Conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the fucntion applied while the blue boxes provide the type of object or data. Following the arrows a step by step instruction is provided ...}
 \label{fig:Flowchart}
 \end{figure}
@@ -141,46 +94,44 @@ Before you can actually start using the tutorial for conducting SSF you need to 
 
 \subsection{Packages - what we need}
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{# installing packages -----------------------------------------------------}
-\hlcom{## for implementing SSF}
-\hlcom{# install.packages("adehabitat") # outdated version, not needed for this tutorial}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatHR"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatHS"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatLT"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatMA"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"tkrplot"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"hab"}\hlstd{,} \hlkwc{repos} \hlstd{=} \hlstr{"http://ase-research.org/R/"}\hlstd{)} \hlcom{# regular}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"hab"}\hlstd{,} \hlkwc{repos} \hlstd{=} \hlstr{"http://ase-research.org/R/"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"source"}\hlstd{)} \hlcom{# for self-compiling}
-
-\hlcom{# for handling ratser data}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"move"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"raster"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"rgdal"}\hlstd{)}
-\hlcom{#install.packages("")}
-
-\hlcom{# loading the packages}
-\hlcom{# require(adehabitat) # keep fingers off this package. It is outdated.}
-\hlkwd{require}\hlstd{(hab)}
-\hlkwd{require}\hlstd{(adehabitatMA)}
-\hlkwd{require}\hlstd{(adehabitatHR)}
-\hlkwd{require}\hlstd{(adehabitatHS)}
-\hlkwd{require}\hlstd{(adehabitatLT)}
-
-
-\hlcom{## for i dont know}
-
-\hlcom{#require(move)}
-\hlcom{#require(raster)}
-\hlcom{#require(rgdal)}
-\hlcom{#require(tkrplot)}
-\hlcom{#require(raster)}
-\hlcom{#require(sp)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+\begin{Schunk}
+\begin{Sinput}
+> # installing packages -----------------------------------------------------
+> ## for implementing SSF
+> # install.packages("adehabitat") # outdated version, not needed for this tutorial
+> install.packages("adehabitatHR")
+> install.packages("adehabitatHS")
+> install.packages("adehabitatLT")
+> install.packages("adehabitatMA")
+> install.packages("tkrplot")
+> install.packages("hab", repos = "http://ase-research.org/R/") # regular
+> install.packages("hab", repos = "http://ase-research.org/R/", type = "source") # for self-compiling
+> # for handling ratser data
+> install.packages("move")
+> install.packages("raster")
+> install.packages("rgdal")
+> #install.packages("")
+> 
+> # loading the packages
+> # require(adehabitat) # keep fingers off this package. It is outdated.
+> require(hab)
+> require(adehabitatMA)
+> require(adehabitatHR)
+> require(adehabitatHS)
+> require(adehabitatLT)
+> 
+> 
+> ## for i dont know
+> 
+> #require(move)
+> #require(raster)
+> #require(rgdal)
+> #require(tkrplot)
+> #require(raster)
+> #require(sp)
+> 
+\end{Sinput}
+\end{Schunk}
 
 \section{All right site steps}
 
@@ -211,38 +162,34 @@ This section explains the use of spatial parameters that will be tested for sele
 With a simple function stored in the package \textbf{raster} you are able to upload any ratser file into R. Examplarily we are using the ratser data for ruggedness and canopy cover for the study area.  
 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{#install.packages("RArcInfo")}
-\hlcom{#require(RArcInfo)}
-\hlkwd{require}\hlstd{(raster)}
-\hlkwd{require}\hlstd{(rgdal)}
-
-\hlkwd{require}\hlstd{(sp)}
-
-
-\hlcom{#?raster}
-\hlcom{#getwd()}
-\hlcom{#setwd("/home/Peter/")}
-
-\hlstd{ruggedness} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf"}\hlstd{)}
-\hlcom{# plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{landcover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf"}\hlstd{)}
-\hlcom{# plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{canopycover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf"}\hlstd{)}
-\hlcom{# plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{disthighway} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf"}\hlstd{)}
-\hlcom{# plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{distroad} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf"}\hlstd{)}
-\hlkwd{plot}\hlstd{(distroad)} \hlcom{# outcomment this if you just quickly want to run the script. Takes a minute to process.}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+\begin{Schunk}
+\begin{Sinput}
+> #install.packages("RArcInfo")
+> #require(RArcInfo)
+> require(raster)
+> require(rgdal)
+> require(sp)
+> #?raster
+> #getwd()
+> #setwd("/home/Peter/")
+> 
+> ruggedness <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf") 
+> # plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+> 
+> landcover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf") 
+> # plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+> 
+> canopycover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf") 
+> # plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+> 
+> disthighway <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf") 
+> # plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+> 
+> distroad <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf") 
+> plot(distroad) # outcomment this if you just quickly want to run the script. Takes a minute to process.
+> 
+\end{Sinput}
+\end{Schunk}
 
 
 \subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
@@ -250,6 +197,10 @@ Peter is successfully doing this step!!
 
 \section{Final SSF model}
 
+Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
+\[
+\displaystyle f(x) = (x - mean)/sd(x)
+\]
 
 \section{Acknowledgements}
 Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.

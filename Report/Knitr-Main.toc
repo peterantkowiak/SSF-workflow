@@ -1,8 +1,8 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}
-\contentsline {subsection}{\numberline {1.1}Preparations}{2}{subsection.1.1}
-\contentsline {subsection}{\numberline {1.2}Packages - what we need}{4}{subsection.1.2}
-\contentsline {section}{\numberline {2}All right site steps}{4}{section.2}
-\contentsline {subsection}{\numberline {2.1}Load telemetry data (*.csv, ESRI)}{4}{subsection.2.1}
+\contentsline {subsection}{\numberline {1.1}Preparations}{3}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Packages - what we need}{3}{subsection.1.2}
+\contentsline {section}{\numberline {2}All right site steps}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Load telemetry data (*.csv, ESRI)}{3}{subsection.2.1}
 \contentsline {subsection}{\numberline {2.2}Create a Spatial Points Data Frame}{5}{subsection.2.2}
 \contentsline {subsection}{\numberline {2.3}Create a ltraj object}{5}{subsection.2.3}
 \contentsline {subsection}{\numberline {2.4}Compute random steps}{5}{subsection.2.4}
