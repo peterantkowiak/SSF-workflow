@@ -116,37 +116,12 @@
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
 
-----------------------KORRIGIERTE "ALTE" VERSION----------------------------------
-
-In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed position as starting points. These alternative positions represent the available habitat beside observed positions. Finally, a comparison of spatial attributes of both, the available and the chosen locations, describes the habitat selection made by animals \cite{thurfjell2014applications}.\\
-So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS (www.spatialecology.com/gme/). However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but different ones provide helpful functions that perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}.\\
-
-
-Figure~\ref{fig:Flowchart} provides an overview of necessary steps and potential options to conduct a SSF. The initial data needs to be stored in two independent datasets: \begin{enumerate} \item {a raster file of your spatial attributes} and \item{GPS locations of your individuals asigned with a time stamp} \end{enumerate}. The main focus lays on the right site of the workflow, describing preparation of the waypoint data. After loading the table into R you need to create an so-called \texttt{ltraj} object. This data class can be modified if necessary, as random steps should only be calculated for equal time intervals. Accumualtions of relocations with the same time lag can be combined to several "bursts". Each burst has an unique ID (often including an ID for the individual and the time stamp). While there are many options to adjust your waypoint data the raster data describing your spatial attributes needs not much input. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the fucntion \texttt{extract}. At this point waypoint and raster data will be combined and your final model can be written.   
-
-
-In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Puma concolor}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
-
-
-
-----------------------HENNIS "NEUE" VERSION-----------------------------
-
 In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}).\\
 
 
 Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and potential options to conduct a SSF. This tutorial will guide you through each step and gives brief instructions on how to implement the functions and what to consider beforehand.
 To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
-We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. After loading the table into R you need to create an so-called \texttt{ltraj} object. This data class can now be further transformed by ... Random steps should only be calculated for equal time intervals. These can be defined by creating bursts. Each burst has an unique ID (often including an ID for the individual and the time stamp). While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
-
----------------------------------------------------------------
-
-DO WE NEED A EQUATION??
-\[
-\displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
-\]
-\
-Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
-
+We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of a change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
 
 
 \begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
@@ -161,12 +136,10 @@ Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - 
 
 
 
-\subsection{Preparations}
-Before you can actually start using the tutorial for conducting SSF you need to load a bunch of packages in R. Some of them require others so that you have to add all these to your library:
+\subsection{Installing and loading Packages}
 
-\subsection{Packages - what we need}
+Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
 
-Installing packages:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -212,9 +185,9 @@ Loading packages:
 
 
 
-\section{Processing the waypoint data (or telemetry?)}
+\section{Processing the Waypoint Data (or telemetry?)}
 
-\subsection{Loading waypoint data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
+\subsection{Loading Waypoint Data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
 
 The data for the analysis should be saved in a simple *.csv file format. The table should have column headings in the first line and for each observation include at least the following values: 
 \begin{enumerate}
@@ -357,19 +330,18 @@ There are two options of cutting the trajectory depending on nextr. If it is set
 
 
 
-\subsection{Creating random steps}
+\subsection{Creating Random Steps}
 
-Given your final bursts of at least three positions (this is because for calculating random steps the angle from the point before but the distance to the point afterwards is used) you need to check for correletaion between angle and distance. In case your species tends to move long distances by turning in small angles (e.g. Cougars while searching for prey or wandering around) you want to pick the distance and the angle as pairs dependent on each other. If no correlation is found you can pick both variables independently.
-
+Given your final bursts we now randomly draw angle and distance from your observed data to get random steps. The angle is taken from the observed position before your starting point of the random step while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain of three observed positions. 
+Before applying the function \texttt{rdSteps} you might want to check for correletaion between turning angle and distance. In case your individuals tend to move long distances by turning only in small angles (e.g. a species migrating) but stop for several days for feeding you want to pick the distance and the angle as pairs. If no correlation is found you can pick both variables independently.
+To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
 AUTOCORRELATION ???
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: adehabitatLT\\\#\# Loading required package: sp\\\#\# Loading required package: ade4\\\#\# Loading required package: adehabitatMA\\\#\# Loading required package: CircStats\\\#\# Loading required package: MASS\\\#\# Loading required package: boot}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in inherits(ltraj, "{}ltraj"{}): Objekt 'xmpl.cut' nicht gefunden}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): konnte Funktion "{}ld"{} nicht finden}}\end{kframe}
 \end{knitrout}
 
 \begin{knitrout}
@@ -382,7 +354,7 @@ AUTOCORRELATION ???
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in with(xmpl.cut.df, plot(dist, rel.angle)): Objekt 'xmpl.cut.df' nicht gefunden}}\end{kframe}
 \end{knitrout}
 
-The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you profide with \texttt{x}. If your random steps shall be taken from a different data set you can do so by writting it in \textt{rand.dist = }. Her you can also specify a distribution for estimating angle and distance to draw from. 
+\noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply  \texttt{rdSteps}.  
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -394,8 +366,8 @@ The plot shows a correleation of step length and turning angle and therefore the
 \end{kframe}
 \end{knitrout}
 
-The function \texttt{rdSteps} uses several default settings for calculating the random steps. You can easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{dist.Max} to that value (per default all steps are taken). By setting \textt{reproduibilty = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current step to draw angle and distamce from than set \texttt{only.others = TRUE}. 
-
+\noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from than set \texttt{only.others = TRUE}.
+All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -407,7 +379,8 @@ The function \texttt{rdSteps} uses several default settings for calculating the 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): Objekt 'xmpl.steps' nicht gefunden}}\end{kframe}
 \end{knitrout}
 
-You see that the function \texttt{rdSteps} does give you the difference (column dx and dy) of your observed positions for each random step. To get new coordinates fo your random steps we simply add the x-coordinates to the dx and the same for the y-coordinates. Thereby, the first observed position will be overwritten as the first random step. That is necessary because there is no random step to compare the first observed position with (no angle to calculate for!). Also the last observed position will be lost for similar reasons (there is no distance to calculate the random step with!).
+\noindent The table still includes your cat id, burst id, the rel.angle and dist of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" defines all 10 random steps and the one observed location, so you can later tell your function what to compare.  
+Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. To do so you find the rel.angle and distance for each random point. Only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step ("dx" and "dy"). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -418,6 +391,9 @@ You see that the function \texttt{rdSteps} does give you the difference (column 
 \end{kframe}
 \end{knitrout}
 
+\noindent Thereby, the ???rst observed position will be overwritten as the ???rst random step. That is necessary because there is no random step to compare the ???rst observed position with (angle could not be calculated!). Also the last observed position will be lost for similar reasons (distance could not be calculated!). 
+  
+\noindent After running this chapter you get your final SpatialPointDataFrame to use with the selection function.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -428,21 +404,14 @@ You see that the function \texttt{rdSteps} does give you the difference (column 
 {\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): Objekt 'xmpl.steps' nicht gefunden}}\end{kframe}
 \end{knitrout}
 
-Your final table includes a column for the differences of the observed positions to each random step (dx and dy) and now also a column for the actual coordinates of each random position.
-Depending on your analysis you might want to compare only the endpoints (observed positions) of your species or also the spatial attributes along the path. 
-
-  
-strata ??
-case ??
 
 
 
 
-
-\section{Processing spatial covariates}%----------------------------------------------------------------------------------------------------------------------------
+\section{Processing Spatial Covariates}%----------------------------------------------------------------------------------------------------------------------------
 This section explains the handling of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (ESRI *.adf or georeferenced *.tif). These should have the same coordinate system as your telemetry data and should (for time reasons) already be clipped to your study area and. For instructions how to do this in R, please read the GIS instructions from the other group ;)   
 
-\subsection{Load raster data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
+\subsection{Load Raster Data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
 
 With a simple function stored in the package \textbf{raster} you are able to upload any raster file into R. Examplarily we use raster data on the following parameters for the study area:
 \begin{enumerate}
@@ -495,9 +464,9 @@ You can plot the data for a first overview. As this can take a while with large 
 \end{kframe}
 \end{knitrout}
 
-\subsection{Checking for collinearity}
+\subsection{Checking for Collinearity}
 
-\subsection{Raster extraction}
+\subsection{Raster Extraction}
 Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
 Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
 \begin{knitrout}
@@ -555,7 +524,7 @@ Now your final dataset should be ready for analysis. Examine it:
 
 
 
-\section{Final SSF model}
+\section{Final SSF Model}
 
 Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
 \[
@@ -576,27 +545,21 @@ Session Info:
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
 ## R version 3.1.2 (2014-10-31)
-## Platform: x86_64-redhat-linux-gnu (64-bit)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
 ## 
 ## locale:
-##  [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=de_DE.UTF-8        LC_COLLATE=de_DE.UTF-8    
-##  [5] LC_MONETARY=de_DE.UTF-8    LC_MESSAGES=de_DE.UTF-8   
-##  [7] LC_PAPER=de_DE.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=de_DE.UTF-8 LC_IDENTIFICATION=C       
+## [1] LC_COLLATE=German_Germany.1252  LC_CTYPE=German_Germany.1252   
+## [3] LC_MONETARY=German_Germany.1252 LC_NUMERIC=C                   
+## [5] LC_TIME=German_Germany.1252    
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] adehabitatLT_0.3.16 CircStats_0.2-4     boot_1.3-13        
-## [4] MASS_7.3-35         adehabitatMA_0.3.8  ade4_1.6-2         
-## [7] sp_1.0-16           knitr_1.7          
+## [1] knitr_1.8
 ## 
 ## loaded via a namespace (and not attached):
-## [1] evaluate_0.5.5  formatR_1.0     grid_3.1.2      highr_0.4      
-## [5] lattice_0.20-29 stringr_0.6.2   tools_3.1.2
+## [1] evaluate_0.5.5 formatR_1.0    highr_0.4      stringr_0.6.2  tools_3.1.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
