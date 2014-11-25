@@ -545,7 +545,8 @@ summary(mc_quad)
 # plot(cscR.all$ruggedness,cscR.all$wrugg)
 
 #predictions for ruggedness (highw kept to median)
-mydata = data.frame(ruggedness=seq(0,200,1))
+summary(cscR.all$ruggedness)
+mydata = data.frame(ruggedness=seq(0,193,1))
 mydata$wrugg = exp(mc_quad$coefficients[2] * mydata$ruggedness  + 
                        mc_quad$coefficients[3] * mydata$ruggedness^2 + 
                        mc_quad$coefficients[4] * median(cscR.all$disthighway)
@@ -560,5 +561,11 @@ lines(mydata$ruggedness,mydata$wrugg,type="l",col="green", lwd=2)
 abline(h=1,lty=2,col="wheat4")
 
 
+mydata = data.frame(disthighway=seq(0,27000,100))
+mydata$whighw = exp(mc_quad$coefficients[4] * mydata$disthighway  + 
+                     mc_quad$coefficients[5] * mydata$disthighway^2 + 
+                     mc_quad$coefficients[2] * median(cscR.all$ruggedness)
+                   + mc_quad$coefficients[3] * (median(cscR.all$ruggedness))^2)
+plot(mydata$disthighway,mydata$whighw,type="l", lwd=2)
 
 
