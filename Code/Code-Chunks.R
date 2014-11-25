@@ -90,6 +90,8 @@ names(cougarsSPDF)
 # create ltraj object ------------------------------------------------------
 
 XY <- coordinates(cougarsSPDF)  # coordinates are stored in my SPDF
+
+# This is not necessary
 cougarsDF <- base:::as.data.frame(cougarsSPDF)
 # catID <- as.character(cougarsDF[,3])
 # cougars2[,1] <- as.factor(cougars2[,1]) # does not really help but now its a Factor just as the name in puechabonsp
@@ -102,6 +104,7 @@ unique(cougarsDF$cat) #
 # [1] 10286 10287 10288 10289 10290 10291 10293
 
 
+cougarsLTR <- hab:::as.ltraj(coordinates(cougarsSPDF), date, id = cougarsSPDF$cat) 
 cougarsLTR <- hab:::as.ltraj(XY, date, id = cougarsDF[,1]) 
 # cougarsLTR <- hab:::as.ltraj(XY, date, id = catID) 
 
@@ -297,7 +300,10 @@ distroad.extr <- extract(distroad, cougars.steps.c.SPDF, method='simple', sp=F, 
 
 cougars.steps.c.SPDF$ruggedness <- ruggedness.extr[,2]
 #cougars.steps.c.SPDF$landcover <- landcover.extr[,2]
-cougars.steps.c.SPDF$landcover <- as.factor(ifelse(landcover.extr[,2] < 6,"forest","pasture"))         
+cougars.steps.c.SPDF$landcover1 <- as.factor(
+    ifelse(landcover.extr[,2] == 0,"NA",
+    ifelse(landcover.extr[,2] < 5, "forest", 
+    ifelse(landcover.extr[,2] < 8, "open","NA"))))         
 cougars.steps.c.SPDF$canopycover <- canopycover.extr[,2]
 cougars.steps.c.SPDF$disthighway <- disthighway.extr[,2]
 cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
