@@ -67,6 +67,10 @@ Then we split the object of class ltraj into smaller bursts using \texttt{cutltr
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
 
-There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, (adehabitat 2014, page 17, details!!! ) 
+There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
+
+
+
+
  
 \end{document}
