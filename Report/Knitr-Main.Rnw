@@ -65,6 +65,16 @@ options(replace.assign=TRUE, width=90)
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
 
+<<<<<<< HEAD
+In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed position as starting points. These alternative positions represent the available habitat beside observed positions. Finally, a comparison of spatial attributes of both, the available and the chosen locations, describes the habitat selection made by animals \cite{thurfjell2014applications}.\\
+So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS (www.spatialecology.com/gme/). However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but different ones provide helpful functions that perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}.\\
+
+
+Figure~\ref{fig:Flowchart} provides an overview of necessary steps and potential options to conduct a SSF. The initial data needs to be stored in two independent datasets: \begin{enumerate} \item {a raster file of your spatial attributes} and \item{GPS locations of your individuals asigned with a time stamp} \end{enumerate}. The main focus lays on the right site of the workflow, describing preparation of the waypoint data. After loading the table into R you need to create an so-called \texttt{ltraj} object. This data class can be modified if necessary, as random steps should only be calculated for equal time intervals. Accumualtions of relocations with the same time lag can be combined to several "bursts". Each burst has an unique ID (often including an ID for the individual and the time stamp). While there are many options to adjust your waypoint data the raster data describing your spatial attributes needs not much input. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the fucntion \texttt{extract}. At this point waypoint and raster data will be combined and your final model can be written.   
+
+
+In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Puma concolor}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
+=======
 In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}).\\
 
 
@@ -73,6 +83,7 @@ To conduct a SSF using this tutorial we need you to store your initial data  in 
 We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. After loading the table into R you need to create an so-called \texttt{ltraj} object. This data class can now be further transformed by ... Random steps should only be calculated for equal time intervals. These can be defined by creating bursts. Each burst has an unique ID (often including an ID for the individual and the time stamp). While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
 
 
+>>>>>>> 7e996ed24050650938a643b93597870d6fa79fb8
 DO WE NEED A EQUATION??
 \[
 \displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
@@ -200,7 +211,63 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 \subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
 Peter is successfully doing this step!!
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+\section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
+The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
+\begin{enumerate}
+\item{ID}
+\item{coordinates}
+\item{date and/or time}
+\item{...}
+\end{enumerate}
 
+
+
+\section{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
+
+\section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
+
+
+\section{Creating Bursts}%
+
+For analysing the data, there might be the need to create "sub-bursts" within your trajectory. For example, if the individuals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your \texttt{ltraj} object into smaller burst according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class \texttt{ltraj} with the same attribute "id" to one unique burst. \cite{Package2011} To find out if there are more missing values, you can plot the \texttt{ltraj} object. For that, you need to define the time interval you are looking at. 
+
+
+In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals).
+
+<<eval=FALSE>>=
+plotltr(xmpl.ltr, "dt/3600") 
+
+# time log 1 hour
+
+plotltr(xmpl.ltr, "dt/3600/3")
+
+# time log 3 hours
+@
+
+Because we want to keep relocations which are only a few minutes "wrong", we need a function which defines \texttt{dt}, which is the time interval between successive relocations (measured in seconds).
+
+<<eval=FALSE>>=
+foo = function(dt) {return(dt> (3800*3))} 
+@
+
+Then we split the object of class \texttt{ltraj} according to that function into smaller bursts. The bursts we had before applying this function still remain.
+
+<<eval=FALSE>>=
+xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
+@
+
+
+\section{Compute random steps}
+
+The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
+
+=======
+>>>>>>> fbdcfe621d003f329a5c7d1fe40dce142ac0c74d
+=======
+
+>>>>>>> 7e996ed24050650938a643b93597870d6fa79fb8
 \section{Final SSF model}
 
 Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
