@@ -569,3 +569,10 @@ mydata$whighw = exp(mc_quad$coefficients[4] * mydata$disthighway  +
 plot(mydata$disthighway,mydata$whighw,type="l", lwd=2)
 
 
+
+# save models -----------------------
+
+save(pippo, file="pippo.Rdata")
+pippo <- load("pippo.Rdata")
+
+
