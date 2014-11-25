@@ -1,0 +1,104 @@
+\documentclass[11pt, a4paper]{article} %or article has only section and below, book and report also have chapter: http://texblog.org/2007/07/09/documentclassbook-report-article-or-letter/
+  
+  \usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
+
+\usepackage{caption}  			% provides commands for handling caption sizes etc.
+%\usepackage[a4paper, left=25mm, right=20mm, top=25mm, bottom=20mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
+
+\usepackage{etoolbox}    % for conditional evaluations!
+  \usepackage[bottom]{footmisc}  % I love footnotes! And they should be down at the bottom of the page!
+  \usepackage{graphicx}        % when using figures and alike
+\usepackage[hidelinks]{hyperref}		% for hyperreferences (links within the document: references, figures, tables, citations)
+
+\usepackage{euler}     % a math font, only for equations and alike; call BEFORE changing the main font; alternatives: mathptmx, fourier, 
+%\usepackage{gentium} % for a different font; you can also try: cantarell, charter, libertine, gentium, bera, ... http://tex.stackexchange.com/questions/59403/what-font-packages-are-installed-in-tex-live
+
+%------------------------------------------------------------------------------------------------------
+  %------- text size settings --------------
+  \setlength{\textwidth}{16cm}% 
+\setlength{\textheight}{25cm} %23 
+%(these values were used to fill the page more fully and thus reduce the number of pages!)
+\setlength{\topmargin}{-1.5cm} %0
+\setlength{\footskip}{1cm} %
+%\setlength{\hoffset}{0cm} %
+  \setlength{\oddsidemargin}{0cm}%
+\setlength{\evensidemargin}{0cm}%
+\setlength{\parskip}{0cm} % Abstand zwischen Absätzen
+% ----------------------------------------------------------------
+  \renewcommand{\textfraction}{0.1} % allows more space to graphics in float
+\renewcommand{\topfraction}{0.85}
+%\renewcommand{\bottomfraction}{0.65}
+\renewcommand{\floatpagefraction}{0.70}
+
+
+\frenchspacing %http://texwelt.de/wissen/fragen/1154/was-ist-french-spacing-was-macht-frenchspacing
+%------------------------------------------------------------------------------------------------------
+  %------------------------------------------------------------------------------------------------------
+  
+  \begin{document}
+
+%%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
+  <<setup, include=FALSE, cache=FALSE, echo=F>>=
+  library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE, width=90)
+@
+  
+  
+
+
+\section{Creating random steps}
+
+Given your final bursts of at least three positions (this is because for calculating random steps the angle from the point before but the distance to the point afterwards is used) you need to check for correletaion between angle and distance. In case your species tends to move long distances by turning in small angles (e.g. Cougars while searching for prey or wandering around) you want to pick the distance and the angle as pairs dependent on each other. If no correlation is found you can pick both variables independently.
+
+AUTOCORRELATION ???
+
+<<echo=FALSE>>=
+
+xmpl.cut.df <- ld(xmpl.cut)  # ld creates a data frame you need for plotting
+@
+
+<<echo=TRUE>>=
+with(xmpl.cut.df, plot(dist, rel.angle))
+@
+
+The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you profide with \texttt{x}. If your random steps shall be taken from a different data set you can do so by writting it in \textt{rand.dist = }. Her you can also specify a distribution for estimating angle and distance to draw from. 
+
+<<eval=FALSE>>=
+  
+xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,  
+                      dist.Max = Inf, reproducibility = TRUE, only.others = FALSE) 
+          # use simult = FALSE if your data is not correlated
+@
+
+The function \texttt{rdSteps} uses several default settings for calculating the random steps. You can easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{dist.Max} to that value (per default all steps are taken). By setting \textt{reproduibilty = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current step to draw angle and distamce from than set \texttt{only.others = TRUE}. 
+
+
+<<echo=TRUE>>=
+head(xmpl.steps)
+@
+
+You see that the function \texttt{rdSteps} does give you the difference (column dx and dy) of your observed positions for each random step. To get new coordinates fo your random steps we simply add the x-coordinates to the dx and the same for the y-coordinates. Thereby, the first observed position will be overwritten as the first random step. That is necessary because there is no random step to compare the first observed position with (no angle to calculate for!). Also the last observed position will be lost for similar reasons (there is no distance to calculate the random step with!).
+
+<<eval=FALSE>>=
+
+xmpl.steps$new_x <- xmpl.steps$x + xmpl.steps$dx
+xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
+
+@
+
+<<echo=TRUE>>=
+head(xmpl.steps)
+@
+
+Your final table includes a column for the differences of the observed positions to each random step (dx and dy) and now also a column for the actual coordinates of each random position.
+Depending on your analysis you might want to compare only the endpoints (observed positions) of your species or also the spatial attributes along the path. 
+
+  
+strata ??
+case ??
+
+  
+  
+  \end{document}
