@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
 
 \usepackage{caption}				% provides commands for handling caption sizes etc.
-%\usepackage[a4paper, left=25mm, right=20mm, top=25mm, bottom=20mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
+\usepackage[a4paper, left=25mm, right=25mm, top=25mm, bottom=25mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
 
 
 
@@ -15,16 +15,19 @@
 \usepackage{euler}     % a math font, only for equations and alike; call BEFORE changing the main font; alternatives: mathptmx, fourier, 
 %\usepackage{gentium} % for a different font; you can also try: cantarell, charter, libertine, gentium, bera, ... http://tex.stackexchange.com/questions/59403/what-font-packages-are-installed-in-tex-live
 
+%\usepackage{listings}
+%\lstset{breaklines=T}
+
 %------------------------------------------------------------------------------------------------------
 %------- text size settings --------------
 \setlength{\textwidth}{16cm}% 
 \setlength{\textheight}{25cm} %23 
 %(these values were used to fill the page more fully and thus reduce the number of pages!)
-\setlength{\topmargin}{-1.5cm} %0
+\setlength{\topmargin}{-1.5cm} %-1.5
 \setlength{\footskip}{1cm} %
 %\setlength{\hoffset}{0cm} %
-\setlength{\oddsidemargin}{1cm}%
-\setlength{\evensidemargin}{-.5cm}%
+\setlength{\oddsidemargin}{0cm}%1
+\setlength{\evensidemargin}{0cm} %-0.5
 \setlength{\parskip}{0cm} % Abstand zwischen Absätzen
 % ----------------------------------------------------------------
 \renewcommand{\textfraction}{0.1} % allows more space to graphics in float
@@ -35,7 +38,7 @@
 
 \frenchspacing %http://texwelt.de/wissen/fragen/1154/was-ist-french-spacing-was-macht-frenchspacing
 
-
+\sloppy
 
 %------------------------------------------------------------------------------------------------------
 %------------------------------------------------------------------------------------------------------
@@ -45,10 +48,11 @@
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
 library(knitr)
-library(formatR)
+# library(formatR)
 # set global chunk options
-opts_chunk$set(fig.path='', fig.align='center', fig.show='hold')
-options(replace.assign=TRUE, width=90)
+opts_chunk$set(fig.path='', fig.align='center', fig.show='hold', tidy=FALSE)
+options(replace.assign=TRUE, width=80)
+#render_listings()
 @
 
 
@@ -88,8 +92,6 @@ Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - 
 \caption{\emph{Conducting a SSF using existing R-packages:} this figures provides an overview of the steps necessary to conduct a SSF. The steps are separated in subsections, which the turtorial will guide you through.}
 \label{fig:Flowchart}
 \end{figure}
-
-
 
 
 \section{Preparations}
@@ -161,7 +163,6 @@ Depending on your analysis you can include further values such as:
 
 \noindent Use the following commands to set your working directory and read the data:
 <<eval=FALSE>>=
-
 setwd("/your/working/directory")
 xmpl = read.csv("xmpl.csv", head=T)
 @
@@ -202,7 +203,7 @@ Now you can proceed and actually create the ltraj object by executing the follow
 <<eval=FALSE>>=
 xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date, id = xmpl.spdf$cat) 
 @
-Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its "adehabitatLT" sibling. Unlike the \texttt{xmpl.spdf@coords} promt which works for any SPDF object, the \texttt{xmpl.spdf$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
+Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the "xmpl.spdf@coords" promt which works for any SPDF object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
 
 You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
 <<eval=FALSE>>=
@@ -239,88 +240,73 @@ With a simple function stored in the package \textbf{raster} you are able to upl
 \item{distance to the nearest road}
 \end{enumerate}
 
-
+For reading the raster data, three packages are required:
 <<eval=FALSE>>=
 require(raster)
 require(rgdal)
-
 require(sp)
-
-
-#?raster
-#getwd()
-#setwd("/home/Peter/")
-
-ruggedness <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf") 
-# plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.
-
-landcover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf") 
-# plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
-
-canopycover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf") 
-# plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
-
-disthighway <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf") 
-# plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.
-
-distroad <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf") 
-plot(distroad) # outcomment this if you just quickly want to run the script. Takes a minute to process.
 @
 
-
+The source files for the raster data can be stored in the working directory or loaded by specifying the exact path. The \texttt{raster()} function is a universal and very powerful tool for loading all kinds of raster data. For reading shapefiles, use the \texttt{readOGR()} function. Below is an example of how to read a set of raster layers.
 <<eval=FALSE>>=
+# First, make sure that your working directory is still the one specified earlier:
+getwd()
 
-# Raster extraction ---------------------------------
+# Now read the layers:
+ruggedness <- raster("ruggedness.adf") 
+landcover <- raster("landcover.adf") 
+canopycover <- raster("canopycover.adf") 
+disthighway <- raster("disthighway.adf")
+distroad <- raster("distroad.adf")
+# In the ESRI directory system, raster layers are usually stored in files called "w001001.adf". For demonstration purpose, we copied and renamed them.
+@
 
-#sp <- SpatialPoints(xy)
-# cougarsRugged <- extract(ruggedness, cougarsSPDF, method='simple', sp=T, df=T) 
-# method = 'bilinear' interpolates values from four nearest cells. sp returns Spatial object, df a data frame.
+You can plot the data for a first overview. As this can take a while with large datasets, outcomment the following chunk if you please!
+<<eval=FALSE>>=
+plot(ruggedness) 
+plot(landcover)
+plot(canopycover)
+plot(disthighway)
+plot(distroad)
+@
 
+\subsection{Raster extraction}
+Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
+Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
+<<eval=FALSE>>= 
+xmpl.steps.spdf <- SpatialPointsDataFrame(coords = xmpl.steps[,c("new_x","new_y")], data = xmpl.steps)
+@
 
-# first convert the cougars.steps into a SpatialPointsDataFrame
+Extracting the values from each raster layer:
+<<eval=FALSE>>= 
+ruggedness.extr <- extract(ruggedness, xmpl.steps.spdf, method='simple', sp=F, df=T) 
+canopycover.extr <- extract(canopycover, xmpl.steps.spdf, method='simple', sp=F, df=T)
+disthighway.extr <- extract(disthighway, xmpl.steps.spdf, method='simple', sp=F, df=T)
+distroad.extr <- extract(distroad, xmpl.steps.spdf, method='simple', sp=F, df=T)
+landcover.extr <- extract(landcover, xmpl.steps.spdf, method='simple', sp=F, df=T)
+@
+The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. df=T returns the result as a data frame and sp=F ensures that the output is not added to the original dataset right away. 
 
-#cougars.steps.SPDF = SpatialPointsDataFrame(coords = cougars.steps[,c("new_x","new_y")], data = cougars.steps)
-cougars.steps.c.SPDF = SpatialPointsDataFrame(coords = cougars.steps.c[,c("new_x","new_y")], data = cougars.steps.c)
+Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
 
-#cougars.steps.Rugged <- extract(ruggedness, cougars.steps.SPDF, method='simple', sp=T, df=T) 
-#cougars.steps.c.Rugged <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=T, df=T) 
+This is the code for compiling the final dataset:
+<<eval=FALSE>>= 
+xmpl.steps.spdf$ruggedness <- ruggedness.extr[,2]
+xmpl.steps.spdf$canopycover <- canopycover.extr[,2]
+xmpl.steps.spdf$disthighway <- disthighway.extr[,2]
+xmpl.steps.spdf$distroad <- distroad.extr[,2]
 
-# method = 'simple' extracts value from nearest cell. method = 'bilinear' interpolates from the four nearest cells.
-
-ruggedness.extr <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=F, df=T) 
-landcover.extr <- extract(landcover, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
-canopycover.extr <- extract(canopycover, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
-disthighway.extr <- extract(disthighway, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
-distroad.extr <- extract(distroad, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
-
-
-
-
-
-cougars.steps.c.SPDF$ruggedness <- ruggedness.extr[,2]
-#cougars.steps.c.SPDF$landcover <- landcover.extr[,2]
-cougars.steps.c.SPDF$landcover1 <- as.factor(
+# The landcover covariate comes coded in integers between 0 an 10 and is by default (mis)interpreted as an integer string. 
+unique(landcover.extr[,2])
+# Re-classifying landcover:
+xmpl.steps.spdf$landcover <- as.factor(
     ifelse(landcover.extr[,2] == 0,"NA",
     ifelse(landcover.extr[,2] < 5, "forest", 
-    ifelse(landcover.extr[,2] < 8, "open","NA"))))         
-cougars.steps.c.SPDF$canopycover <- canopycover.extr[,2]
-cougars.steps.c.SPDF$disthighway <- disthighway.extr[,2]
-cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
-
-  
-head(cougars.steps.c.SPDF)
-
-#head(cougars.steps.Rugged)
-#View(cougars.steps.Rugged)
-
-#head(cougars.steps.c.Rugged)
-#View(cougars.steps.c.Rugged)
-
-
-#names(ruggedness)
-#head(cougars)
-#head(cougarsRugged)
-
+    ifelse(landcover.extr[,2] < 8, "open","NA"))))   
+@
+Now your final dataset should be ready for analysis. Examine it:  
+<<eval=FALSE>>=
+head(xmpl.steps.spdf)
 @
 
 
@@ -335,6 +321,11 @@ Peter is successfully doing this step!!
 \section{Acknowledgements}
 Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
 
+\section{Appendix / Literature}
 
+Session Info:
+<<echo=FALSE>>=
+sessionInfo()
+@
 
 \end{document}

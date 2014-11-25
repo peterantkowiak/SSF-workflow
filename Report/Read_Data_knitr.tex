@@ -52,7 +52,7 @@
 \usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
 
 \usepackage{caption}				% provides commands for handling caption sizes etc.
-%\usepackage[a4paper, left=25mm, right=20mm, top=25mm, bottom=20mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
+\usepackage[a4paper, left=25mm, right=25mm, top=25mm, bottom=25mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
 
 
 
@@ -64,16 +64,19 @@
 \usepackage{euler}     % a math font, only for equations and alike; call BEFORE changing the main font; alternatives: mathptmx, fourier, 
 %\usepackage{gentium} % for a different font; you can also try: cantarell, charter, libertine, gentium, bera, ... http://tex.stackexchange.com/questions/59403/what-font-packages-are-installed-in-tex-live
 
+%\usepackage{listings}
+%\lstset{breaklines=T}
+
 %------------------------------------------------------------------------------------------------------
 %------- text size settings --------------
 \setlength{\textwidth}{16cm}% 
 \setlength{\textheight}{25cm} %23 
 %(these values were used to fill the page more fully and thus reduce the number of pages!)
-\setlength{\topmargin}{-1.5cm} %0
+\setlength{\topmargin}{-1.5cm} %-1.5
 \setlength{\footskip}{1cm} %
 %\setlength{\hoffset}{0cm} %
-\setlength{\oddsidemargin}{1cm}%
-\setlength{\evensidemargin}{-.5cm}%
+\setlength{\oddsidemargin}{0cm}%1
+\setlength{\evensidemargin}{0cm} %-0.5
 \setlength{\parskip}{0cm} % Abstand zwischen Absätzen
 % ----------------------------------------------------------------
 \renewcommand{\textfraction}{0.1} % allows more space to graphics in float
@@ -84,7 +87,7 @@
 
 \frenchspacing %http://texwelt.de/wissen/fragen/1154/was-ist-french-spacing-was-macht-frenchspacing
 
-
+\sloppy
 
 %------------------------------------------------------------------------------------------------------
 %------------------------------------------------------------------------------------------------------
@@ -131,8 +134,6 @@ Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - 
 \caption{\emph{Conducting a SSF using existing R-packages:} this figures provides an overview of the steps necessary to conduct a SSF. The steps are separated in subsections, which the turtorial will guide you through.}
 \label{fig:Flowchart}
 \end{figure}
-
-
 
 
 \section{Preparations}
@@ -263,7 +264,7 @@ Now you can proceed and actually create the ltraj object by executing the follow
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its "adehabitatLT" sibling. Unlike the \texttt{xmpl.spdf@coords} promt which works for any SPDF object, the \texttt{xmpl.spdf$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
+Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the "xmpl.spdf@coords" promt which works for any SPDF object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
 
 You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
 \begin{knitrout}
@@ -308,92 +309,99 @@ With a simple function stored in the package \textbf{raster} you are able to upl
 \item{distance to the nearest road}
 \end{enumerate}
 
-
+For reading the raster data, three packages are required:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlkwd{require}\hlstd{(raster)}
 \hlkwd{require}\hlstd{(rgdal)}
-
 \hlkwd{require}\hlstd{(sp)}
-
-
-\hlcom{#?raster}
-\hlcom{#getwd()}
-\hlcom{#setwd("/home/Peter/")}
-
-\hlstd{ruggedness} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf"}\hlstd{)}
-\hlcom{# plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{landcover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf"}\hlstd{)}
-\hlcom{# plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{canopycover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf"}\hlstd{)}
-\hlcom{# plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{disthighway} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf"}\hlstd{)}
-\hlcom{# plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.}
-
-\hlstd{distroad} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf"}\hlstd{)}
-\hlkwd{plot}\hlstd{(distroad)} \hlcom{# outcomment this if you just quickly want to run the script. Takes a minute to process.}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
 
-
+The source files for the raster data can be stored in the working directory or loaded by specifying the exact path. The \texttt{raster()} function is a universal and very powerful tool for loading all kinds of raster data. For reading shapefiles, use the \texttt{readOGR()} function. Below is an example of how to read a set of raster layers.
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlcom{# Raster extraction ---------------------------------}
+\hlcom{# First, make sure that your working directory is still the one specified earlier:}
+\hlkwd{getwd}\hlstd{()}
 
-\hlcom{#sp <- SpatialPoints(xy)}
-\hlcom{# cougarsRugged <- extract(ruggedness, cougarsSPDF, method='simple', sp=T, df=T) }
-\hlcom{# method = 'bilinear' interpolates values from four nearest cells. sp returns Spatial object, df a data frame.}
+\hlcom{# Now read the layers:}
+\hlstd{ruggedness} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"ruggedness.adf"}\hlstd{)}
+\hlstd{landcover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"landcover.adf"}\hlstd{)}
+\hlstd{canopycover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"canopycover.adf"}\hlstd{)}
+\hlstd{disthighway} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"disthighway.adf"}\hlstd{)}
+\hlstd{distroad} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"distroad.adf"}\hlstd{)}
+\hlcom{# In the ESRI directory system, raster layers are usually stored in files called "w001001.adf". For demonstration purpose, we copied and renamed them.}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
+You can plot the data for a first overview. As this can take a while with large datasets, outcomment the following chunk if you please!
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{plot}\hlstd{(ruggedness)}
+\hlkwd{plot}\hlstd{(landcover)}
+\hlkwd{plot}\hlstd{(canopycover)}
+\hlkwd{plot}\hlstd{(disthighway)}
+\hlkwd{plot}\hlstd{(distroad)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
-\hlcom{# first convert the cougars.steps into a SpatialPointsDataFrame}
+\subsection{Raster extraction}
+Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
+Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{xmpl.steps.spdf} \hlkwb{<-} \hlkwd{SpatialPointsDataFrame}\hlstd{(}\hlkwc{coords} \hlstd{= xmpl.steps[,}\hlkwd{c}\hlstd{(}\hlstr{"new_x"}\hlstd{,}\hlstr{"new_y"}\hlstd{)],} \hlkwc{data} \hlstd{= xmpl.steps)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
 
-\hlcom{#cougars.steps.SPDF = SpatialPointsDataFrame(coords = cougars.steps[,c("new_x","new_y")], data = cougars.steps)}
-\hlstd{cougars.steps.c.SPDF} \hlkwb{=} \hlkwd{SpatialPointsDataFrame}\hlstd{(}\hlkwc{coords} \hlstd{= cougars.steps.c[,}\hlkwd{c}\hlstd{(}\hlstr{"new_x"}\hlstd{,}\hlstr{"new_y"}\hlstd{)],} \hlkwc{data} \hlstd{= cougars.steps.c)}
+Extracting the values from each raster layer:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ruggedness.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(ruggedness, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
+\hlstd{canopycover.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(canopycover, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
+\hlstd{disthighway.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(disthighway, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
+\hlstd{distroad.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(distroad, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
+\hlstd{landcover.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(landcover, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. df=T returns the result as a data frame and sp=F ensures that the output is not added to the original dataset right away. 
 
-\hlcom{#cougars.steps.Rugged <- extract(ruggedness, cougars.steps.SPDF, method='simple', sp=T, df=T) }
-\hlcom{#cougars.steps.c.Rugged <- extract(ruggedness, cougars.steps.c.SPDF, method='simple', sp=T, df=T) }
+Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
 
-\hlcom{# method = 'simple' extracts value from nearest cell. method = 'bilinear' interpolates from the four nearest cells.}
+This is the code for compiling the final dataset:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{ruggedness} \hlkwb{<-} \hlstd{ruggedness.extr[,}\hlnum{2}\hlstd{]}
+\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{canopycover} \hlkwb{<-} \hlstd{canopycover.extr[,}\hlnum{2}\hlstd{]}
+\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{disthighway} \hlkwb{<-} \hlstd{disthighway.extr[,}\hlnum{2}\hlstd{]}
+\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{distroad} \hlkwb{<-} \hlstd{distroad.extr[,}\hlnum{2}\hlstd{]}
 
-\hlstd{ruggedness.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(ruggedness, cougars.steps.c.SPDF,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{landcover.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(landcover, cougars.steps.c.SPDF,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{canopycover.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(canopycover, cougars.steps.c.SPDF,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{disthighway.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(disthighway, cougars.steps.c.SPDF,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{distroad.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(distroad, cougars.steps.c.SPDF,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-
-
-
-
-
-\hlstd{cougars.steps.c.SPDF}\hlopt{$}\hlstd{ruggedness} \hlkwb{<-} \hlstd{ruggedness.extr[,}\hlnum{2}\hlstd{]}
-\hlcom{#cougars.steps.c.SPDF$landcover <- landcover.extr[,2]}
-\hlstd{cougars.steps.c.SPDF}\hlopt{$}\hlstd{landcover1} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(}
+\hlcom{# The landcover covariate comes coded in integers between 0 an 10 and is by default (mis)interpreted as an integer string. }
+\hlkwd{unique}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{])}
+\hlcom{# Re-classifying landcover:}
+\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{landcover} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(}
     \hlkwd{ifelse}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{]} \hlopt{==} \hlnum{0}\hlstd{,}\hlstr{"NA"}\hlstd{,}
     \hlkwd{ifelse}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{]} \hlopt{<} \hlnum{5}\hlstd{,} \hlstr{"forest"}\hlstd{,}
     \hlkwd{ifelse}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{]} \hlopt{<} \hlnum{8}\hlstd{,} \hlstr{"open"}\hlstd{,}\hlstr{"NA"}\hlstd{))))}
-\hlstd{cougars.steps.c.SPDF}\hlopt{$}\hlstd{canopycover} \hlkwb{<-} \hlstd{canopycover.extr[,}\hlnum{2}\hlstd{]}
-\hlstd{cougars.steps.c.SPDF}\hlopt{$}\hlstd{disthighway} \hlkwb{<-} \hlstd{disthighway.extr[,}\hlnum{2}\hlstd{]}
-\hlstd{cougars.steps.c.SPDF}\hlopt{$}\hlstd{distroad} \hlkwb{<-} \hlstd{distroad.extr[,}\hlnum{2}\hlstd{]}
-
-
-\hlkwd{head}\hlstd{(cougars.steps.c.SPDF)}
-
-\hlcom{#head(cougars.steps.Rugged)}
-\hlcom{#View(cougars.steps.Rugged)}
-
-\hlcom{#head(cougars.steps.c.Rugged)}
-\hlcom{#View(cougars.steps.c.Rugged)}
-
-
-\hlcom{#names(ruggedness)}
-\hlcom{#head(cougars)}
-\hlcom{#head(cougarsRugged)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+Now your final dataset should be ready for analysis. Examine it:  
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{head}\hlstd{(xmpl.steps.spdf)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -410,6 +418,33 @@ Peter is successfully doing this step!!
 \section{Acknowledgements}
 Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
 
+\section{Appendix / Literature}
 
+Session Info:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{verbatim}
+## R version 3.1.2 (2014-10-31)
+## Platform: x86_64-redhat-linux-gnu (64-bit)
+## 
+## locale:
+##  [1] LC_CTYPE=de_DE.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=de_DE.UTF-8        LC_COLLATE=de_DE.UTF-8    
+##  [5] LC_MONETARY=de_DE.UTF-8    LC_MESSAGES=de_DE.UTF-8   
+##  [7] LC_PAPER=de_DE.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+## [11] LC_MEASUREMENT=de_DE.UTF-8 LC_IDENTIFICATION=C       
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] knitr_1.7
+## 
+## loaded via a namespace (and not attached):
+## [1] evaluate_0.5.5 formatR_1.0    highr_0.4      stringr_0.6.2  tools_3.1.2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 
 \end{document}
