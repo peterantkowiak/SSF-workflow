@@ -163,7 +163,7 @@ adehabitatLT:::plotNAltraj(cougarsLTR)
 
 
 # create bursts -------------------------------------------------
-
+plotltr(cougarsLTR)
 plotltr(cougarsLTR, "dt/3600") # 1 hour intervals 
 plotltr(cougarsLTR, "dt/3600/3") # 3 hour intervals
 # converting the time lag between relocations into days and plotting
@@ -242,8 +242,8 @@ all.equal(bla, blo)
 # Preparing the raster data -----------------------------------------------
 
 
-#install.packages("RArcInfo")
-#require(RArcInfo)
+install.packages("RArcInfo")
+require(RArcInfo)
 require(raster)
 require(rgdal)
 
