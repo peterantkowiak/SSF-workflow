@@ -10,7 +10,8 @@
 \contentsline {subsection}{\numberline {2.6}Creating random steps}{8}{subsection.2.6}
 \contentsline {section}{\numberline {3}Processing spatial covariates}{9}{section.3}
 \contentsline {subsection}{\numberline {3.1}Load raster data (ESRI, *.tif, (*.shp))}{9}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Raster extraction}{10}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.2}Checking for collinearity}{10}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Raster extraction}{10}{subsection.3.3}
 \contentsline {section}{\numberline {4}Final SSF model}{11}{section.4}
 \contentsline {section}{\numberline {5}Acknowledgements}{11}{section.5}
 \contentsline {section}{\numberline {6}Appendix}{11}{section.6}

@@ -355,8 +355,6 @@ There are two options of cutting the trajectory depending on nextr. If it is set
 
 
 
-
-
 \subsection{Creating random steps}
 
 Given your final bursts of at least three positions (this is because for calculating random steps the angle from the point before but the distance to the point afterwards is used) you need to check for correletaion between angle and distance. In case your species tends to move long distances by turning in small angles (e.g. Cougars while searching for prey or wandering around) you want to pick the distance and the angle as pairs dependent on each other. If no correlation is found you can pick both variables independently.
@@ -367,7 +365,9 @@ AUTOCORRELATION ???
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): konnte Funktion "{}ld"{} nicht finden}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: adehabitatLT\\\#\# Loading required package: sp\\\#\# Loading required package: ade4\\\#\# Loading required package: adehabitatMA\\\#\# Loading required package: CircStats\\\#\# Loading required package: MASS\\\#\# Loading required package: boot}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in inherits(ltraj, "{}ltraj"{}): Objekt 'xmpl.cut' nicht gefunden}}\end{kframe}
 \end{knitrout}
 
 \begin{knitrout}
@@ -386,7 +386,7 @@ The plot shows a correleation of step length and turning angle and therefore the
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
 \hlstd{xmpl.steps} \hlkwb{<-} \hlkwd{rdSteps}\hlstd{(}\hlkwc{x} \hlstd{= xmpl.cut,} \hlkwc{nrs} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{simult} \hlstd{= T,} \hlkwc{rand.dis} \hlstd{=} \hlkwa{NULL}\hlstd{,}
-                      \hlkwc{dist.Max} \hlstd{=} \hlnum{Inf}\hlstd{,} \hlkwc{reproducibility} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{only.others} \hlstd{=} \hlnum{FALSE}\hlstd{)}
+                      \hlkwc{distMax} \hlstd{=} \hlnum{Inf}\hlstd{,} \hlkwc{reproducible} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{only.others} \hlstd{=} \hlnum{FALSE}\hlstd{)}
           \hlcom{# use simult = FALSE if your data is not correlated}
 \end{alltt}
 \end{kframe}
@@ -493,6 +493,8 @@ You can plot the data for a first overview. As this can take a while with large 
 \end{kframe}
 \end{knitrout}
 
+\subsection{Checking for collinearity}
+
 \subsection{Raster extraction}
 Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
 Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
@@ -516,7 +518,7 @@ Extracting the values from each raster layer:
 \end{alltt}
 \end{kframe}
 \end{knitrout}
-The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. df=T returns the result as a data frame and sp=F ensures that the output is not added to the original dataset right away. 
+The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. \texttt{df=T} returns the result as a data frame and \texttt{sp=F} ensures that the output is not added to the original dataset right away. 
 
 Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
 
@@ -582,10 +584,13 @@ Session Info:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.7
+## [1] adehabitatLT_0.3.16 CircStats_0.2-4     boot_1.3-13        
+## [4] MASS_7.3-35         adehabitatMA_0.3.8  ade4_1.6-2         
+## [7] sp_1.0-16           knitr_1.7          
 ## 
 ## loaded via a namespace (and not attached):
-## [1] evaluate_0.5.5 formatR_1.0    highr_0.4      stringr_0.6.2  tools_3.1.2
+## [1] evaluate_0.5.5  formatR_1.0     grid_3.1.2      highr_0.4      
+## [5] lattice_0.20-29 stringr_0.6.2   tools_3.1.2
 \end{verbatim}
 \end{kframe}
 \end{knitrout}

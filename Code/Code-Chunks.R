@@ -481,7 +481,7 @@ plot(allEffects(model1c.all))
 # Rescaling function ------------------------------------------
 
 cs. <- function(x) scale(x,scale=TRUE,center=TRUE) #to rescale your variable
-
+# use just scale instead
 
 model1rc = glmer(case ~ cs.(w001001) + (1|id/strata), data = cscR, family = binomial)
 model1rc.q = glmer(case ~ cs.(w001001) + I(cs.(w001001)^2)  + (1|id/strata), data = cscR, family = binomial)
@@ -497,6 +497,7 @@ summary(model1c.all.c)
 plot(allEffects(model1c.all.c))
 
 
+
 # quadratic
 # more parameters
 
@@ -509,11 +510,11 @@ plot(allEffects(model1c.all.c))
 install.packages("mclogit")
 require(mclogit)
 
-mc <- mclogit(cbind(case, strata) ~ rugged + landco + disthiway, data = cscR.all)
+mc <- mclogit(cbind(case, strata) ~ ruggedness + landcover + disthighway, data = cscR.all)
 
 summary(mc) 
 
-mc_quad <-  mclogit(cbind(case, strata) ~ landco + I(rugged^2)  + disthiway, data = cscR.all)
+mc_quad <-  mclogit(cbind(case, strata) ~ landcover + ruggedness + I(ruggedness^2)  + disthighway + I(disthighway^2) , data = cscR.all)
 summary(mc_quad) 
 
 # models give same results as the glmer:
@@ -529,5 +530,35 @@ summary(mclogit(
   cbind(resp,suburb)~distance+cost,
   data=Transport
 ))
+
+
+landcover
+ruggedness
+disthgw
+
+
+summary(mc_quad)
+# cscR.all$wrugg = exp(mc_quad$coefficients[2] * cscR.all$ruggedness  + 
+#                        mc_quad$coefficients[3] * cscR.all$ruggedness^2 + 
+#                        mc_quad$coefficients[4] * median(cscR.all$disthighway)
+#                      + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2)
+# plot(cscR.all$ruggedness,cscR.all$wrugg)
+
+#predictions for ruggedness (highw kept to median)
+mydata = data.frame(ruggedness=seq(0,200,1))
+mydata$wrugg = exp(mc_quad$coefficients[2] * mydata$ruggedness  + 
+                       mc_quad$coefficients[3] * mydata$ruggedness^2 + 
+                       mc_quad$coefficients[4] * median(cscR.all$disthighway)
+                     + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2)
+plot(mydata$ruggedness,mydata$wrugg,type="l")
+mydata$wrugg = exp(mc_quad$coefficients[2] * mydata$ruggedness  + 
+                     mc_quad$coefficients[3] * mydata$ruggedness^2 + 
+                     mc_quad$coefficients[4] * median(cscR.all$disthighway)
+                   + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2
+                   -3.838e-01)
+lines(mydata$ruggedness,mydata$wrugg,type="l",col="green")
+abline(h=1,lty=2,col="wheat4")
+
+
 
 

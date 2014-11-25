@@ -285,7 +285,7 @@ disthighway.extr <- extract(disthighway, xmpl.steps.spdf, method='simple', sp=F,
 distroad.extr <- extract(distroad, xmpl.steps.spdf, method='simple', sp=F, df=T)
 landcover.extr <- extract(landcover, xmpl.steps.spdf, method='simple', sp=F, df=T)
 @
-The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. df=T returns the result as a data frame and sp=F ensures that the output is not added to the original dataset right away. 
+The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. \texttt{df=T} returns the result as a data frame and \texttt{sp=F} ensures that the output is not added to the original dataset right away. 
 
 Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
 
