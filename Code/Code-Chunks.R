@@ -550,13 +550,13 @@ mydata$wrugg = exp(mc_quad$coefficients[2] * mydata$ruggedness  +
                        mc_quad$coefficients[3] * mydata$ruggedness^2 + 
                        mc_quad$coefficients[4] * median(cscR.all$disthighway)
                      + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2)
-plot(mydata$ruggedness,mydata$wrugg,type="l")
+plot(mydata$ruggedness,mydata$wrugg,type="l", lwd=2)
 mydata$wrugg = exp(mc_quad$coefficients[2] * mydata$ruggedness  + 
                      mc_quad$coefficients[3] * mydata$ruggedness^2 + 
                      mc_quad$coefficients[4] * median(cscR.all$disthighway)
                    + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2
                    -3.838e-01)
-lines(mydata$ruggedness,mydata$wrugg,type="l",col="green")
+lines(mydata$ruggedness,mydata$wrugg,type="l",col="green", lwd=2)
 abline(h=1,lty=2,col="wheat4")
 
 
