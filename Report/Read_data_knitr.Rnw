@@ -67,11 +67,6 @@ options(replace.assign=TRUE, width=90)
 In addition to Resources Selection Functions (RSF) a more detailed anlysis for telemetry data can be conducted by using Step Selection Function (SSF). The use of latter is providing answers to th actual selection of animals on their habitat rather than analysing the use of a habitat only. (DO WE WANT TO CITE, HERE FOR EXAMPLE Simone and friends). So far most of the SSF were done in GIS to use spatial data together with mathematics equations. However, more and more packages are provided in R and thus becomes a valuable alternative. \
 This tutorial provides an overview on how to implement SSF with R. The main package we will use in the following is the package \textbf{adehabitatLT}. All single steps that need to be taken care of are summarized in (Figure~\ref{fig:Flowchart}).\
 In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Latin name}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
-
-\[
-\displaystyle w(x) = exp(\beta\1 x1 + \beta\2 x\2 + ... + \beta\px\p)
-\]
-\
 Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
 
 
@@ -118,7 +113,6 @@ require(adehabitatHR)
 require(adehabitatHS)
 require(adehabitatLT)
 
-
 ## for i dont know
 
 #require(move)
@@ -127,30 +121,7 @@ require(adehabitatLT)
 #require(tkrplot)
 #require(raster)
 #require(sp)
-
 @
-
-
-
-\section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
-The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
-\begin{enumerate}
-\item{coordinates}
-\item{ID}
-\item{date and/or time}
-\item{...}
-\end{enumerate}
-
-
-
-\section{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
-
-\section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
- 
-
-\section{Compute random steps}
-
-The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
 \section{Spatial covariates}%----------------------------------------------------------------------------------------------------------------------------
 This section explains the use of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (probably ESRI (*.adf) or *.tif) and for time reasons already clipped to your area. How you can do this in R please read the GIS instructions from the other group ;)   
@@ -193,12 +164,11 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 \subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
 Peter is successfully doing this step!!
 
-<<<<<<< HEAD
 \section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
 The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
 \begin{enumerate}
-\item{ID}
 \item{coordinates}
+\item{ID}
 \item{date and/or time}
 \item{...}
 \end{enumerate}
@@ -208,41 +178,12 @@ The data for the analysis should be safed in a simple *.csv format. Depending on
 \section{Create a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
 
 \section{Create a ltraj object}%------------------------------------------------------------------------------------------------------
-
-
-\section{Creating Bursts}%
-
-For analysing the data, there might be the need to create "sub-bursts" within your trajectory. For example, if the individuals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your \texttt{ltraj} object into smaller burst according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class \texttt{ltraj} with the same attribute "id" to one unique burst. (c. Calenge) To find out if there are more missing values, you can plot the \texttt{ltraj} object. For that, you need to define the time interval you are looking at. 
-
-
-In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals).
-
-<<eval=FALSE>>=
-plotltr(xmpl.ltr, "dt/3600") 
-# time log 1 hour
-plotltr(xmpl.ltr, "dt/3600/3")
-# time log 3 hours
-@
-
-Because we want to keep relocations which are only a few minutes "wrong", we need a function which defines \texttt{dt}, which is the time interval between successive relocations (measured in seconds).
-
-<<eval=FALSE>>=
-foo = function(dt) {return(dt> (3800*3))} 
-@
-
-Then we split the object of class \texttt{ltraj} according to that function into smaller bursts. The bursts we had before applying this function still remain.
-
-<<eval=FALSE>>=
-xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
-@
-
+ 
 
 \section{Compute random steps}
 
 The function \textbf{rdSteps} removes the first and the last data point. That's what you want. 
 
-=======
->>>>>>> fbdcfe621d003f329a5c7d1fe40dce142ac0c74d
 \section{Final SSF model}
 
 

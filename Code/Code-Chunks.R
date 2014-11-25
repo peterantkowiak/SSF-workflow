@@ -292,8 +292,12 @@ disthighway.extr <- extract(disthighway, cougars.steps.c.SPDF, method='simple', 
 distroad.extr <- extract(distroad, cougars.steps.c.SPDF, method='simple', sp=F, df=T)
 
 
+
+
+
 cougars.steps.c.SPDF$ruggedness <- ruggedness.extr[,2]
-cougars.steps.c.SPDF$landcover <- landcover.extr[,2]
+#cougars.steps.c.SPDF$landcover <- landcover.extr[,2]
+cougars.steps.c.SPDF$landcover <- as.factor(ifelse(landcover.extr[,2] < 6,"forest","pasture"))         
 cougars.steps.c.SPDF$canopycover <- canopycover.extr[,2]
 cougars.steps.c.SPDF$disthighway <- disthighway.extr[,2]
 cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
@@ -301,12 +305,11 @@ cougars.steps.c.SPDF$distroad <- distroad.extr[,2]
   
 head(cougars.steps.c.SPDF)
 
-
 #head(cougars.steps.Rugged)
 #View(cougars.steps.Rugged)
 
-head(cougars.steps.c.Rugged)
-View(cougars.steps.c.Rugged)
+#head(cougars.steps.c.Rugged)
+#View(cougars.steps.c.Rugged)
 
 
 #names(ruggedness)
@@ -495,6 +498,30 @@ plot(allEffects(model1c.all.c))
 # model1 = glmer(response ~ ruggedness + canopycover + (1|ID/strata), cougars.final.DF,family = binomial)
 
 
+# Model mclogit -----------------------------------------------------------
 
+install.packages("mclogit")
+require(mclogit)
+
+mc <- mclogit(cbind(case, strata) ~ rugged + landco + disthiway, data = cscR.all)
+
+summary(mc) 
+
+mc_quad <-  mclogit(cbind(case, strata) ~ landco + I(rugged^2)  + disthiway, data = cscR.all)
+summary(mc_quad) 
+
+# models give same results as the glmer:
+# ruggedness is significant when quared, landcover is always significant
+
+# plot(allEffects(mc)) # how to plot??
+
+
+## example
+data(Transport)
+
+summary(mclogit(
+  cbind(resp,suburb)~distance+cost,
+  data=Transport
+))
 
 
