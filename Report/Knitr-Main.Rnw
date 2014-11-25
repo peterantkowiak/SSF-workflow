@@ -200,6 +200,7 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 \subsection{Extract coordinates for comparison of used and random points} %------------------------------------------------------------------------------------------------------
 Peter is successfully doing this step!!
 
+
 \section{Final SSF model}
 
 Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
