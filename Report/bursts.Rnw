@@ -1,0 +1,72 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
+
+\usepackage{caption}  			% provides commands for handling caption sizes etc.
+%\usepackage[a4paper, left=25mm, right=20mm, top=25mm, bottom=20mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
+
+\usepackage{etoolbox}    % for conditional evaluations!
+\usepackage[bottom]{footmisc}  % I love footnotes! And they should be down at the bottom of the page!
+\usepackage{graphicx}        % when using figures and alike
+\usepackage[hidelinks]{hyperref}		% for hyperreferences (links within the document: references, figures, tables, citations)
+
+\usepackage{euler}     % a math font, only for equations and alike; call BEFORE changing the main font; alternatives: mathptmx, fourier, 
+%\usepackage{gentium} % for a different font; you can also try: cantarell, charter, libertine, gentium, bera, ... http://tex.stackexchange.com/questions/59403/what-font-packages-are-installed-in-tex-live
+
+%------------------------------------------------------------------------------------------------------
+%------- text size settings --------------
+\setlength{\textwidth}{16cm}% 
+\setlength{\textheight}{25cm} %23 
+%(these values were used to fill the page more fully and thus reduce the number of pages!)
+\setlength{\topmargin}{-1.5cm} %0
+\setlength{\footskip}{1cm} %
+%\setlength{\hoffset}{0cm} %
+\setlength{\oddsidemargin}{1cm}%
+\setlength{\evensidemargin}{-.5cm}%
+\setlength{\parskip}{0cm} % Abstand zwischen Absätzen
+% ----------------------------------------------------------------
+\renewcommand{\textfraction}{0.1} % allows more space to graphics in float
+\renewcommand{\topfraction}{0.85}
+%\renewcommand{\bottomfraction}{0.65}
+\renewcommand{\floatpagefraction}{0.70}
+
+
+\begin{document}
+% \SweaveOpts{concordance=TRUE}
+
+
+<<setup, include=FALSE, cache=FALSE, echo=F>>=
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE, width=90)
+@
+
+
+
+\section{Creating Bursts}%
+
+For analysing the data, there might be the need to create "sub-bursts" within your trajectory. For example, if the individuals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your \texttt{ltraj} object into smaller burst according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class \texttt{ltraj} with the same attribute "id" to one unique burst. (c. Calenge) To find out if there are more missing values, you can plot the \texttt{ltraj} object. For that, you need to define the time interval you are looking at. 
+
+
+In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals).
+
+<<eval=FALSE>>=
+plotltr(xmpl.ltr, "dt/3600") 
+plotltr(xmpl.ltr, "dt/3600/3")
+@
+
+Because we want to keep relocations which are only a few minutes "wrong", we need a function which defines \texttt{dt}, which is the time interval between successive relocations (measured in seconds).
+
+<<eval=FALSE>>=
+foo = function(dt) {return(dt> (3800*3))} 
+@
+
+Then we split the object of class \texttt{ltraj} according to that function into smaller bursts. The bursts we had before applying this function still remain.
+
+<<eval=FALSE>>=
+xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
+@
+
+
+\end{document}
