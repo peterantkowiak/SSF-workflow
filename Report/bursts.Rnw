@@ -71,6 +71,5 @@ There are two options of cutting the trajectory depending on nextr. If it is set
 
 
 
-
  
 \end{document}
