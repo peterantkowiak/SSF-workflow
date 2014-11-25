@@ -21,8 +21,8 @@
 \setlength{\topmargin}{-1.5cm} %0
 \setlength{\footskip}{1cm} %
 %\setlength{\hoffset}{0cm} %
-\setlength{\oddsidemargin}{1cm}%
-\setlength{\evensidemargin}{-.5cm}%
+\setlength{\oddsidemargin}{0cm}%
+\setlength{\evensidemargin}{0cm}%
 \setlength{\parskip}{0cm} % Abstand zwischen Absätzen
 % ----------------------------------------------------------------
 \renewcommand{\textfraction}{0.1} % allows more space to graphics in float
@@ -65,6 +65,7 @@ options(replace.assign=TRUE, width=90)
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
 
+<<<<<<< HEAD
 In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed position as starting points. These alternative positions represent the available habitat beside observed positions. Finally, a comparison of spatial attributes of both, the available and the chosen locations, describes the habitat selection made by animals \cite{thurfjell2014applications}.\\
 So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS (www.spatialecology.com/gme/). However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but different ones provide helpful functions that perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}.\\
 
@@ -73,6 +74,16 @@ Figure~\ref{fig:Flowchart} provides an overview of necessary steps and potential
 
 
 In our tutorial we use telemetry data from Cougars/Mountain Lion (\textit{Puma concolor}) collected by Simone Ciuti\footnote{we might have to specify that and name and thank the institute.../collected/containing}. As spatial parameters x tables for ruggedness, slope, canopy cover etc. are available. Describe study area...\
+=======
+In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}).\\
+
+
+Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and potential options to conduct a SSF. This tutorial will guide you through each step and gives brief instructions on how to implement the functions and what to consider beforehand.
+To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
+We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. After loading the table into R you need to create an so-called \texttt{ltraj} object. This data class can now be further transformed by ... Random steps should only be calculated for equal time intervals. These can be defined by creating bursts. Each burst has an unique ID (often including an ID for the individual and the time stamp). While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
+
+
+>>>>>>> 7e996ed24050650938a643b93597870d6fa79fb8
 DO WE NEED A EQUATION??
 \[
 \displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
@@ -81,11 +92,12 @@ DO WE NEED A EQUATION??
 Why did we not use the data (Wildboar) prepared for the adehabitatLT package? - No information on details, metadata provided, it is hard to understand when to use which dataset and why.
 
 
+
 \begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
 % see also here: http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Captions
-\captionsetup{width=0.8\textwidth}
+\captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=0.8\textwidth]{Flowchart.pdf} %our perfect workflow!
+\includegraphics[width=1\textwidth]{Flowchart.pdf} %our perfect workflow!
 \caption{Conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the fucntion applied while the blue boxes provide the type of object or data. Following the arrows a step by step instruction is provided ...}
 \label{fig:Flowchart}
 \end{figure}
@@ -200,6 +212,7 @@ plot(distroad) # outcomment this if you just quickly want to run the script. Tak
 Peter is successfully doing this step!!
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 \section{Load telemetry data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
 The data for the analysis should be safed in a simple *.csv format. Depending on your analysis you have to include 
 \begin{enumerate}
@@ -252,8 +265,15 @@ The function \textbf{rdSteps} removes the first and the last data point. That's 
 
 =======
 >>>>>>> fbdcfe621d003f329a5c7d1fe40dce142ac0c74d
+=======
+
+>>>>>>> 7e996ed24050650938a643b93597870d6fa79fb8
 \section{Final SSF model}
 
+Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
+\[
+\displaystyle f(x) = (x - mean)/sd(x)
+\]
 
 \section{Acknowledgements}
 Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
