@@ -1,0 +1,75 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
+
+\usepackage{caption}  			% provides commands for handling caption sizes etc.
+%\usepackage[a4paper, left=25mm, right=20mm, top=25mm, bottom=20mm]{geometry}		 % to easily change margin widths: https://www.sharelatex.com/learn/Page_size_and_margins
+
+\usepackage{etoolbox}    % for conditional evaluations!
+\usepackage[bottom]{footmisc}  % I love footnotes! And they should be down at the bottom of the page!
+\usepackage{graphicx}        % when using figures and alike
+\usepackage[hidelinks]{hyperref}		% for hyperreferences (links within the document: references, figures, tables, citations)
+
+\usepackage{euler}     % a math font, only for equations and alike; call BEFORE changing the main font; alternatives: mathptmx, fourier, 
+%\usepackage{gentium} % for a different font; you can also try: cantarell, charter, libertine, gentium, bera, ... http://tex.stackexchange.com/questions/59403/what-font-packages-are-installed-in-tex-live
+
+%------------------------------------------------------------------------------------------------------
+%------- text size settings --------------
+\setlength{\textwidth}{16cm}% 
+\setlength{\textheight}{25cm} %23 
+%(these values were used to fill the page more fully and thus reduce the number of pages!)
+\setlength{\topmargin}{-1.5cm} %0
+\setlength{\footskip}{1cm} %
+%\setlength{\hoffset}{0cm} %
+\setlength{\oddsidemargin}{1cm}%
+\setlength{\evensidemargin}{-.5cm}%
+\setlength{\parskip}{0cm} % Abstand zwischen Absätzen
+% ----------------------------------------------------------------
+\renewcommand{\textfraction}{0.1} % allows more space to graphics in float
+\renewcommand{\topfraction}{0.85}
+%\renewcommand{\bottomfraction}{0.65}
+\renewcommand{\floatpagefraction}{0.70}
+
+
+\begin{document}
+% \SweaveOpts{concordance=TRUE}
+
+
+<<setup, include=FALSE, cache=FALSE, echo=F>>=
+library(knitr)
+# set global chunk options
+opts_chunk$set(fig.path='', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE, width=90)
+@
+
+
+
+\subsection{Testing for Autocorrelation}%
+
+To understand the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
+
+To test for autocorrelation, the ltraj object needs to be of type 1 or consist of constant time lags. As our time lags are not constant, we transform our trajectory into type 1 by using a simple \texttt{typeII2typeI} function.
+
+<<eval=FALSE>>=
+xmpl.ltr.t1 = typeII2typeI(xmpl.ltr)
+@
+
+The new format does not include any information concerning time and date:
+<<eval=FALSE>>=
+xmpl.ltr.t1
+@
+
+
+\subsubsection {Linear Parameters}
+
+To test the three linear parameters (\texttt{dist, dx, dy}), the independence test of Wald and Wolfowitz (1994) can be used. It tests the sequential autocorrelation in a vector. It can be implemented as \texttt{wawotest.ltraj} for each burst in a \texttt{ltraj} object. This function removes all NAs before running the test. \cite{Package2011}
+
+
+<<eval=FALSE>>=
+wawotest(xmpl.ltr.t1) 
+@
+
+To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. 
+
+ 
+\end{document}
