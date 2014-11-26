@@ -1,0 +1,11 @@
+######################
+
+
+.~lock.Flowchart.odg#
+
+*.tex
+*.log
+*.toc
+*.gz
+
+Thumbs.db
