@@ -44,7 +44,6 @@
 %------------------------------------------------------------------------------------------------------
 
 \begin{document}
-%\SweaveOpts{concordance=TRUE}
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
 library(knitr)

@@ -93,7 +93,6 @@
 %------------------------------------------------------------------------------------------------------
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
-%\SweaveOpts{concordance=TRUE}
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 
 
@@ -341,7 +340,7 @@ AUTOCORRELATION ???
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): konnte Funktion "{}ld"{} nicht finden}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): could not find function "{}ld"{}}}\end{kframe}
 \end{knitrout}
 
 \begin{knitrout}
@@ -351,7 +350,7 @@ AUTOCORRELATION ???
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in with(xmpl.cut.df, plot(dist, rel.angle)): Objekt 'xmpl.cut.df' nicht gefunden}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in with(xmpl.cut.df, plot(dist, rel.angle)): object 'xmpl.cut.df' not found}}\end{kframe}
 \end{knitrout}
 
 \noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply  \texttt{rdSteps}.  
@@ -376,7 +375,7 @@ All in all, \texttt{rdSteps} is very straight forward and computes a lot of usef
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): Objekt 'xmpl.steps' nicht gefunden}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): object 'xmpl.steps' not found}}\end{kframe}
 \end{knitrout}
 
 \noindent The table still includes your cat id, burst id, the rel.angle and dist of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" defines all 10 random steps and the one observed location, so you can later tell your function what to compare.  
@@ -401,7 +400,7 @@ Depending on your analysis you might want to compare only your observed position
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): Objekt 'xmpl.steps' nicht gefunden}}\end{kframe}
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): object 'xmpl.steps' not found}}\end{kframe}
 \end{knitrout}
 
 
@@ -544,22 +543,24 @@ Session Info:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{verbatim}
-## R version 3.1.2 (2014-10-31)
-## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## R version 3.1.1 (2014-07-10)
+## Platform: i386-w64-mingw32/i386 (32-bit)
 ## 
 ## locale:
-## [1] LC_COLLATE=German_Germany.1252  LC_CTYPE=German_Germany.1252   
-## [3] LC_MONETARY=German_Germany.1252 LC_NUMERIC=C                   
-## [5] LC_TIME=German_Germany.1252    
+## [1] LC_COLLATE=English_United Kingdom.1252 
+## [2] LC_CTYPE=English_United Kingdom.1252   
+## [3] LC_MONETARY=English_United Kingdom.1252
+## [4] LC_NUMERIC=C                           
+## [5] LC_TIME=English_United Kingdom.1252    
 ## 
 ## attached base packages:
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.8
+## [1] knitr_1.7
 ## 
 ## loaded via a namespace (and not attached):
-## [1] evaluate_0.5.5 formatR_1.0    highr_0.4      stringr_0.6.2  tools_3.1.2
+## [1] evaluate_0.5.5 formatR_1.0    highr_0.4      stringr_0.6.2  tools_3.1.1
 \end{verbatim}
 \end{kframe}
 \end{knitrout}
