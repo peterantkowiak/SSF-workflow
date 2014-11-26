@@ -390,25 +390,48 @@ head(xmpl.steps.spdf)
 
 \section{Final SSF Model}
 
-There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
+There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
+We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation
+\[
+\displaystyle mclogit(case, strata) ~ 
+ruggedness + ruggedness^2 + disthighway + disthighway^2 + distroad + distroad^2 + landcover, random=~1|id
+\]
+
+Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
 
 In a second step, we will use one of the fitted models to generate predictions and plot them.
 
 
-\subsection{mixed conditional logistic regression}
+\subsection{mixed conditional logistic regression}%---------------------------
+
 The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
 Here is how to implement it in R:
 
 <<>>=
-install.packages("mclogit")
-require(mclogit)
+library(mclogit)
+# Trasform dataset to a data frame
+xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
 
-mc <- mclogit(cbind(case, strata) ~ ruggedness + landcover + disthighway, ramdom=~1|id, data = cscR.all)
+# Recall the column names of the dataset:
+head(xmpl.steps.df)
 
-summary(mc) 
+#xmpl.steps.spdf$id <- as.integer(xmpl.steps.spdf$id)
 
-mc_quad <-  mclogit(cbind(case, strata) ~ landcover + ruggedness + I(ruggedness^2)  + disthighway + I(disthighway^2), ramdom=~1|id, data = cscR.all)
-summary(mc_quad) 
+# column "case" indicates whether a site was visited or not. "strata" indicates the burst number and "id" the individual animal.
+
+# The actual logistic model:
+xmpl.logit.fit <- 
+    mclogit(cbind(case, strata) ~ 
+    landcover +
+    ruggedness + I(ruggedness^2) + 
+    distroad + I(distroad^2),
+    data = xmpl.steps.df)
+ 
+
+#random=~1|id,
+#disthighway + I(disthighway^2),
+
+summary(xmpl.logit.fit)
 
 
 
@@ -418,7 +441,7 @@ pippo <- load("pippo.Rdata")
 # models give same results as the glmer:
 # ruggedness is significant when quared, landcover is always significant
 
-# plot(allEffects(mc)) # how to plot??
+#plot(allEffects(mc)) # how to plot??
 
 @
 
@@ -437,7 +460,8 @@ without mixed: pseudo-replication because replicates are not independent but rat
 
 
 
-\subsection{generalized linear mixed model}
+\subsection{generalized linear mixed model}%------------------------------
+
 family binomial (with a binomial distribution of error)
 nested random effect for ID and strata
 ...where the random effect takes the form of (1|id/strata).
@@ -445,24 +469,67 @@ nested random effect for ID and strata
 structure of pseudo replication: id, stratum
 
 
+<<>>=
+# Rescaling function ------------------------------------------
+
+cs. <- function(x) scale(x,scale=TRUE,center=TRUE) #to rescale your variable
+# use just scale instead
+
+model1rc = glmer(case ~ cs.(w001001) + (1|id/strata), data = cscR, family = binomial)
+model1rc.q = glmer(case ~ cs.(w001001) + I(cs.(w001001)^2)  + (1|id/strata), data = cscR, family = binomial)
+model1c.all.c = glmer(case ~ cs.(ruggedness) + landcover + cs.(canopycover) + cs.(disthighway) + cs.(distroad) + (1|id/strata), family = binomial, data=cscR.all)
+
+summary(model1rc)
+plot(allEffects(model1rc))
+
+summary(model1rc.q)
+plot(allEffects(model1rc.q))
+
+summary(model1c.all.c)
+plot(allEffects(model1c.all.c))
+
+
+save(pippo, file="pippo.Rdata")
+pippo <- load("pippo.Rdata")
+
+
+@
 
 
 
 <<>>=
 ##lmer
 
-
 library(lme4)
 
+head(xmpl.steps.df)
+
 # model 1
-csR <- as.data.frame(cougars.steps.Rugged)
-cscR <- as.data.frame(cougars.steps.c.Rugged)
 
-cscR.all <- as.data.frame(cougars.steps.c.SPDF)
+xmpl.glmm.fit <- glmer(case ~ 
+    landcover +
+    ruggedness + I(ruggedness^2) + 
+    distroad + I(distroad^2) + 
+    (1|id/strata),
+    family = binomial, data=xmpl.steps.df)
+                      
 
-model1 = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=csR)
-model1c = glmer(case ~ w001001 + (1|id/strata), family = binomial, data=cscR)
-model1c.all = glmer(case ~ ruggedness + landcover + canopycover + disthighway + distroad + (1|id/strata), family = binomial, data=cscR.all)
+# scaled covariates
+
+xmpl.glmm.fit <- glmer(case ~ 
+    landcover +
+    scale(ruggedness) + I((scale(ruggedness))^2) + 
+    scale(canopycover) + I((scale(canopycover))^2) +
+    scale(distroad) + I((scale(distroad))^2) + 
+    (1|id/strata),
+    family = binomial, data=xmpl.steps.df)
+
+
+summary(xmpl.glmm.fit)
+
+
+
+                      ruggedness + landcover + canopycover + disthighway + distroad + (1|id/strata), family = binomial, data=cscR.all)
 
 
 summary(model1)
@@ -494,31 +561,6 @@ Using the function \texttt{cs.} we get comparable values for each predictor. The
 \]
 
 
-<<>>=
-# Rescaling function ------------------------------------------
-
-cs. <- function(x) scale(x,scale=TRUE,center=TRUE) #to rescale your variable
-# use just scale instead
-
-model1rc = glmer(case ~ cs.(w001001) + (1|id/strata), data = cscR, family = binomial)
-model1rc.q = glmer(case ~ cs.(w001001) + I(cs.(w001001)^2)  + (1|id/strata), data = cscR, family = binomial)
-model1c.all.c = glmer(case ~ cs.(ruggedness) + landcover + cs.(canopycover) + cs.(disthighway) + cs.(distroad) + (1|id/strata), family = binomial, data=cscR.all)
-
-summary(model1rc)
-plot(allEffects(model1rc))
-
-summary(model1rc.q)
-plot(allEffects(model1rc.q))
-
-summary(model1c.all.c)
-plot(allEffects(model1c.all.c))
-
-
-save(pippo, file="pippo.Rdata")
-pippo <- load("pippo.Rdata")
-
-
-@
 
 
 
