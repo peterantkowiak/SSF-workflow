@@ -44,6 +44,7 @@
 %------------------------------------------------------------------------------------------------------
 
 \begin{document}
+
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
 library(knitr)
@@ -97,7 +98,7 @@ We will start with the \emph{Waypoint data} because these need to transformed a 
 
 Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
 
-<<eval=FALSE>>=
+<<>>=
 
 ## for implementing SSF
 
@@ -120,7 +121,7 @@ install.packages("rgdal")
 
 Loading packages:
 
-<<eval=FALSE>>=
+<<>>=
 
 require(hab)
 require(adehabitatMA)
@@ -162,9 +163,9 @@ Depending on your analysis you can include further values such as:
 
 
 \noindent Use the following commands to set your working directory and read the data:
-<<eval=FALSE>>=
-setwd("/your/working/directory")
-xmpl = read.csv("xmpl.csv", head=T)
+<<>>=
+setwd("P:/Henriette/BestPracticeR/SSF-workflow/Code")
+xmpl = read.csv("UTMsREDUCED.csv", head=T)
 @
 
 \noindent You can execute \texttt{head(xmpl)} and \texttt{str(xmpl)} to check, whether the data were successfully read.
@@ -174,10 +175,11 @@ xmpl = read.csv("xmpl.csv", head=T)
 \subsection{Creating a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
 The functions used along the rest of the toolchain can only process data that are stored as objects of class "SpatialPointsDataFrame". This object class stores the coordinates separately and can be created using the according function from package "sp". 
 
-<<eval=FALSE>>=
+<<>>=
 require(sp)
 
-xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")], data = xmpl)
+xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")],
+                                   data = xmpl)
 
 names(xmpl)
 @
@@ -194,26 +196,30 @@ The function \texttt{as.ltraj} requires at least three arguments to work:
 \end{enumerate}
 
 Both coordinates and animal id can easily be adopted from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and you therefore need to convert it first:
-<<eval=FALSE>>=
-date <- as.POSIXct(strptime(paste(xmpl.spdf$LMT_DATE, xmpl.spdf$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
+<<>>=
+date <- as.POSIXct(strptime(paste(xmpl.spdf$LMT_DATE, xmpl.spdf$LMT_TIME),
+                            "%d/%m/%Y  %H:%M:%S"))
 @
 It is necessary to combine date and time in one POSIXct value. If your dataset already features a POSIXct timestamp, you can skip this step.
 
 Now you can proceed and actually create the ltraj object by executing the following command:
-<<eval=FALSE>>=
-xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date, id = xmpl.spdf$cat) 
+<<>>=
+xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
+                           id = xmpl.spdf$cat) 
 @
 Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the "xmpl.spdf@coords" promt which works for any SPDF object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
 
 You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
-<<eval=FALSE>>=
+<<>>=
 str(xmpl.ltr)
 @
 When scrolling through the output you will first notice that it consists of 7 elements - the number of individuals in the example dataset. This is because \texttt{as.ltraj()} automatically splits the dataset into subsets one for each individual. We will refine these subsets in the next chapter. Furthermore, the ltraj contains information on the distances and turning angles between consecutive locations.
 To get a visual impression of your data you can plot the trajectory for all or for one particular animal:
-<<eval=FALSE>>=
+<<>>=
 plot(xmpl.ltr)
-unique(xmpl.spdf$cat) # prompts a list of all cat ID's. Choose one that you are interested in!
+unique(xmpl.spdf$cat) 
+    # prompts a list of all cat ID's. Choose one that you are interested in!
+
 plot(xmpl.ltr, id=10289)
 @
 
@@ -226,19 +232,19 @@ As described in the previous section, the relocations stored in the ltraj object
 
 In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals). "dt", the time between successive relocations is measured in seconds.
 
-<<eval=FALSE>>=
+<<>>=
 plotltr(xmpl.ltr, "dt/3600/3")
 @
 
 To cut our data at our desired interval, we need a function which defines "dt". Because we want to keep relocations which are only a few minutes "wrong", we added 10 extra minutes.
 
-<<eval=FALSE>>=
+<<>>=
 foo = function(dt) {return(dt> (3800*3))} 
 @
 
 Then we split the object of class ltraj into smaller bursts using \texttt{cutltraj} and the function above. The bursts we had before applying this function still remain.
 
-<<eval=FALSE>>=
+<<>>=
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
 
@@ -253,18 +259,19 @@ Before applying the function \texttt{rdSteps} you might want to check for correl
 To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
 AUTOCORRELATION ???
 
-<<echo=FALSE>>=
-
-xmpl.cut.df <- ld(xmpl.cut)  # ld creates a data frame you need for plotting
+<<>>=
+# ld is a quick way to create a data frame from an ltraj object
+xmpl.cut.df <- ld(xmpl.cut)  
+   
 @
 
-<<echo=TRUE>>=
+<<>>=
 with(xmpl.cut.df, plot(dist, rel.angle))
 @
 
 \noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply  \texttt{rdSteps}.  
 
-<<eval=FALSE>>=
+<<>>=
   
 xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,  
                       distMax = Inf, reproducible = TRUE, only.others = FALSE) 
@@ -274,14 +281,14 @@ xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,
 \noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from than set \texttt{only.others = TRUE}.
 All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
 
-<<echo=TRUE>>=
+<<>>=
 head(xmpl.steps)
 @
 
 \noindent The table still includes your cat id, burst id, the rel.angle and dist of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" defines all 10 random steps and the one observed location, so you can later tell your function what to compare.  
 Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. To do so you find the rel.angle and distance for each random point. Only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step ("dx" and "dy"). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
 
-<<eval=FALSE>>=
+<<>>=
 
 xmpl.steps$new_x <- xmpl.steps$x + xmpl.steps$dx
 xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
@@ -291,7 +298,7 @@ xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
 \noindent Thereby, the ???rst observed position will be overwritten as the ???rst random step. That is necessary because there is no random step to compare the ???rst observed position with (angle could not be calculated!). Also the last observed position will be lost for similar reasons (distance could not be calculated!). 
   
 \noindent After running this chapter you get your final SpatialPointDataFrame to use with the selection function.
-<<echo=TRUE>>=
+<<>>=
 head(xmpl.steps)
 @
 
