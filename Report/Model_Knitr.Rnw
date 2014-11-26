@@ -392,7 +392,7 @@ head(xmpl.steps.spdf)
 
 There are several options to analyze the generated data. 
 
-\subsection{}
+\subsection{mixed conditional logistic regression}
 
 
 
@@ -400,6 +400,20 @@ Using the function \texttt{cs.} we get comparable values for each predictor. The
 \[
 \displaystyle f(x) = (x - mean)/sd(x)
 \]
+
+
+
+
+\subsection{Predictions}
+
+
+\[
+  \displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
+  \]
+\
+
+
+
 
 \section{Acknowledgements}
 Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.

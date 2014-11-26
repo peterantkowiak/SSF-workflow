@@ -3,9 +3,9 @@
 
 .~lock.Flowchart.odg#
 
-.tex
-.log
-.toc
-.gz
+*.tex
+*.log
+*.toc
+*.gz
 
 Thumbs.db
