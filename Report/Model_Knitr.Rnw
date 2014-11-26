@@ -390,10 +390,9 @@ head(xmpl.steps.spdf)
 
 \section{Final SSF Model}
 
-There are several options to analyze the generated data. 
+There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
 
-they work similar
-
+In a second step, we will use one of the fitted models to generate predictions and plot them.
 
 
 \subsection{mixed conditional logistic regression}
