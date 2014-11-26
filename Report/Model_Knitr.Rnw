@@ -392,7 +392,28 @@ head(xmpl.steps.spdf)
 
 There are several options to analyze the generated data. 
 
+they work similar
+
+
+
 \subsection{mixed conditional logistic regression}
+
+conditional logistic regression - special case of (usually unconditional) logistic regression for matched observations
+
+strata + random effect for individual
+
+
+without mixed: pseudo-replication because replicates are not independent but rather linked e.g. by animal.
+
+
+
+
+\subsection{generalized linear mixed model}
+family binomial (with a binomial distribution of error)
+nested random effect for ID and strata
+...where the random effect takes the form of (1|id/strata).
+
+structure of pseudo replication: id, stratum
 
 
 
@@ -413,6 +434,7 @@ Using the function \texttt{cs.} we get comparable values for each predictor. The
 \
 
 
+Save Models!
 
 
 \section{Acknowledgements}
@@ -420,7 +442,7 @@ Don't forget to thank TeX and R and other opensource communities if you use thei
 
 Special thanks to \ding{164} \ding{170} Simone \ding{170}\ding{170}\ding{170} \ding{164}\ding{165}\ding{95}! You were our best team member! \ding{96}
 
-Save Models!
+
 
 \section{Appendix}
 

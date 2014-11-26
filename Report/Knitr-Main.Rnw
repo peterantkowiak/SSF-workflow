@@ -44,6 +44,7 @@
 %------------------------------------------------------------------------------------------------------
 
 \begin{document}
+
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
 library(knitr)
@@ -163,8 +164,8 @@ Depending on your analysis you can include further values such as:
 
 \noindent Use the following commands to set your working directory and read the data:
 <<eval=FALSE>>=
-setwd("/your/working/directory")
-xmpl = read.csv("xmpl.csv", head=T)
+setwd("P:/Henriette/BestPracticeR/SSF-workflow/Code")
+xmpl = read.csv("UTMsREDUCED", head=T)
 @
 
 \noindent You can execute \texttt{head(xmpl)} and \texttt{str(xmpl)} to check, whether the data were successfully read.
@@ -253,14 +254,26 @@ Before applying the function \texttt{rdSteps} you might want to check for correl
 To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
 AUTOCORRELATION ???
 
-<<echo=FALSE>>=
+<<>>=
 
 xmpl.cut.df <- ld(xmpl.cut)  # ld creates a data frame you need for plotting
 @
 
-<<echo=TRUE>>=
+<<>>=
 with(xmpl.cut.df, plot(dist, rel.angle))
 @
+
+<<>>=
+x1 <- runif(50)
+x2 <- 0.5 * x1 + rnorm(100) / 10
+# Our Linear Model from before
+y <- 2 + (2 * x1) + (.3 * x2) + rnorm(100)
+
+# Calculate the mean
+mean.y <- mean(y)
+@
+
+The mean of \(Y\) is \(\Sexpr{mean.y}\).
 
 \noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply  \texttt{rdSteps}.  
 
@@ -274,7 +287,7 @@ xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,
 \noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from than set \texttt{only.others = TRUE}.
 All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
 
-<<echo=TRUE>>=
+<<>>=
 head(xmpl.steps)
 @
 

@@ -510,11 +510,11 @@ plot(allEffects(model1c.all.c))
 install.packages("mclogit")
 require(mclogit)
 
-mc <- mclogit(cbind(case, strata) ~ ruggedness + landcover + disthighway, data = cscR.all)
+mc <- mclogit(cbind(case, strata) ~ ruggedness + landcover + disthighway, ramdom=~1|id, data = cscR.all)
 
 summary(mc) 
 
-mc_quad <-  mclogit(cbind(case, strata) ~ landcover + ruggedness + I(ruggedness^2)  + disthighway + I(disthighway^2) , data = cscR.all)
+mc_quad <-  mclogit(cbind(case, strata) ~ landcover + ruggedness + I(ruggedness^2)  + disthighway + I(disthighway^2), ramdom=~1|id, data = cscR.all)
 summary(mc_quad) 
 
 # models give same results as the glmer:
