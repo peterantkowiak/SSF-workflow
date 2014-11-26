@@ -56,7 +56,7 @@ options(replace.assign=TRUE, width=80)
 @
 
 
-\title{A tutorial for Step Selection Function}
+\title{A tutorial for implementing Step Selection Function in R}
 
 \author{P. Antkowiak\thanks{M.Sc. programme "GIS und Umweltmodellierung" at University of Freiburg} \and H. Tripke\thanks{M.Sc. programme "Wildlife, Biodiversity and Vegetation" at University of Freiburg} \and C. Wilhelm\thanks{M.Sc. programme "Wildlife, Biodiversity and Vegetation" at University of Freiburg}}
 % for more control, multiple affiliations, line breaks and alike, use the authblk package!!
@@ -82,12 +82,11 @@ To conduct a SSF using this tutorial we need you to store your initial data  in 
 We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of a change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
 
 
-\begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
-% see also here: http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Captions
+\begin{figure} 
 \captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=1\textwidth]{Flowchart.pdf} %our perfect workflow!
-\caption{Conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the fucntion applied while the blue boxes provide the type of object or data. Following the arrows a step by step instruction is provided ...}
+\includegraphics[width=1\textwidth]{Flowchart.pdf} % our perfect workflow!
+\caption{Stepwise conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the function applied while the blue boxes provide the type of object or data. In light grey optional steps are highlighted that are not implemented in this tutorial.}
 \label{fig:Flowchart}
 \end{figure}
 
@@ -98,7 +97,7 @@ We will start with the \emph{Waypoint data} because these need to transformed a 
 
 Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
 
-<<>>=
+<<echo=FALSE, warning=FALSE, message=FALSE>>=
 
 ## for implementing SSF
 
@@ -117,23 +116,30 @@ install.packages("move")
 install.packages("raster")
 install.packages("rgdal")
 
+# for analyzing the data
+install.packages("mclogit")
+install.packages("lme4")
+
 @
 
 Loading packages:
 
-<<>>=
+<<echo=FALSE, warning=FALSE, message=FALSE>>=
 
-require(hab)
-require(adehabitatMA)
-require(adehabitatHR)
-require(adehabitatHS)
-require(adehabitatLT)
+library(hab)
+library(adehabitatMA)
+library(adehabitatHR)
+library(adehabitatHS)
+library(adehabitatLT)
 
-require(sp)
-require(raster)
-#require(move)
-#require(rgdal)
-#require(tkrplot)
+library(sp)
+library(raster)
+#library(move)
+#library(rgdal)
+#library(tkrplot)
+
+library(mclogit)
+library(lme4)
 @
 
 
@@ -153,13 +159,13 @@ The data for the analysis should be saved in a simple *.csv file format. The tab
 \noindent Note that the coordinates need to be provided in the same coordinate system and spatial projection as the raster data.
 
 Depending on your analysis you can include further values such as:
-\begin{enumerate}
+\begin{itemize}
 \item{ID for each record}
 \item{GPS precision}
 \item{other recording parameters such as season}
 \item{temperature / elevation at the moment of record}
 \item{other values that might be of interest in the further analysis}
-\end{enumerate}
+\end{itemize}
 
 
 \noindent Use the following commands to set your working directory and read the data:
@@ -176,14 +182,15 @@ xmpl = read.csv("UTMsREDUCED.csv", head=T)
 The functions used along the rest of the toolchain can only process data that are stored as objects of class "SpatialPointsDataFrame". This object class stores the coordinates separately and can be created using the according function from package "sp". 
 
 <<>>=
-require(sp)
+library(sp)
 
 xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")],
                                    data = xmpl)
 
 names(xmpl)
 @
-In the "coords" argument of the function you should specify the coordinate vectors for your dataset. In our example, we simply assign the two coordinate columns of the example dataset, but you can read the coordinates from a separate file if you want.
+
+\noindent In the "coords" argument of the function you should specify the coordinate vectors for your dataset. In our example, we simply assign the two coordinate columns of the example dataset, but you can read the coordinates from a separate file if you want.
 
 
 \subsection{Creating an ltraj object}%------------------------------------------------------------------------------------------------------
@@ -195,60 +202,95 @@ The function \texttt{as.ltraj} requires at least three arguments to work:
 \item{"id" (the animal id)}
 \end{enumerate}
 
-Both coordinates and animal id can easily be adopted from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and you therefore need to convert it first:
+\noindent Both coordinates and animal id can easily be adopted from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and you therefore need to convert it first:
 <<>>=
 date <- as.POSIXct(strptime(paste(xmpl.spdf$LMT_DATE, xmpl.spdf$LMT_TIME),
                             "%d/%m/%Y  %H:%M:%S"))
 @
-It is necessary to combine date and time in one POSIXct value. If your dataset already features a POSIXct timestamp, you can skip this step.
+\noindent It is necessary to combine date and time in one POSIXct value. If your dataset already features a POSIXct timestamp, you can skip this step.
 
-Now you can proceed and actually create the ltraj object by executing the following command:
+\noindent Now you can proceed and actually create the ltraj object by executing the following command:
 <<>>=
 xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
                            id = xmpl.spdf$cat) 
 @
-Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the "xmpl.spdf@coords" promt which works for any SPDF object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
+\noindent Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the "xmpl.spdf@coords" promt which works for any SPDF object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
 
-You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
+\noindent You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
+
 <<>>=
 str(xmpl.ltr)
 @
-When scrolling through the output you will first notice that it consists of 7 elements - the number of individuals in the example dataset. This is because \texttt{as.ltraj()} automatically splits the dataset into subsets one for each individual. We will refine these subsets in the next chapter. Furthermore, the ltraj contains information on the distances and turning angles between consecutive locations.
+
+\noindent When scrolling through the output you will first notice that it consists of 7 elements - the number of individuals in the example dataset. This is because \texttt{as.ltraj()} automatically splits the dataset into subsets one for each individual. We will refine these subsets in the next chapter. Furthermore, the ltraj contains information on the distances and turning angles between consecutive locations.
 To get a visual impression of your data you can plot the trajectory for all or for one particular animal:
-<<>>=
+
+
+<<ltraj_plot, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(xmpl.ltr)
+@
+
+\begin{figure}
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{ltraj_plot.pdf}
+\caption{Visualization of the observed positions and the path from seven collared cougars.}
+\end{figure}
+
+
+<<>>=
 unique(xmpl.spdf$cat) 
     # prompts a list of all cat ID's. Choose one that you are interested in!
+@
 
+
+<<ind_plot, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(xmpl.ltr, id=10289)
 @
+
+\begin{figure}
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{ind_plot.pdf}
+\caption{Visualization of the observed positions and the path from only one individual.}
+\label{ind_plot}
+\end{figure}
 
 
 
 \subsection{Creating Bursts}%
 
-As described in the previous section, the relocations stored in the ltraj object are already devided into the different individuals. This partition is called a "burst". For analysing the data, there might be the need to create "sub-bursts" for each animal within your trajectory. For example, if the animals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably, each accumulation of relocations can be defined as a different burst. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your ltraj object into smaller bursts according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class "ltraj" with the same attribute "id" to one unique burst. To find out if there are more missing values, you can plot the ltraj object. For that, you need to define the time interval you are looking at. \cite{0.3.162014}
+As described in the previous section, the relocations stored in the ltraj object are already devided into the different individuals. This partition is called a "burst". For analysing the data, there might be the need to create "sub-bursts" for each animal within your trajectory. For example, if the animals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably, each accumulation of relocations can be defined as a different burst. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your ltraj object into smaller bursts according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class "ltraj" with the same attribute "id" to one unique burst. To find out if there are more missing values, you can plot the ltraj object. For that, you need to define the time interval you are looking at \cite{0.3.162014}.
 
 
 In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals). "dt", the time between successive relocations is measured in seconds.
 
-<<>>=
+<<time_seq, echo=TRUE, dev="pdf", fig.show="hide">>=
 plotltr(xmpl.ltr, "dt/3600/3")
 @
 
-To cut our data at our desired interval, we need a function which defines "dt". Because we want to keep relocations which are only a few minutes "wrong", we added 10 extra minutes.
+\begin{figure}
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{time_seq.pdf}
+\caption{For each individual the observations are plotted. The y-axis shows the time interval from one observation to the next. Observations at 1 mean they are no more than 3 hours apart.}
+\label{time_seq}
+\end{figure}
+
+
+\noindent To cut our data at our desired interval, we need a function which defines "dt". Because we want to keep relocations which are only a few minutes "wrong", we added 10 extra minutes.
 
 <<>>=
 foo = function(dt) {return(dt> (3800*3))} 
 @
 
-Then we split the object of class ltraj into smaller bursts using \texttt{cutltraj} and the function above. The bursts we had before applying this function still remain.
+\noindent Then we split the object of class ltraj into smaller bursts using \texttt{cutltraj} and the function above. The bursts we had before applying this function still remain.
 
 <<>>=
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
 
-There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
+\noindent There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
 
 
@@ -265,9 +307,19 @@ xmpl.cut.df <- ld(xmpl.cut)
    
 @
 
-<<>>=
-with(xmpl.cut.df, plot(dist, rel.angle))
+
+<<corr_1, echo=TRUE, dev="pdf", fig.show="hide">>=
+plot(xmpl.cut.df$dist, xmpl.cut.df$rel.angle)
 @
+
+\begin{figure}
+\captionsetup{width=0.4\textwidth}
+\centering
+\includegraphics[width=0.4\textwidth]{cor_1.pdf}
+\caption{Testing for correlation of the observed turning angle and step length. The y-axis shows the difference in the turning angle. The shape indicates a correlation for longer steps and doing only smal turning angles (around 1).}
+\label{cor_1}
+\end{figure}
+
 
 \noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply  \texttt{rdSteps}.  
 
@@ -285,8 +337,9 @@ All in all, \texttt{rdSteps} is very straight forward and computes a lot of usef
 head(xmpl.steps)
 @
 
-\noindent The table still includes your cat id, burst id, the rel.angle and dist of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" defines all 10 random steps and the one observed location, so you can later tell your function what to compare.  
-Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. To do so you find the rel.angle and distance for each random point. Only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step ("dx" and "dy"). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
+\noindent The table still includes your "cat id", "burst id", the "rel.angle" and "dist" of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" marks all 10 random steps and the one observed location, so you can later tell your function what to compare.  
+Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. For letter you need to implement more code because we did not use this option in our tutorial (see the grey box in Figure~\ref{fig:Flowchart}).\
+Only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step ("dx" and "dy"). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
 
 <<>>=
 
@@ -312,36 +365,42 @@ This section explains the handling of spatial parameters that will be tested for
 \subsection{Load Raster Data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
 
 With a simple function stored in the package \textbf{raster} you are able to upload any raster file into R. Examplarily we use raster data on the following parameters for the study area:
-\begin{enumerate}
+\begin{itemize}
 \item{ruggedness of the terrain}
 \item{land cover}
 \item{canopy cover}
 \item{distance to the nearest highway}
 \item{distance to the nearest road}
-\end{enumerate}
+\end{itemize}
 
 For reading the raster data, three packages are required:
-<<eval=FALSE>>=
-require(raster)
-require(rgdal)
-require(sp)
+<<>>=
+library(raster)
+library(rgdal)
+library(sp)
 @
 
 The source files for the raster data can be stored in the working directory or loaded by specifying the exact path. The \texttt{raster()} function is a universal and very powerful tool for loading all kinds of raster data. For reading shapefiles, use the \texttt{readOGR()} function. Below is an example of how to read a set of raster layers.
-<<eval=FALSE>>=
+<<>>=
 # First, make sure that your working directory is still the one specified earlier:
-getwd()
+# getwd()
 
-# Now read the layers:
-ruggedness <- raster("ruggedness.adf") 
-landcover <- raster("landcover.adf") 
-canopycover <- raster("canopycover.adf") 
-disthighway <- raster("disthighway.adf")
-distroad <- raster("distroad.adf")
-# In the ESRI directory system, raster layers are usually stored in files called "w001001.adf". For demonstration purpose, we copied and renamed them.
+# Now read the layers (in our case the layers are stored in a different place):
+ruggedness <- raster("P:/SSF PROJECT/
+                     NEW GIS LAYERS/tri1") 
+landcover <- raster("P:/SSF PROJECT/
+                    NEW GIS LAYERS/lc_30") 
+canopycover <- raster("P:/SSF PROJECT/
+                      NEW GIS LAYERS/cc_abmt") 
+disthighway <- raster("P:/SSF PROJECT/
+                      NEW GIS LAYERS/disthwy")
+distroad <- raster("P:/SSF PROJECT/
+                   NEW GIS LAYERS/distsmrd")
+
+# It is enough to load the whole folder were your *.adf files are stored in. The function raster() finds the needed files. 
 @
 
-You can plot the data for a first overview. As this can take a while with large datasets, outcomment the following chunk if you please!
+You can plot the data for a first overview. As this can take a while with large datasets, we outcommented the following chunk.
 <<eval=FALSE>>=
 plot(ruggedness) 
 plot(landcover)
@@ -356,23 +415,30 @@ plot(distroad)
 Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
 Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
 <<eval=FALSE>>= 
-xmpl.steps.spdf <- SpatialPointsDataFrame(coords = xmpl.steps[,c("new_x","new_y")], data = xmpl.steps)
+xmpl.steps.spdf <- SpatialPointsDataFrame(coords = 
+                                          xmpl.steps[,c("new_x","new_y")], 
+                                          data = xmpl.steps)
 @
 
 Extracting the values from each raster layer:
-<<eval=FALSE>>= 
-ruggedness.extr <- extract(ruggedness, xmpl.steps.spdf, method='simple', sp=F, df=T) 
-canopycover.extr <- extract(canopycover, xmpl.steps.spdf, method='simple', sp=F, df=T)
-disthighway.extr <- extract(disthighway, xmpl.steps.spdf, method='simple', sp=F, df=T)
-distroad.extr <- extract(distroad, xmpl.steps.spdf, method='simple', sp=F, df=T)
-landcover.extr <- extract(landcover, xmpl.steps.spdf, method='simple', sp=F, df=T)
+<<>>= 
+ruggedness.extr <- extract(ruggedness, xmpl.steps.spdf, 
+                           method='simple',sp=F, df=T) 
+canopycover.extr <- extract(canopycover, xmpl.steps.spdf, 
+                            method='simple', sp=F, df=T)
+disthighway.extr <- extract(disthighway, xmpl.steps.spdf, 
+                            method='simple', sp=F, df=T)
+distroad.extr <- extract(distroad, xmpl.steps.spdf, 
+                         method='simple', sp=F, df=T)
+landcover.extr <- extract(landcover, xmpl.steps.spdf, 
+                          method='simple', sp=F, df=T)
 @
 The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. \texttt{df=T} returns the result as a data frame and \texttt{sp=F} ensures that the output is not added to the original dataset right away. 
 
 Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
 
 This is the code for compiling the final dataset:
-<<eval=FALSE>>= 
+<<>>= 
 xmpl.steps.spdf$ruggedness <- ruggedness.extr[,2]
 xmpl.steps.spdf$canopycover <- canopycover.extr[,2]
 xmpl.steps.spdf$disthighway <- disthighway.extr[,2]
@@ -387,7 +453,7 @@ xmpl.steps.spdf$landcover <- as.factor(
     ifelse(landcover.extr[,2] < 8, "open","NA"))))   
 @
 Now your final dataset should be ready for analysis. Examine it:  
-<<eval=FALSE>>=
+<<>>=
 head(xmpl.steps.spdf)
 @
 
