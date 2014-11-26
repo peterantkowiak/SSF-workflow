@@ -2,6 +2,65 @@
 % Encoding: Cp1252
 
 
+@Manual{,
+  Title                    = {Mixed Effects Models in R - Analysing Ecological Data},
+  Author                   = {Zuur et al.},
+
+  Owner                    = {en.student},
+  Timestamp                = {2014.11.26}
+}
+
+@InProceedings{0.3.162014,
+  Title                    = {Package ‘adehabitatLT’},
+  Author                   = {Calenge, C.},
+  Year                     = {2014},
+
+  File                     = {:adehabitatLT2014.pdf:PDF},
+  Review                   = {Package ‘adehabitatLT’
+July 2, 2014
+
+Version 0.3.16
+
+Date 2013/06/02
+
+Depends R (>= 2.10.0), sp, methods, ade4, adehabitatMA, CircStats
+
+Suggests maptools, tkrplot, MASS
+
+Title Analysis of animal movements
+
+Author Clement Calenge, contributions from Stephane Dray and Manuela Royer
+
+Maintainer Clement Calenge <clement.calenge@oncfs.gouv.fr>
+
+Description A collection of tools for the analysis of animal movements
+
+License GPL (>= 2)
+
+URL https://trac.faunalia.it/animove/
+
+NeedsCompilation yes
+
+Repository CRAN
+
+Date/Publication 2014-06-02 14:41:34
+
+R topics documented:
+acfdist.ltraj . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+albatross . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+as.ltraj . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+bear . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+buffalo . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+burst . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+c.ltraj . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+capreochiz . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+capreotf . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+Chi . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+cutltraj . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+
+1}
+}
+
 @InProceedings{Package2011,
   Title                    = {Analysis of Animal Movements in R},
   Author                   = {Calenge, Clement},

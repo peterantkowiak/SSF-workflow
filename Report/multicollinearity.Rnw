@@ -32,6 +32,7 @@
 
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 % \SweaveOpts{concordance=TRUE}
 
 
@@ -46,25 +47,23 @@ options(replace.assign=TRUE, width=90)
 
 \subsection{Checking for Multicollinearity}%
 
-Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. We did....
+Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the spatial points data frame into a data frame. 
 
 
-NEEDS FURTHER MODIFICATION
+<<eval=TRUE>>=
+xmpl.steps.df = as.data.frame(xmpl.steps.spdf)
 
-<<eval=FALSE>>=
-# our data needs to be inserted!! example from R cours from simone!
+attach(xmpl.steps.df)
+ 
+Z = cbind(ruggedness,canopycover,disthighway,distroad,landcover) 
+
+cor(Z)
 
 
-source("Routines from Zuur et al 2009.r")  #loading useful functions
-attach(Birds)
-Z<-cbind(ABUND,L.AREA,L.DIST,L.LDIST,YR.ISOL,ALT,GRAZE)
-colnames(Z)<-c("ABUND","L.AREA","L.DIST","L.LDIST","YR.ISOL","ALT","GRAZE")
-pairs(Z, lower.panel=panel.smooth2,
+pairs(Z, lower.panel=panel.smooth,
       upper.panel=panel.cor,diag.panel=panel.hist)
+
 @
 
-
-
-
- 
+As you can see, the canopycover and the landcover are highly correlated. The value for the distance to roads and the distance to highways is very high as well. 
 \end{document}

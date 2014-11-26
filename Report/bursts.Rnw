@@ -44,12 +44,9 @@ options(replace.assign=TRUE, width=90)
 
 
 
-\section{Creating Bursts}%
+\subsection{Checking for Multicollinearity}%
 
-As described in the previous section, the relocations stored in the ltraj object are already devided into the different individuals. This partition is called a "burst". For analysing the data, there might be the need to create "sub-bursts" for each animal within your trajectory. For example, if the animals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably, each accumulation of relocations can be defined as a different burst. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your ltraj object into smaller bursts according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class "ltraj" with the same attribute "id" to one unique burst. To find out if there are more missing values, you can plot the ltraj object. For that, you need to define the time interval you are looking at. \cite{0.3.162014}
-
-
-In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals). "dt", the time between successive relocations is measured in seconds.
+Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. We did
 
 <<eval=FALSE>>=
 plotltr(xmpl.ltr, "dt/3600/3")
@@ -67,7 +64,20 @@ Then we split the object of class ltraj into smaller bursts using \texttt{cutltr
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
 
-There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
+
+\subsection{Testing for Autocorrelation}%
+
+To understand the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
+
+\subsubsection {Linear Parameters}
+
+To test the three linear parameters (\texttt{dist, dx, dy}), the independence test of Wald and Wolfowitz (1994) can be used. It tests the sequential autocorrelation in a vector. It can be implemented as \texttt{wawotest.ltraj} for each burst in a \texttt{ltraj} object. This function removes all NAs before running the test. \cite{Package2011}
+
+wawotest(xmpl.) ???? insert the right data!
+
+
+To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. 
+
 
 
 
