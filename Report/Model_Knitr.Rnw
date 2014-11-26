@@ -1,53 +1,4 @@
-\documentclass[11pt, a4paper]{article}\usepackage[]{graphicx}\usepackage[]{color}
-%% maxwidth is the original width if it is less than linewidth
-%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
-\makeatletter
-\def\maxwidth{ %
-  \ifdim\Gin@nat@width>\linewidth
-    \linewidth
-  \else
-    \Gin@nat@width
-  \fi
-}
-\makeatother
-
-\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
-\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
-\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
-\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
-\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
-\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
-\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
-\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
-\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
-\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
-
-\usepackage{framed}
-\makeatletter
-\newenvironment{kframe}{%
- \def\at@end@of@kframe{}%
- \ifinner\ifhmode%
-  \def\at@end@of@kframe{\end{minipage}}%
-  \begin{minipage}{\columnwidth}%
- \fi\fi%
- \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
- \colorbox{shadecolor}{##1}\hskip-\fboxsep
-     % There is no \\@totalrightmargin, so:
-     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
- \MakeFramed {\advance\hsize-\width
-   \@totalleftmargin\z@ \linewidth\hsize
-   \@setminipage}}%
- {\par\unskip\endMakeFramed%
- \at@end@of@kframe}
-\makeatother
-
-\definecolor{shadecolor}{rgb}{.97, .97, .97}
-\definecolor{messagecolor}{rgb}{0, 0, 0}
-\definecolor{warningcolor}{rgb}{1, 0, 1}
-\definecolor{errorcolor}{rgb}{1, 0, 0}
-\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
-
-\usepackage{alltt} %or article has only section and below, book and report also have chapter: http://texblog.org/2007/07/09/documentclassbook-report-article-or-letter/
+\documentclass[11pt, a4paper]{article} %or article has only section and below, book and report also have chapter: http://texblog.org/2007/07/09/documentclassbook-report-article-or-letter/
 
 \usepackage[utf8]{inputenc}  % use utf8 encoding of symbols such as umlaute for maximal compatibility across platforms
 
@@ -91,10 +42,18 @@
 
 %------------------------------------------------------------------------------------------------------
 %------------------------------------------------------------------------------------------------------
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\begin{document}
-%%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+%%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
+<<setup, include=FALSE, cache=FALSE, echo=F>>=
+library(knitr)
+# library(formatR)
+# set global chunk options
+opts_chunk$set(fig.path='', fig.align='center', fig.show='hold', tidy=FALSE)
+options(replace.assign=TRUE, width=80)
+#render_listings()
+@
 
 
 \title{A tutorial for Step Selection Function}
@@ -139,48 +98,43 @@ We will start with the \emph{Waypoint data} because these need to transformed a 
 
 Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{## for implementing SSF}
+<<eval=FALSE>>=
 
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatHR"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatHS"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatLT"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"adehabitatMA"}\hlstd{)}
-\hlcom{# Keep fingers off the "adehabitat" package! It is outdated.}
+## for implementing SSF
 
-\hlkwd{install.packages}\hlstd{(}\hlstr{"tkrplot"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"hab"}\hlstd{,} \hlkwc{repos} \hlstd{=} \hlstr{"http://ase-research.org/R/"}\hlstd{)} \hlcom{# regular}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"hab"}\hlstd{,} \hlkwc{repos} \hlstd{=} \hlstr{"http://ase-research.org/R/"}\hlstd{,} \hlkwc{type} \hlstd{=} \hlstr{"source"}\hlstd{)} \hlcom{# for self-compiling}
+install.packages("adehabitatHR")
+install.packages("adehabitatHS")
+install.packages("adehabitatLT")
+install.packages("adehabitatMA")
+# Keep fingers off the "adehabitat" package! It is outdated.
 
-\hlcom{# for handling raster data}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"move"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"raster"}\hlstd{)}
-\hlkwd{install.packages}\hlstd{(}\hlstr{"rgdal"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+install.packages("tkrplot")
+install.packages("hab", repos = "http://ase-research.org/R/") # regular
+install.packages("hab", repos = "http://ase-research.org/R/", type = "source") # for self-compiling
+
+# for handling raster data
+install.packages("move")
+install.packages("raster")
+install.packages("rgdal")
+
+@
 
 Loading packages:
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{require}\hlstd{(hab)}
-\hlkwd{require}\hlstd{(adehabitatMA)}
-\hlkwd{require}\hlstd{(adehabitatHR)}
-\hlkwd{require}\hlstd{(adehabitatHS)}
-\hlkwd{require}\hlstd{(adehabitatLT)}
+<<eval=FALSE>>=
 
-\hlkwd{require}\hlstd{(sp)}
-\hlkwd{require}\hlstd{(raster)}
-\hlcom{#require(move)}
-\hlcom{#require(rgdal)}
-\hlcom{#require(tkrplot)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+require(hab)
+require(adehabitatMA)
+require(adehabitatHR)
+require(adehabitatHS)
+require(adehabitatLT)
+
+require(sp)
+require(raster)
+#require(move)
+#require(rgdal)
+#require(tkrplot)
+@
 
 
 
@@ -209,14 +163,10 @@ Depending on your analysis you can include further values such as:
 
 
 \noindent Use the following commands to set your working directory and read the data:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{setwd}\hlstd{(}\hlstr{"/your/working/directory"}\hlstd{)}
-\hlstd{xmpl} \hlkwb{=} \hlkwd{read.csv}\hlstd{(}\hlstr{"xmpl.csv"}\hlstd{,} \hlkwc{head}\hlstd{=T)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+setwd("/your/working/directory")
+xmpl = read.csv("xmpl.csv", head=T)
+@
 
 \noindent You can execute \texttt{head(xmpl)} and \texttt{str(xmpl)} to check, whether the data were successfully read.
 
@@ -225,17 +175,13 @@ Depending on your analysis you can include further values such as:
 \subsection{Creating a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
 The functions used along the rest of the toolchain can only process data that are stored as objects of class "SpatialPointsDataFrame". This object class stores the coordinates separately and can be created using the according function from package "sp". 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{require}\hlstd{(sp)}
+<<eval=FALSE>>=
+require(sp)
 
-\hlstd{xmpl.spdf} \hlkwb{=} \hlkwd{SpatialPointsDataFrame}\hlstd{(}\hlkwc{coords} \hlstd{= xmpl[,}\hlkwd{c}\hlstd{(}\hlstr{"easting"}\hlstd{,}\hlstr{"northing"}\hlstd{)],} \hlkwc{data} \hlstd{= xmpl)}
+xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")], data = xmpl)
 
-\hlkwd{names}\hlstd{(xmpl)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+names(xmpl)
+@
 In the "coords" argument of the function you should specify the coordinate vectors for your dataset. In our example, we simply assign the two coordinate columns of the example dataset, but you can read the coordinates from a separate file if you want.
 
 
@@ -249,44 +195,28 @@ The function \texttt{as.ltraj} requires at least three arguments to work:
 \end{enumerate}
 
 Both coordinates and animal id can easily be adopted from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and you therefore need to convert it first:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{date} \hlkwb{<-} \hlkwd{as.POSIXct}\hlstd{(}\hlkwd{strptime}\hlstd{(}\hlkwd{paste}\hlstd{(xmpl.spdf}\hlopt{$}\hlstd{LMT_DATE, xmpl.spdf}\hlopt{$}\hlstd{LMT_TIME),} \hlstr{"%d/%m/%Y  %H:%M:%S"}\hlstd{))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+date <- as.POSIXct(strptime(paste(xmpl.spdf$LMT_DATE, xmpl.spdf$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
+@
 It is necessary to combine date and time in one POSIXct value. If your dataset already features a POSIXct timestamp, you can skip this step.
 
 Now you can proceed and actually create the ltraj object by executing the following command:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{xmpl.ltr} \hlkwb{<-} \hlstd{hab}\hlopt{:::}\hlkwd{as.ltraj}\hlstd{(}\hlkwc{xy} \hlstd{= xmpl.spdf}\hlopt{@}\hlkwc{coords}\hlstd{,} \hlkwc{date} \hlstd{= date,} \hlkwc{id} \hlstd{= xmpl.spdf}\hlopt{$}\hlstd{cat)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date, id = xmpl.spdf$cat) 
+@
 Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the "xmpl.spdf@coords" promt which works for any SPDF object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
 
 You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{str}\hlstd{(xmpl.ltr)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+str(xmpl.ltr)
+@
 When scrolling through the output you will first notice that it consists of 7 elements - the number of individuals in the example dataset. This is because \texttt{as.ltraj()} automatically splits the dataset into subsets one for each individual. We will refine these subsets in the next chapter. Furthermore, the ltraj contains information on the distances and turning angles between consecutive locations.
 To get a visual impression of your data you can plot the trajectory for all or for one particular animal:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{plot}\hlstd{(xmpl.ltr)}
-\hlkwd{unique}\hlstd{(xmpl.spdf}\hlopt{$}\hlstd{cat)} \hlcom{# prompts a list of all cat ID's. Choose one that you are interested in!}
-\hlkwd{plot}\hlstd{(xmpl.ltr,} \hlkwc{id}\hlstd{=}\hlnum{10289}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+plot(xmpl.ltr)
+unique(xmpl.spdf$cat) # prompts a list of all cat ID's. Choose one that you are interested in!
+plot(xmpl.ltr, id=10289)
+@
 
 
 
@@ -297,33 +227,21 @@ As described in the previous section, the relocations stored in the ltraj object
 
 In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals). "dt", the time between successive relocations is measured in seconds.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{plotltr}\hlstd{(xmpl.ltr,} \hlstr{"dt/3600/3"}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+plotltr(xmpl.ltr, "dt/3600/3")
+@
 
 To cut our data at our desired interval, we need a function which defines "dt". Because we want to keep relocations which are only a few minutes "wrong", we added 10 extra minutes.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{foo} \hlkwb{=} \hlkwa{function}\hlstd{(}\hlkwc{dt}\hlstd{) \{}\hlkwd{return}\hlstd{(dt}\hlopt{>} \hlstd{(}\hlnum{3800}\hlopt{*}\hlnum{3}\hlstd{))\}}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+foo = function(dt) {return(dt> (3800*3))} 
+@
 
 Then we split the object of class ltraj into smaller bursts using \texttt{cutltraj} and the function above. The bursts we had before applying this function still remain.
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{xmpl.cut} \hlkwb{<-} \hlkwd{cutltraj}\hlstd{(xmpl.ltr,} \hlstr{"foo(dt)"}\hlstd{,} \hlkwc{nextr} \hlstd{=} \hlnum{TRUE}\hlstd{)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
+@
 
 There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
@@ -336,72 +254,47 @@ Before applying the function \texttt{rdSteps} you might want to check for correl
 To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
 AUTOCORRELATION ???
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+<<echo=FALSE>>=
 
+xmpl.cut.df <- ld(xmpl.cut)  # ld creates a data frame you need for plotting
+@
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): could not find function "{}ld"{}}}\end{kframe}
-\end{knitrout}
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{with}\hlstd{(xmpl.cut.df,} \hlkwd{plot}\hlstd{(dist, rel.angle))}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in with(xmpl.cut.df, plot(dist, rel.angle)): object 'xmpl.cut.df' not found}}\end{kframe}
-\end{knitrout}
+<<echo=TRUE>>=
+with(xmpl.cut.df, plot(dist, rel.angle))
+@
 
 \noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply  \texttt{rdSteps}.  
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{xmpl.steps} \hlkwb{<-} \hlkwd{rdSteps}\hlstd{(}\hlkwc{x} \hlstd{= xmpl.cut,} \hlkwc{nrs} \hlstd{=} \hlnum{10}\hlstd{,} \hlkwc{simult} \hlstd{= T,} \hlkwc{rand.dis} \hlstd{=} \hlkwa{NULL}\hlstd{,}
-                      \hlkwc{distMax} \hlstd{=} \hlnum{Inf}\hlstd{,} \hlkwc{reproducible} \hlstd{=} \hlnum{TRUE}\hlstd{,} \hlkwc{only.others} \hlstd{=} \hlnum{FALSE}\hlstd{)}
-          \hlcom{# use simult = FALSE if your data is not correlated}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+  
+xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,  
+                      distMax = Inf, reproducible = TRUE, only.others = FALSE) 
+          # use simult = FALSE if your data is not correlated
+@
 
 \noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from than set \texttt{only.others = TRUE}.
 All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{head}\hlstd{(xmpl.steps)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): object 'xmpl.steps' not found}}\end{kframe}
-\end{knitrout}
+<<echo=TRUE>>=
+head(xmpl.steps)
+@
 
 \noindent The table still includes your cat id, burst id, the rel.angle and dist of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" defines all 10 random steps and the one observed location, so you can later tell your function what to compare.  
 Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. To do so you find the rel.angle and distance for each random point. Only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step ("dx" and "dy"). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
 
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{xmpl.steps}\hlopt{$}\hlstd{new_x} \hlkwb{<-} \hlstd{xmpl.steps}\hlopt{$}\hlstd{x} \hlopt{+} \hlstd{xmpl.steps}\hlopt{$}\hlstd{dx}
-\hlstd{xmpl.steps}\hlopt{$}\hlstd{new_y} \hlkwb{<-} \hlstd{xmpl.steps}\hlopt{$}\hlstd{y} \hlopt{+} \hlstd{xmpl.steps}\hlopt{$}\hlstd{dy}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+
+xmpl.steps$new_x <- xmpl.steps$x + xmpl.steps$dx
+xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
+
+@
 
 \noindent Thereby, the ???rst observed position will be overwritten as the ???rst random step. That is necessary because there is no random step to compare the ???rst observed position with (angle could not be calculated!). Also the last observed position will be lost for similar reasons (distance could not be calculated!). 
   
 \noindent After running this chapter you get your final SpatialPointDataFrame to use with the selection function.
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{head}\hlstd{(xmpl.steps)}
-\end{alltt}
-
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in head(xmpl.steps): object 'xmpl.steps' not found}}\end{kframe}
-\end{knitrout}
+<<echo=TRUE>>=
+head(xmpl.steps)
+@
 
 
 
@@ -422,113 +315,105 @@ With a simple function stored in the package \textbf{raster} you are able to upl
 \end{enumerate}
 
 For reading the raster data, three packages are required:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{require}\hlstd{(raster)}
-\hlkwd{require}\hlstd{(rgdal)}
-\hlkwd{require}\hlstd{(sp)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+require(raster)
+require(rgdal)
+require(sp)
+@
 
 The source files for the raster data can be stored in the working directory or loaded by specifying the exact path. The \texttt{raster()} function is a universal and very powerful tool for loading all kinds of raster data. For reading shapefiles, use the \texttt{readOGR()} function. Below is an example of how to read a set of raster layers.
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlcom{# First, make sure that your working directory is still the one specified earlier:}
-\hlkwd{getwd}\hlstd{()}
+<<eval=FALSE>>=
+# First, make sure that your working directory is still the one specified earlier:
+getwd()
 
-\hlcom{# Now read the layers:}
-\hlstd{ruggedness} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"ruggedness.adf"}\hlstd{)}
-\hlstd{landcover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"landcover.adf"}\hlstd{)}
-\hlstd{canopycover} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"canopycover.adf"}\hlstd{)}
-\hlstd{disthighway} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"disthighway.adf"}\hlstd{)}
-\hlstd{distroad} \hlkwb{<-} \hlkwd{raster}\hlstd{(}\hlstr{"distroad.adf"}\hlstd{)}
-\hlcom{# In the ESRI directory system, raster layers are usually stored in files called "w001001.adf". For demonstration purpose, we copied and renamed them.}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+# Now read the layers:
+ruggedness <- raster("ruggedness.adf") 
+landcover <- raster("landcover.adf") 
+canopycover <- raster("canopycover.adf") 
+disthighway <- raster("disthighway.adf")
+distroad <- raster("distroad.adf")
+# In the ESRI directory system, raster layers are usually stored in files called "w001001.adf". For demonstration purpose, we copied and renamed them.
+@
 
 You can plot the data for a first overview. As this can take a while with large datasets, outcomment the following chunk if you please!
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{plot}\hlstd{(ruggedness)}
-\hlkwd{plot}\hlstd{(landcover)}
-\hlkwd{plot}\hlstd{(canopycover)}
-\hlkwd{plot}\hlstd{(disthighway)}
-\hlkwd{plot}\hlstd{(distroad)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+plot(ruggedness) 
+plot(landcover)
+plot(canopycover)
+plot(disthighway)
+plot(distroad)
+@
 
 \subsection{Checking for Collinearity}
 
 \subsection{Raster Extraction}
 Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
 Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{xmpl.steps.spdf} \hlkwb{<-} \hlkwd{SpatialPointsDataFrame}\hlstd{(}\hlkwc{coords} \hlstd{= xmpl.steps[,}\hlkwd{c}\hlstd{(}\hlstr{"new_x"}\hlstd{,}\hlstr{"new_y"}\hlstd{)],} \hlkwc{data} \hlstd{= xmpl.steps)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>= 
+xmpl.steps.spdf <- SpatialPointsDataFrame(coords = xmpl.steps[,c("new_x","new_y")], data = xmpl.steps)
+@
 
 Extracting the values from each raster layer:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{ruggedness.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(ruggedness, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{canopycover.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(canopycover, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{disthighway.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(disthighway, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{distroad.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(distroad, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\hlstd{landcover.extr} \hlkwb{<-} \hlkwd{extract}\hlstd{(landcover, xmpl.steps.spdf,} \hlkwc{method}\hlstd{=}\hlstr{'simple'}\hlstd{,} \hlkwc{sp}\hlstd{=F,} \hlkwc{df}\hlstd{=T)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>= 
+ruggedness.extr <- extract(ruggedness, xmpl.steps.spdf, method='simple', sp=F, df=T) 
+canopycover.extr <- extract(canopycover, xmpl.steps.spdf, method='simple', sp=F, df=T)
+disthighway.extr <- extract(disthighway, xmpl.steps.spdf, method='simple', sp=F, df=T)
+distroad.extr <- extract(distroad, xmpl.steps.spdf, method='simple', sp=F, df=T)
+landcover.extr <- extract(landcover, xmpl.steps.spdf, method='simple', sp=F, df=T)
+@
 The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. \texttt{df=T} returns the result as a data frame and \texttt{sp=F} ensures that the output is not added to the original dataset right away. 
 
 Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
 
 This is the code for compiling the final dataset:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{ruggedness} \hlkwb{<-} \hlstd{ruggedness.extr[,}\hlnum{2}\hlstd{]}
-\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{canopycover} \hlkwb{<-} \hlstd{canopycover.extr[,}\hlnum{2}\hlstd{]}
-\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{disthighway} \hlkwb{<-} \hlstd{disthighway.extr[,}\hlnum{2}\hlstd{]}
-\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{distroad} \hlkwb{<-} \hlstd{distroad.extr[,}\hlnum{2}\hlstd{]}
+<<eval=FALSE>>= 
+xmpl.steps.spdf$ruggedness <- ruggedness.extr[,2]
+xmpl.steps.spdf$canopycover <- canopycover.extr[,2]
+xmpl.steps.spdf$disthighway <- disthighway.extr[,2]
+xmpl.steps.spdf$distroad <- distroad.extr[,2]
 
-\hlcom{# The landcover covariate comes coded in integers between 0 an 10 and is by default (mis)interpreted as an integer string. }
-\hlkwd{unique}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{])}
-\hlcom{# Re-classifying landcover:}
-\hlstd{xmpl.steps.spdf}\hlopt{$}\hlstd{landcover} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(}
-    \hlkwd{ifelse}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{]} \hlopt{==} \hlnum{0}\hlstd{,}\hlstr{"NA"}\hlstd{,}
-    \hlkwd{ifelse}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{]} \hlopt{<} \hlnum{5}\hlstd{,} \hlstr{"forest"}\hlstd{,}
-    \hlkwd{ifelse}\hlstd{(landcover.extr[,}\hlnum{2}\hlstd{]} \hlopt{<} \hlnum{8}\hlstd{,} \hlstr{"open"}\hlstd{,}\hlstr{"NA"}\hlstd{))))}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+# The landcover covariate comes coded in integers between 0 an 10 and is by default (mis)interpreted as an integer string. 
+unique(landcover.extr[,2])
+# Re-classifying landcover:
+xmpl.steps.spdf$landcover <- as.factor(
+    ifelse(landcover.extr[,2] == 0,"NA",
+    ifelse(landcover.extr[,2] < 5, "forest", 
+    ifelse(landcover.extr[,2] < 8, "open","NA"))))   
+@
 Now your final dataset should be ready for analysis. Examine it:  
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{head}\hlstd{(xmpl.steps.spdf)}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
+<<eval=FALSE>>=
+head(xmpl.steps.spdf)
+@
 
 
 
 
 \section{Final SSF Model}
 
+There are several options to analyze the generated data. 
+
+\subsection{mixed conditional logistic regression}
+
+
+
 Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
 \[
 \displaystyle f(x) = (x - mean)/sd(x)
 \]
+
+
+
+
+\subsection{Predictions}
+
+
+\[
+  \displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
+  \]
+\
+
+
+
 
 \section{Acknowledgements}
 Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
@@ -540,30 +425,9 @@ Save Models!
 \section{Appendix}
 
 Session Info:
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{verbatim}
-## R version 3.1.1 (2014-07-10)
-## Platform: i386-w64-mingw32/i386 (32-bit)
-## 
-## locale:
-## [1] LC_COLLATE=English_United Kingdom.1252 
-## [2] LC_CTYPE=English_United Kingdom.1252   
-## [3] LC_MONETARY=English_United Kingdom.1252
-## [4] LC_NUMERIC=C                           
-## [5] LC_TIME=English_United Kingdom.1252    
-## 
-## attached base packages:
-## [1] stats     graphics  grDevices utils     datasets  methods   base     
-## 
-## other attached packages:
-## [1] knitr_1.7
-## 
-## loaded via a namespace (and not attached):
-## [1] evaluate_0.5.5 formatR_1.0    highr_0.4      stringr_0.6.2  tools_3.1.1
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
+<<echo=FALSE>>=
+sessionInfo()
+@
 
 \bibliography{References}{}
 \bibliographystyle{plain}
