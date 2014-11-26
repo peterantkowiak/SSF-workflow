@@ -13,7 +13,7 @@ load("P:/Henriette/BestPracticeR/SSF-workflow/Report/xmpl.Rdata")
 load("P:/Henriette/BestPracticeR/SSF-workflow/Report/xmpl.spdf.Rdata")
 load("P:/Henriette/BestPracticeR/SSF-workflow/Report/xmpl.cut.Rdata")
 load("P:/Henriette/BestPracticeR/SSF-workflow/Report/xmpl.steps.Rdata")
-
+load("P:/Henriette/BestPracticeR/SSF-workflow/Report/xmpl.steps.spdf.Rdata")
 
 # loading all spatial covariates
 ruggedness <- raster("P:/SSF PROJECT/NEW GIS LAYERS/tri1") 
