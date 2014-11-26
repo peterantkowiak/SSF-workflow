@@ -51,7 +51,7 @@ To understand the movement patterns of an animal, is it essential to check the p
 To test for autocorrelation, the ltraj object needs to be of type 1 or consist of constant time lags. As our time lags are not constant, we transform our trajectory into type 1 by using a simple \texttt{typeII2typeI} function.
 
 <<eval=FALSE>>=
-xmpl.ltr.t1 = typeII2typeI(xmpl.ltr)
+xmpl.ltr.t1 = typeII2typeI(xmpl.cut)
 @
 
 The new format does not include any information concerning time and date:
@@ -69,7 +69,19 @@ To test the three linear parameters (\texttt{dist, dx, dy}), the independence te
 wawotest(xmpl.ltr.t1) 
 @
 
-To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. 
+The p-Values indicate the correlation but as our time lag is not constatnt, the interpretation does not make much sense. 
 
+To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. Here, the ltraj object needs to be regular. For further information check out the tutorial by Clement Calenge. \cite{Package2011}
+
+\subsubsection {Angles}
+
+testdist.ltraj(x, nrep = 999, alter = c("two-sided","less","greater"))
+
+and 
+
+testang.ltraj(x, which = c("absolute", "relative"),
+              nrep = 999, alter = c("two-sided","less","greater"))
+
+they are working but i dont know what exactly they simulate
  
 \end{document}
