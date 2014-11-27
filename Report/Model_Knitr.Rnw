@@ -135,6 +135,16 @@ plot(allEffects(xmpl.glmm.fit.sc))
 @
 
 
+<<eval=FALSE, echo=FALSE>>=
+# alternative Version of GLMM
+xmpl.glmm.fit.sc <- glmer(case ~ 
+                            landcover +
+                            scale(ruggedness) + I(scale(ruggedness)^2) + 
+                            scale(distroad) + I(scale(distroad)^2) + 
+                            (1|id) +(1|strata),
+                          family = binomial, data=xmpl.steps.df)
+@
+
 
 \subsection{mixed conditional logistic regression}%---------------------------
 
