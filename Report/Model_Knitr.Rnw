@@ -70,325 +70,9 @@ options(replace.assign=TRUE, width=80)
 
 \tableofcontents
 
-\newpage
 
-\section{Introduction}%------------------------------------------------------------------------------------------------------
 
-In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}).\\
-
-
-Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and potential options to conduct a SSF. This tutorial will guide you through each step and gives brief instructions on how to implement the functions and what to consider beforehand.
-To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
-We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of a change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
-
-
-\begin{figure} % you can (but shouldn't) use [h] behind {figure} to force the picture to go here. However, the idea of LaTeX is that it will do things for you, so too much interfering is not saving you any time.
-% see also here: http://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Captions
-\captionsetup{width=1\textwidth}
-\centering
-\includegraphics[width=1\textwidth]{Flowchart.pdf} %our perfect workflow!
-\caption{Conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the fucntion applied while the blue boxes provide the type of object or data. Following the arrows a step by step instruction is provided ...}
-\label{fig:Flowchart}
-\end{figure}
-
-
-
-
-\subsection{Installing and loading Packages}
-
-Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
-
-<<eval=FALSE>>=
-
-## for implementing SSF
-
-install.packages("adehabitatHR")
-install.packages("adehabitatHS")
-install.packages("adehabitatLT")
-install.packages("adehabitatMA")
-# Keep fingers off the "adehabitat" package! It is outdated.
-
-install.packages("tkrplot")
-install.packages("hab", repos = "http://ase-research.org/R/") # regular
-install.packages("hab", repos = "http://ase-research.org/R/", type = "source") # for self-compiling
-
-# for handling raster data
-install.packages("move")
-install.packages("raster")
-install.packages("rgdal")
-
-@
-
-Loading packages:
-
-<<eval=FALSE>>=
-
-require(hab)
-require(adehabitatMA)
-require(adehabitatHR)
-require(adehabitatHS)
-require(adehabitatLT)
-
-require(sp)
-require(raster)
-#require(move)
-#require(rgdal)
-#require(tkrplot)
-@
-
-
-
-\section{Processing the Waypoint Data (or telemetry?)}
-
-\subsection{Loading Waypoint Data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
-
-The data for the analysis should be saved in a simple *.csv file format. The table should have column headings in the first line and for each observation include at least the following values: 
-\begin{enumerate}
-\item{x-coordinate (easting)}
-\item{y-coordinate (northing)}
-\item{date and/or time}
-\item{animal ID}
-\end{enumerate}
-
-\noindent Note that the coordinates need to be provided in the same coordinate system and spatial projection as the raster data.
-
-Depending on your analysis you can include further values such as:
-\begin{enumerate}
-\item{ID for each record}
-\item{GPS precision}
-\item{other recording parameters such as season}
-\item{temperature / elevation at the moment of record}
-\item{other values that might be of interest in the further analysis}
-\end{enumerate}
-
-
-\noindent Use the following commands to set your working directory and read the data:
-<<eval=FALSE>>=
-setwd("/your/working/directory")
-xmpl = read.csv("xmpl.csv", head=T)
-@
-
-\noindent You can execute \texttt{head(xmpl)} and \texttt{str(xmpl)} to check, whether the data were successfully read.
-
-\subsection{Broken stick model}
-
-\subsection{Creating a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
-The functions used along the rest of the toolchain can only process data that are stored as objects of class "SpatialPointsDataFrame". This object class stores the coordinates separately and can be created using the according function from package "sp". 
-
-<<eval=FALSE>>=
-require(sp)
-
-xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")], data = xmpl)
-
-names(xmpl)
-@
-In the "coords" argument of the function you should specify the coordinate vectors for your dataset. In our example, we simply assign the two coordinate columns of the example dataset, but you can read the coordinates from a separate file if you want.
-
-
-\subsection{Creating an ltraj object}%------------------------------------------------------------------------------------------------------
-After storing the data in a Spatial Points Data Frame, you now need to connect the single points and turn them into a set of trajectories. This operation is carried out by the function \texttt{as.ltraj} from the "hab" package and produces objects of class "ltraj".
-The function \texttt{as.ltraj} requires at least three arguments to work:
-\begin{enumerate}
-\item{"xy" (x- and y- coordinates for each point)}
-\item{"date" (timestamp for each point, given as POSIXct class)}
-\item{"id" (the animal id)}
-\end{enumerate}
-
-Both coordinates and animal id can easily be adopted from the Spatial Points Data Frame. The timestamp however, is not stored in the required format yet and you therefore need to convert it first:
-<<eval=FALSE>>=
-date <- as.POSIXct(strptime(paste(xmpl.spdf$LMT_DATE, xmpl.spdf$LMT_TIME), "%d/%m/%Y  %H:%M:%S"))
-@
-It is necessary to combine date and time in one POSIXct value. If your dataset already features a POSIXct timestamp, you can skip this step.
-
-Now you can proceed and actually create the ltraj object by executing the following command:
-<<eval=FALSE>>=
-xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date, id = xmpl.spdf$cat) 
-@
-Two comments to the function as used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the "hab" package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the "xmpl.spdf@coords" promt which works for any SPDF object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called "cat". If this differs in your dataset and you should change the prompt accordingly.
-
-You now may want to have a closer look at the created ltraj object. Display its structure with by executing \texttt{str(xmpl.ltr)}. 
-<<eval=FALSE>>=
-str(xmpl.ltr)
-@
-When scrolling through the output you will first notice that it consists of 7 elements - the number of individuals in the example dataset. This is because \texttt{as.ltraj()} automatically splits the dataset into subsets one for each individual. We will refine these subsets in the next chapter. Furthermore, the ltraj contains information on the distances and turning angles between consecutive locations.
-To get a visual impression of your data you can plot the trajectory for all or for one particular animal:
-<<eval=FALSE>>=
-plot(xmpl.ltr)
-unique(xmpl.spdf$cat) # prompts a list of all cat ID's. Choose one that you are interested in!
-plot(xmpl.ltr, id=10289)
-@
-
-
-
-\subsection{Creating Bursts}%
-
-As described in the previous section, the relocations stored in the ltraj object are already devided into the different individuals. This partition is called a "burst". For analysing the data, there might be the need to create "sub-bursts" for each animal within your trajectory. For example, if the animals were only recorded during the day, the monitoring took place over two consecutive years or the time lag between the relocations differs remarkably, each accumulation of relocations can be defined as a different burst. Looking at those different parts seperately might be necessary for different reasons. The function \texttt{cutltraj} splits the given bursts of your ltraj object into smaller bursts according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class "ltraj" with the same attribute "id" to one unique burst. To find out if there are more missing values, you can plot the ltraj object. For that, you need to define the time interval you are looking at. \cite{0.3.162014}
-
-
-In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. We now want to split the existing bursts (individuals) into "sub-bursts" where the time lag is smaller than 3 hours. To get an impression about the time lags we plotted the different bursts (individuals). "dt", the time between successive relocations is measured in seconds.
-
-<<eval=FALSE>>=
-plotltr(xmpl.ltr, "dt/3600/3")
-@
-
-To cut our data at our desired interval, we need a function which defines "dt". Because we want to keep relocations which are only a few minutes "wrong", we added 10 extra minutes.
-
-<<eval=FALSE>>=
-foo = function(dt) {return(dt> (3800*3))} 
-@
-
-Then we split the object of class ltraj into smaller bursts using \texttt{cutltraj} and the function above. The bursts we had before applying this function still remain.
-
-<<eval=FALSE>>=
-xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
-@
-
-There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
-
-
-
-\subsection{Creating Random Steps}
-
-Given your final bursts we now randomly draw angle and distance from your observed data to get random steps. The angle is taken from the observed position before your starting point of the random step while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain of three observed positions. 
-Before applying the function \texttt{rdSteps} you might want to check for correletaion between turning angle and distance. In case your individuals tend to move long distances by turning only in small angles (e.g. a species migrating) but stop for several days for feeding you want to pick the distance and the angle as pairs. If no correlation is found you can pick both variables independently.
-To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
-AUTOCORRELATION ???
-
-<<echo=FALSE>>=
-
-xmpl.cut.df <- ld(xmpl.cut)  # ld creates a data frame you need for plotting
-@
-
-<<echo=TRUE>>=
-with(xmpl.cut.df, plot(dist, rel.angle))
-@
-
-\noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply  \texttt{rdSteps}.  
-
-<<eval=FALSE>>=
-  
-xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,  
-                      distMax = Inf, reproducible = TRUE, only.others = FALSE) 
-          # use simult = FALSE if your data is not correlated
-@
-
-\noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from than set \texttt{only.others = TRUE}.
-All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
-
-<<echo=TRUE>>=
-head(xmpl.steps)
-@
-
-\noindent The table still includes your cat id, burst id, the rel.angle and dist of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" defines all 10 random steps and the one observed location, so you can later tell your function what to compare.  
-Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. To do so you find the rel.angle and distance for each random point. Only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step ("dx" and "dy"). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
-
-<<eval=FALSE>>=
-
-xmpl.steps$new_x <- xmpl.steps$x + xmpl.steps$dx
-xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
-
-@
-
-\noindent Thereby, the ???rst observed position will be overwritten as the ???rst random step. That is necessary because there is no random step to compare the ???rst observed position with (angle could not be calculated!). Also the last observed position will be lost for similar reasons (distance could not be calculated!). 
-  
-\noindent After running this chapter you get your final SpatialPointDataFrame to use with the selection function.
-<<echo=TRUE>>=
-head(xmpl.steps)
-@
-
-
-
-
-
-\section{Processing Spatial Covariates}%----------------------------------------------------------------------------------------------------------------------------
-This section explains the handling of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (ESRI *.adf or georeferenced *.tif). These should have the same coordinate system as your telemetry data and should (for time reasons) already be clipped to your study area and. For instructions how to do this in R, please read the GIS instructions from the other group ;)   
-
-\subsection{Load Raster Data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
-
-With a simple function stored in the package \textbf{raster} you are able to upload any raster file into R. Examplarily we use raster data on the following parameters for the study area:
-\begin{enumerate}
-\item{ruggedness of the terrain}
-\item{land cover}
-\item{canopy cover}
-\item{distance to the nearest highway}
-\item{distance to the nearest road}
-\end{enumerate}
-
-For reading the raster data, three packages are required:
-<<eval=FALSE>>=
-require(raster)
-require(rgdal)
-require(sp)
-@
-
-The source files for the raster data can be stored in the working directory or loaded by specifying the exact path. The \texttt{raster()} function is a universal and very powerful tool for loading all kinds of raster data. For reading shapefiles, use the \texttt{readOGR()} function. Below is an example of how to read a set of raster layers.
-<<eval=FALSE>>=
-# First, make sure that your working directory is still the one specified earlier:
-getwd()
-
-# Now read the layers:
-ruggedness <- raster("ruggedness.adf") 
-landcover <- raster("landcover.adf") 
-canopycover <- raster("canopycover.adf") 
-disthighway <- raster("disthighway.adf")
-distroad <- raster("distroad.adf")
-# In the ESRI directory system, raster layers are usually stored in files called "w001001.adf". For demonstration purpose, we copied and renamed them.
-@
-
-You can plot the data for a first overview. As this can take a while with large datasets, outcomment the following chunk if you please!
-<<eval=FALSE>>=
-plot(ruggedness) 
-plot(landcover)
-plot(canopycover)
-plot(disthighway)
-plot(distroad)
-@
-
-\subsection{Checking for Collinearity}
-
-\subsection{Raster Extraction}
-Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
-Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
-<<eval=FALSE>>= 
-xmpl.steps.spdf <- SpatialPointsDataFrame(coords = xmpl.steps[,c("new_x","new_y")], data = xmpl.steps)
-@
-
-Extracting the values from each raster layer:
-<<eval=FALSE>>= 
-ruggedness.extr <- extract(ruggedness, xmpl.steps.spdf, method='simple', sp=F, df=T) 
-canopycover.extr <- extract(canopycover, xmpl.steps.spdf, method='simple', sp=F, df=T)
-disthighway.extr <- extract(disthighway, xmpl.steps.spdf, method='simple', sp=F, df=T)
-distroad.extr <- extract(distroad, xmpl.steps.spdf, method='simple', sp=F, df=T)
-landcover.extr <- extract(landcover, xmpl.steps.spdf, method='simple', sp=F, df=T)
-@
-The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. \texttt{df=T} returns the result as a data frame and \texttt{sp=F} ensures that the output is not added to the original dataset right away. 
-
-Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
-
-This is the code for compiling the final dataset:
-<<eval=FALSE>>= 
-xmpl.steps.spdf$ruggedness <- ruggedness.extr[,2]
-xmpl.steps.spdf$canopycover <- canopycover.extr[,2]
-xmpl.steps.spdf$disthighway <- disthighway.extr[,2]
-xmpl.steps.spdf$distroad <- distroad.extr[,2]
-
-# The landcover covariate comes coded in integers between 0 an 10 and is by default (mis)interpreted as an integer string. 
-unique(landcover.extr[,2])
-# Re-classifying landcover:
-xmpl.steps.spdf$landcover <- as.factor(
-    ifelse(landcover.extr[,2] == 0,"NA",
-    ifelse(landcover.extr[,2] < 5, "forest", 
-    ifelse(landcover.extr[,2] < 8, "open","NA"))))   
-@
-Now your final dataset should be ready for analysis. Examine it:  
-<<eval=FALSE>>=
-head(xmpl.steps.spdf)
-@
-
-
-
-
-\section{Final SSF Model}
+\section{NEW - Final SSF Model - NEW}
 
 There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
 We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation:
@@ -402,73 +86,6 @@ Both models should produce rather similar outputs. Certainly, you are free to im
 In a second step, we will use one of the fitted models to generate predictions and plot them.
 
 
-\subsection{mixed conditional logistic regression}%---------------------------
-
-The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
-Here is how to implement it in R:
-
-<<>>=
-library(mclogit)
-# Trasform dataset to a data frame
-xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
-
-# Recall the column names of the dataset:
-head(xmpl.steps.df)
-
-#xmpl.steps.spdf$id <- as.integer(xmpl.steps.spdf$id)
-
-# column "case" indicates whether a site was visited or not. "strata" indicates the burst number and "id" the individual animal.
-
-# The actual logistic model:
-xmpl.logit.fit <- 
-    mclogit(cbind(case, strata) ~ 
-    landcover +
-    ruggedness + I(ruggedness^2) + 
-    distroad + I(distroad^2),
-    data = xmpl.steps.df)
- 
-
-#random=~1|id,
-#disthighway + I(disthighway^2),
-
-summary(xmpl.logit.fit)
-
-
-
-xmpl.logit.fit <- 
-    mclogit(cbind(case, strata) ~ 
-    landcover +
-    scale(ruggedness) + I(scale(ruggedness)^2) + 
-    scale(distroad) + I(scale(distroad)^2),
-    data = xmpl.steps.df)
-
-
-
-save(pippo, file="pippo.Rdata")
-pippo <- load("pippo.Rdata")
-
-# models give same results as the glmer:
-# ruggedness is significant when quared, landcover is always significant
-library(effects)
-plot(allEffects(xmpl.logit.fit)) # how to plot??
-
-@
-
-
-
-The mixed conditional logistic regression extends the usually unconditional logistic regression and adapts it for matched observations.
-
-
-conditional logistic regression - special case of (usually unconditional) logistic regression for matched observations
-
-strata + random effect for individual
-
-
-without mixed: pseudo-replication because replicates are not independent but rather linked e.g. by animal.
-
-
-
-
 \subsection{generalized linear mixed model}%------------------------------
 
 family binomial (with a binomial distribution of error)
@@ -479,16 +96,7 @@ structure of pseudo replication: id, stratum
 
 
 
-<<>>=
-##lmer
-
-library(lme4)
-library(effects)
-
-
-head(xmpl.steps.df)
-
-# model 1
+<<echo=TRUE, eval=FALSE>>=
 
 xmpl.glmm.fit <- glmer(case ~ 
     landcover +
@@ -500,15 +108,17 @@ xmpl.glmm.fit <- glmer(case ~
 summary(xmpl.glmm.fit)
 
 @
-
-
-Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
+The model does not run and we get error messages suggesting us to scale the variables. 
+Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
 \[
-\displaystyle f(x) = (x - mean)/sd(x)
+\displaystyle f(x) = (x - mean)/SD(x)
 \]
 
-# scaled covariates
-<<>>=
+
+<<echo=TRUE, eval=TRUE>>=
+
+library(lme4)
+library(effects)
 
 xmpl.glmm.fit.sc <- glmer(case ~ 
     landcover +
@@ -519,104 +129,142 @@ xmpl.glmm.fit.sc <- glmer(case ~
 
 
 summary(xmpl.glmm.fit.sc)
+
 plot(allEffects(xmpl.glmm.fit.sc))
-
-
-
-## model1c less significant than model1. why?
-# - loss of data points
-# - linear instead of quadratic term?
-# - average step length too small?
-
-
-save(pippo, file="pippo.Rdata")
-pippo <- load("pippo.Rdata")
-
 
 @
 
+
+
+\subsection{mixed conditional logistic regression}%---------------------------
+
+The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
+Here is how to implement it in R:
+
+<<>>=
+library(mclogit)
+# Trasform dataset to a data frame
+xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
+
+# Recall the column names of the dataset:
+#head(xmpl.steps.df)
+
+#xmpl.steps.spdf$id <- as.integer(xmpl.steps.spdf$id)
+
+# column "case" indicates whether a site was visited or not. "strata" indicates the burst number and "id" the individual animal.
+
+# The actual logistic model:
+xmpl.logit.fit <- 
+    mclogit(cbind(case, strata) ~ 
+    landcover +
+    ruggedness + I(ruggedness^2) + 
+    distroad + I(distroad^2), random=~1|id,
+    data = xmpl.steps.df, start.theta=1000)
+ 
+## when including random effects we run into problems. We get the error message that the data do not have enough residual variance.
+
+#random=~1|id,
+#disthighway + I(disthighway^2),
+
+summary(xmpl.logit.fit)
+
+@
 
 
 \subsection{Predictions}
 
+Formula
 
 \[
   \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
   \]
-\
 
 
+\subsubsection{Predictions for GLMM}
+
+
+-----------------PREDICTIONS FOR GLMM-------------------
 <<>>=
-library(psych)
+# predictions for glmm
+
+#plot(predict(xmpl.glmm.fit.sc, type="response"))
 summary(xmpl.glmm.fit.sc)
 
-#predictions for ruggedness (highw kept to median)
-summary(xmpl.steps.df$ruggedness)
-mydata = data.frame(ruggedness=seq(0,205,1))
-mydata$wrugg = exp(
-              xmpl.glmm.fit.sc@beta[1] +
-              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness  + 
-              xmpl.glmm.fit.sc@beta[5] * mydata$ruggedness^2 + 
-              xmpl.glmm.fit.sc@beta[6] * median(xmpl.steps.df$distroad) + 
-              xmpl.glmm.fit.sc@beta[7] * (median(xmpl.steps.df$distroad))^2)
+mean(xmpl.steps.df$ruggedness)
+sd(xmpl.steps.df$ruggedness)
 
-plot(mydata$ruggedness, mydata$wrugg, type="l", col="darkgreen", lwd=2)
+summary(scale(xmpl.steps.df$ruggedness))
 
-mydata$wrugg = exp(mc_quad$coefficients[1] + mc_quad$coefficients[3] +
-                      mc_quad$coefficients[2] * mydata$ruggedness  + 
-                      mc_quad$coefficients[3] * mydata$ruggedness^2 + 
-                      mc_quad$coefficients[4] * median(cscR.all$distroad) +
-                      mc_quad$coefficients[5] * (median(cscR.all$distroad))^2)
-lines(mydata$ruggedness,mydata$wrugg,type="l",col="green", lwd=2)
-abline(h=1,lty=2,col="wheat4")
+rm(mydata)
+mydata = data.frame(ruggedness=seq(-1.5,15,0.1))
+#mydata = data.frame(ruggedness=scale(xmpl.steps.df$ruggedness))
+
+mydata$wruggforest = exp(              
+              xmpl.glmm.fit.sc@beta[3] * mydata$ruggedness  + 
+              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness^2 + 
+              xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
+              xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
+
+mydata$wruggopen = exp(
+              xmpl.glmm.fit.sc@beta[2] +
+              xmpl.glmm.fit.sc@beta[3] * mydata$ruggedness  + 
+              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness^2 + 
+              xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
+              xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
 
 
-mydata = data.frame(disthighway=seq(0,27000,100))
-mydata$whighw = exp(mc_quad$coefficients[4] * mydata$disthighway  + 
-                     mc_quad$coefficients[5] * mydata$disthighway^2 + 
-                     mc_quad$coefficients[2] * median(cscR.all$ruggedness)
-                   + mc_quad$coefficients[3] * (median(cscR.all$ruggedness))^2)
-plot(mydata$disthighway,mydata$whighw,type="l", lwd=2)
+#plot(mydata$ruggedness, mydata$wruggforest, type="l", col="darkgreen", lwd=2)
+#lines(mydata$ruggedness, mydata$wruggopen, type="l", col="green", lwd=2)
+
+## rescaling
+
+
+mydata$ruggednessResc <- (mydata$ruggedness * sd(xmpl.steps.df$ruggedness) + mean(xmpl.steps.df$ruggedness))
+
+
+#head(mydata)
+#str(mydata)
+#mydata$ruggednessResc
+
+plot(mydata$ruggednessResc, mydata$wruggforest, type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250))
+lines(mydata$ruggednessResc, mydata$wruggopen, type="l", col="green", lwd=2)
+
+
+#abline(h=1,lty=2,col="wheat4")
 
 @
 
 
+\subsubsection{Predictions for MCLOGIT}
 
-
-
+-----------------PREDICTIONS FOR MCLOGIT-------------------
 <<>>=
-summary(mc_quad)
-# cscR.all$wrugg = exp(mc_quad$coefficients[2] * cscR.all$ruggedness  + 
-#                        mc_quad$coefficients[3] * cscR.all$ruggedness^2 + 
-#                        mc_quad$coefficients[4] * median(cscR.all$disthighway)
-#                      + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2)
-# plot(cscR.all$ruggedness,cscR.all$wrugg)
+#predictions for mclogit
 
-#predictions for ruggedness (highw kept to median)
-summary(cscR.all$ruggedness)
-mydata = data.frame(ruggedness=seq(0,193,1))
-mydata$wrugg = exp(mc_quad$coefficients[2] * mydata$ruggedness  + 
-                       mc_quad$coefficients[3] * mydata$ruggedness^2 + 
-                       mc_quad$coefficients[4] * median(cscR.all$disthighway)
-                     + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2)
-plot(mydata$ruggedness,mydata$wrugg,type="l", lwd=2)
-mydata$wrugg = exp(mc_quad$coefficients[2] * mydata$ruggedness  + 
-                     mc_quad$coefficients[3] * mydata$ruggedness^2 + 
-                     mc_quad$coefficients[4] * median(cscR.all$disthighway)
-                   + mc_quad$coefficients[5] * (median(cscR.all$disthighway))^2
-                   -3.838e-01)
-lines(mydata$ruggedness,mydata$wrugg,type="l",col="green", lwd=2)
-abline(h=1,lty=2,col="wheat4")
+summary(xmpl.steps.df$ruggedness)
+summary(xmpl.logit.fit)
+#plot(predict(xmpl.logit.fit))
 
+mydata = data.frame(ruggedness=seq(0,250,1))
 
-mydata = data.frame(disthighway=seq(0,27000,100))
-mydata$whighw = exp(mc_quad$coefficients[4] * mydata$disthighway  + 
-                     mc_quad$coefficients[5] * mydata$disthighway^2 + 
-                     mc_quad$coefficients[2] * median(cscR.all$ruggedness)
-                   + mc_quad$coefficients[3] * (median(cscR.all$ruggedness))^2)
-plot(mydata$disthighway,mydata$whighw,type="l", lwd=2)
+mydata$wruggforest = exp(xmpl.logit.fit$coefficients[2] * mydata$ruggedness  + 
+                xmpl.logit.fit$coefficients[3] * mydata$ruggedness^2 + 
+                xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
+                xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
+
+mydata$wruggopen = exp(xmpl.logit.fit$coefficients[1] +
+                xmpl.logit.fit$coefficients[2] * mydata$ruggedness  + 
+                xmpl.logit.fit$coefficients[3] * mydata$ruggedness^2 + 
+                xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
+                xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
+
+plot(mydata$ruggedness,mydata$wruggforest, type="l", col="darkgreen", lwd=2, ylim=c(0,1))
+lines(mydata$ruggedness,mydata$wruggopen,type="l", col="green", lwd=2)
+#abline(h=1,lty=2,col="wheat4")
 
 @
+
+
 
 
 
