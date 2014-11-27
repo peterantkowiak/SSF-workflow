@@ -165,12 +165,12 @@ library(effects)
 \subsection{Loading Waypoint Data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
 
 The data for the analysis should be saved in a simple *.csv file format. The table should have column headings in the first line and for each observation include at least the four following values: 
-\begin{enumerate}
+\begin{itemize}
 \item{x-coordinate (easting)}
 \item{y-coordinate (northing)}
 \item{date and/or time}
 \item{animal ID}
-\end{enumerate}
+\end{itemize}
 
 \noindent Note that the coordinates need to be provided in the same coordinate system and spatial projection as the raster data.
 
