@@ -315,6 +315,8 @@ xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 \noindent There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
 
+\subsection{Distinguish different behaviors: Broken stick model and autocorrelation}
+
 
 \subsection{Creating Random Steps}
 
@@ -470,9 +472,9 @@ xmpl.steps.spdf$distroad <- distroad.extr[,2]
 unique(landcover.extr[,2])
 # Re-classifying landcover:
 xmpl.steps.spdf$landcover <- as.factor(
-    ifelse(landcover.extr[,2] == 0,"NA",
+    ifelse(landcover.extr[,2] == 0,NA,
     ifelse(landcover.extr[,2] < 5, "forest", 
-    ifelse(landcover.extr[,2] < 8, "open","NA"))))   
+    ifelse(landcover.extr[,2] < 8, "open",NA))))   
 @
 \noindent Now your final dataset should be ready for analysis. Examine it:  
 <<>>=
