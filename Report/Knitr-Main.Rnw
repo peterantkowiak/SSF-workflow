@@ -85,12 +85,18 @@ We will start with the \emph{Waypoint data} because these need to transformed a 
 \begin{figure} 
 \captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=1\textwidth]{Flowchart.pdf} % our perfect workflow!
+\includegraphics[width=1\textwidth]{Flowchart_old.pdf} % our perfect workflow!
 \caption{Stepwise conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the function applied while the blue boxes provide the type of object or data. In light grey optional steps are highlighted that are not implemented in this tutorial.}
 \label{fig:Flowchart}
 \end{figure}
 
-
+\begin{figure} 
+\captionsetup{width=1\textwidth}
+\centering
+\includegraphics[width=1\textwidth]{Flowchart_messy.pdf} % our perfect workflow!
+\caption{Things got a bit more complicated}
+\label{fig:Flowchart - working version}
+\end{figure}
 
 
 \subsection{Installing and loading Packages}
@@ -120,6 +126,7 @@ install.packages("rgdal")
 # for analyzing the data
 install.packages("mclogit")
 install.packages("lme4")
+install.packages("effects")
 
 @
 
@@ -138,6 +145,7 @@ library(raster)
 
 library(mclogit)
 library(lme4)
+library(effects)
 @
 
 
@@ -229,7 +237,7 @@ plot(xmpl.ltr)
 @
 The result of this code chunk is shown in Figure~\ref{fig:ltraj_plot}.
 
-\begin{figure}
+\begin{figure}[!htbp]
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.8\textwidth]{ltraj_plot.pdf}
@@ -250,7 +258,7 @@ plot(xmpl.ltr, id=10289)
 @
 The result of this code chunk is shown in Figure~\ref{fig:ind_plot}.
 
-\begin{figure}
+\begin{figure}[!htbp]
 \captionsetup{width=0.6\textwidth}
 \centering
 \includegraphics[width=0.6\textwidth]{ind_plot.pdf}
@@ -285,7 +293,7 @@ The result of this code chunk is shown in Figure~\ref{fig:time_seq}.
 \noindent To cut our data at our desired interval, we need a function which defines "dt". Because we want to keep relocations which are only a few minutes "wrong", we added 10 extra minutes.
 
 <<>>=
-foo = function(dt) {return(dt> (3800*3))} 
+foo = function(dt) { return(dt> (3800*3))} 
 @
 
 \noindent Then we split the object of class ltraj into smaller bursts using \texttt{cutltraj} and the function above. The bursts we had before applying this function still remain.
@@ -303,7 +311,7 @@ xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 Given your final bursts we now randomly draw angle and distance from your observed data to get random steps. The angle is taken from the observed position before your starting point of the random step while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain of three observed positions. 
 Before applying the function \texttt{rdSteps} you might want to check for correletaion between turning angle and distance. In case your individuals tend to move long distances by turning only in small angles (e.g. a species migrating) but stop for several days for feeding you want to pick the distance and the angle as pairs. If no correlation is found you can pick both variables independently.
 To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
-AUTOCORRELATION ???
+
 
 <<>>=
 # ld is a quick way to create a data frame from an ltraj object
@@ -317,11 +325,11 @@ plot(xmpl.cut.df$dist, xmpl.cut.df$rel.angle)
 @
 The result of this code chunk is shown in Figure~\ref{fig:cor_1}.
 
-\begin{figure}
-\captionsetup{width=0.7\textwidth}
+\begin{figure}[!htbp]
+\captionsetup{width=0.8\textwidth}
 \centering
-\includegraphics[width=0.4\textwidth]{cor_1.pdf}
-\caption{Testing for correlation of the observed turning angle and step length. The y-axis shows the difference in the turning angle. The shape indicates a correlation for longer steps and doing only smal turning angles (around 1).}
+\includegraphics[width=0.6\textwidth]{cor_1.pdf}
+\caption{Testing for correlation of the observed turning angle and step length. The y-axis shows the difference in the turning angle. The shape indicates a correlation for longer steps and doing only small turning angles (around 1).}
 \label{fig:cor_1}
 \end{figure}
 
@@ -411,7 +419,7 @@ plot(disthighway)
 plot(distroad)
 @
 
-\subsection{Checking for Collinearity}
+
 
 \subsection{Raster Extraction}
 Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
@@ -461,15 +469,136 @@ xmpl.steps.spdf$landcover <- as.factor(
 head(xmpl.steps.spdf)
 @
 
+\subsection{Checking for Multicollinearity} % -------------------------------------------------------------------------------------------------------------------------------------------
 
+Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the Spatial Points Data Frame into a data frame. 
+
+
+<<>>=
+xmpl.steps.df = as.data.frame(xmpl.steps.spdf)
+
+attach(xmpl.steps.df)
+ 
+Z = cbind(ruggedness,canopycover,disthighway,distroad,landcover) 
+
+detach(xmpl.steps.df)
+
+cor(Z)
+
+@
+
+As you can see, the canopycover and the landcover are highly correlated. The correlation coefficient for the distance to roads and the distance to highways is very high as well. 
 
 
 \section{Final SSF Model}
 
-Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
+There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
+We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation:
 \[
-\displaystyle f(x) = (x - mean)/sd(x)
+\displaystyle case ~ 
+ruggedness + ruggedness^2 + disthighway + disthighway^2 + distroad + distroad^2 + landcover
 \]
+
+Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
+
+In a second step, we will use one of the fitted models to generate predictions and plot them.
+
+
+\subsection{generalized linear mixed model}%------------------------------
+
+family binomial (with a binomial distribution of error)
+nested random effect for ID and strata
+...where the random effect takes the form of (1|id/strata).
+
+structure of pseudo replication: id, stratum
+
+
+
+<<echo=TRUE, eval=FALSE>>=
+
+xmpl.glmm.fit <- glmer(case ~ 
+    landcover +
+    ruggedness + I(ruggedness^2) + 
+    distroad + I(distroad^2) + 
+    (1|id/strata),
+    family = binomial, data=xmpl.steps.df)
+
+summary(xmpl.glmm.fit)
+
+@
+The model does not run and we get error messages suggesting us to scale the variables. 
+Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
+\[
+\displaystyle f(x) = (x - mean)/SD(x)
+\]
+
+
+<<echo=TRUE, eval=TRUE>>=
+
+library(lme4)
+library(effects)
+
+xmpl.glmm.fit.sc <- glmer(case ~ 
+    landcover +
+    scale(ruggedness) + I(scale(ruggedness)^2) + 
+    scale(distroad) + I(scale(distroad)^2) + 
+    (1|id/strata),
+    family = binomial, data=xmpl.steps.df)
+
+
+summary(xmpl.glmm.fit.sc)
+
+plot(allEffects(xmpl.glmm.fit.sc))
+
+@
+
+
+
+\subsection{mixed conditional logistic regression}%---------------------------
+
+The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
+Here is how to implement it in R:
+
+<<>>=
+library(mclogit)
+# Trasform dataset to a data frame
+xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
+
+# Recall the column names of the dataset:
+#head(xmpl.steps.df)
+
+#xmpl.steps.spdf$id <- as.integer(xmpl.steps.spdf$id)
+
+# column "case" indicates whether a site was visited or not. "strata" indicates the burst number and "id" the individual animal.
+
+# The actual logistic model:
+xmpl.logit.fit <- 
+    mclogit(cbind(case, strata) ~ 
+    landcover +
+    ruggedness + I(ruggedness^2) + 
+    distroad + I(distroad^2),
+    data = xmpl.steps.df)
+ 
+## when including random effects we run into problems. We get the error message that the data do not have enough residual variance.
+
+#random=~1|id,
+#disthighway + I(disthighway^2),
+
+summary(xmpl.logit.fit)
+
+@
+
+
+\subsection{Predictions}
+
+Predictions from the GLMM do not work yet. Values get infinite.
+
+\[
+  \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
+  \]
+\
+
+
 
 
 \newpage
