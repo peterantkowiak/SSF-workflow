@@ -81,6 +81,13 @@ Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and poten
 To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
 We will start with the \emph{Waypoint data} because these need to transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of a change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
 
+\begin{figure} 
+\captionsetup{width=1\textwidth}
+\centering
+\includegraphics[width=1\textwidth]{img001bc.jpg} % our perfect workflow!
+\caption{Do you remember the original workflow?}
+\label{fig:Flowchart - first version}
+\end{figure}
 
 \begin{figure} 
 \captionsetup{width=1\textwidth}
