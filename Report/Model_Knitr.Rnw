@@ -391,7 +391,7 @@ head(xmpl.steps.spdf)
 \section{Final SSF Model}
 
 There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
-We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation
+We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation:
 \[
 \displaystyle case ~ 
 ruggedness + ruggedness^2 + disthighway + disthighway^2 + distroad + distroad^2 + landcover
@@ -541,7 +541,7 @@ pippo <- load("pippo.Rdata")
 
 
 \[
-  \displaystyle w(x) = exp(\beta1 x1 + \beta2x2 + ... + \beta p xp)
+  \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
   \]
 \
 

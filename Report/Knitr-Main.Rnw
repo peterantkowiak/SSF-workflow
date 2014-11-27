@@ -85,12 +85,18 @@ We will start with the \emph{Waypoint data} because these need to transformed a 
 \begin{figure} 
 \captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=1\textwidth]{Flowchart.pdf} % our perfect workflow!
+\includegraphics[width=1\textwidth]{Flowchart_old.pdf} % our perfect workflow!
 \caption{Stepwise conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the function applied while the blue boxes provide the type of object or data. In light grey optional steps are highlighted that are not implemented in this tutorial.}
 \label{fig:Flowchart}
 \end{figure}
 
-
+\begin{figure} 
+\captionsetup{width=1\textwidth}
+\centering
+\includegraphics[width=1\textwidth]{Flowchart_messy.pdf} % our perfect workflow!
+\caption{Things got a bit more complicated}
+\label{fig:Flowchart - working version}
+\end{figure}
 
 
 \subsection{Installing and loading Packages}
@@ -486,10 +492,113 @@ As you can see, the canopycover and the landcover are highly correlated. The cor
 
 \section{Final SSF Model}
 
-Using the function \texttt{cs.} we get comparable values for each predictor. The according equation is: 
+There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
+We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation:
 \[
-\displaystyle f(x) = (x - mean)/sd(x)
+\displaystyle case ~ 
+ruggedness + ruggedness^2 + disthighway + disthighway^2 + distroad + distroad^2 + landcover
 \]
+
+Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
+
+In a second step, we will use one of the fitted models to generate predictions and plot them.
+
+
+\subsection{generalized linear mixed model}%------------------------------
+
+family binomial (with a binomial distribution of error)
+nested random effect for ID and strata
+...where the random effect takes the form of (1|id/strata).
+
+structure of pseudo replication: id, stratum
+
+
+
+<<echo=TRUE, eval=FALSE>>=
+
+xmpl.glmm.fit <- glmer(case ~ 
+    landcover +
+    ruggedness + I(ruggedness^2) + 
+    distroad + I(distroad^2) + 
+    (1|id/strata),
+    family = binomial, data=xmpl.steps.df)
+
+summary(xmpl.glmm.fit)
+
+@
+The model does not run and we get error messages suggesting us to scale the variables. 
+Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
+\[
+\displaystyle f(x) = (x - mean)/SD(x)
+\]
+
+
+<<echo=TRUE, eval=TRUE>>=
+
+library(lme4)
+library(effects)
+
+xmpl.glmm.fit.sc <- glmer(case ~ 
+    landcover +
+    scale(ruggedness) + I(scale(ruggedness)^2) + 
+    scale(distroad) + I(scale(distroad)^2) + 
+    (1|id/strata),
+    family = binomial, data=xmpl.steps.df)
+
+
+summary(xmpl.glmm.fit.sc)
+
+plot(allEffects(xmpl.glmm.fit.sc))
+
+@
+
+
+
+\subsection{mixed conditional logistic regression}%---------------------------
+
+The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
+Here is how to implement it in R:
+
+<<>>=
+library(mclogit)
+# Trasform dataset to a data frame
+xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
+
+# Recall the column names of the dataset:
+#head(xmpl.steps.df)
+
+#xmpl.steps.spdf$id <- as.integer(xmpl.steps.spdf$id)
+
+# column "case" indicates whether a site was visited or not. "strata" indicates the burst number and "id" the individual animal.
+
+# The actual logistic model:
+xmpl.logit.fit <- 
+    mclogit(cbind(case, strata) ~ 
+    landcover +
+    ruggedness + I(ruggedness^2) + 
+    distroad + I(distroad^2),
+    data = xmpl.steps.df)
+ 
+## when including random effects we run into problems. We get the error message that the data do not have enough residual variance.
+
+#random=~1|id,
+#disthighway + I(disthighway^2),
+
+summary(xmpl.logit.fit)
+
+@
+
+
+\subsection{Predictions}
+
+Predictions from the GLMM do not work yet. Values get infinite.
+
+\[
+  \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
+  \]
+\
+
+
 
 
 \newpage
