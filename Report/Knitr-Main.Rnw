@@ -298,8 +298,7 @@ plotltr(xmpl.ltr, "dt/3600/3")
 \end{figure}
 
 \noindent To cut our data at our desired interval, we need a function which defines \texttt{dt}. Because we want to keep relocations which are only a few minutes ``wrong'', we added 10 extra minutes.\\
-\noindent Note: We still keep data with different time lags (< 3:10 h). As this is an irregular type II trajectory, it might cause problems with different functions (e.g. checking for autocorrelation). There are functions to convert it into a regular one, look at the help section to get more information or define an explicit time lag. 
-
+\noindent Note: We still keep data with different time lags (< 3:10 h). As this is an irregular type II trajectory, it might cause problems with different functions (e.g. checking for autocorrelation). There are functions to convert it into a regular one, look at the \texttt{adehabitatLT} tutorial by C. Calenge \cite{0.3.162014}, the help section to get more information or define an explicit time lag in the function below. Because this however might lead to a massive loss of data, we didn't do that. 
 
 <<>>=
 foo = function(dt) { return(dt> (3800*3))} 
@@ -315,11 +314,12 @@ xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 
 
 \subsection{Distinguish different behaviors: Broken stick model and autocorrelation}
-
+NEEDS EXPLANATION!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 \subsection{Creating Random Steps}
 
-\noindent Given your final bursts we now randomly draw angle and distance from your observed data to get random steps. The angle is taken from the observed position before your starting point of the random step while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain of three observed positions. 
+\noindent Given your final bursts we now randomly draw angles and distances from your observed data to get random steps. The angle is taken from the previous observed position111111111 your starting point of the random step while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain of three observed positions. 
 Before applying the function \texttt{rdSteps} you might want to check for correletaion between turning angle and distance. In case your individuals tend to move long distances by turning only in small angles (e.g. a species migrating) but stop for several days for feeding you want to pick the distance and the angle as pairs. If no correlation is found you can pick both variables independently.
 To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
 
@@ -504,25 +504,27 @@ cor(Z)
 
 \section{Final SSF Model}
 
-\noindent There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
+\section{NEW - Final SSF Model - NEW}
+
+There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
 We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation:
 \[
 \displaystyle case ~ 
 ruggedness + ruggedness^2 + disthighway + disthighway^2 + distroad + distroad^2 + landcover
 \]
 
-\noindent Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
+Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
 
-\noindent In a second step, we will use one of the fitted models to generate predictions and plot them.
+In a second step, we will use one of the fitted models to generate predictions and plot them.
 
 
 \subsection{generalized linear mixed model}%------------------------------
 
-\noindent family binomial (with a binomial distribution of error)
+family binomial (with a binomial distribution of error)
 nested random effect for ID and strata
 ...where the random effect takes the form of (1|id/strata).
 
-\noindent structure of pseudo replication: id, stratum
+structure of pseudo replication: id, stratum
 
 
 
@@ -538,8 +540,8 @@ xmpl.glmm.fit <- glmer(case ~
 summary(xmpl.glmm.fit)
 
 @
-\noindent The model does not run and we get error messages suggesting us to scale the variables. 
-\noindent Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
+The model does not run and we get error messages suggesting us to scale the variables. 
+Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
 \[
 \displaystyle f(x) = (x - mean)/SD(x)
 \]
@@ -568,7 +570,7 @@ plot(allEffects(xmpl.glmm.fit.sc))
 
 \subsection{mixed conditional logistic regression}%---------------------------
 
-\noindent The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
+The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
 Here is how to implement it in R:
 
 <<>>=
@@ -588,8 +590,8 @@ xmpl.logit.fit <-
     mclogit(cbind(case, strata) ~ 
     landcover +
     ruggedness + I(ruggedness^2) + 
-    distroad + I(distroad^2),
-    data = xmpl.steps.df)
+    distroad + I(distroad^2), random=~1|id,
+    data = xmpl.steps.df, start.theta=1000)
  
 ## when including random effects we run into problems. We get the error message that the data do not have enough residual variance.
 
@@ -603,29 +605,109 @@ summary(xmpl.logit.fit)
 
 \subsection{Predictions}
 
-\noindent Predictions from the GLMM do not work yet. Values get infinite.
+Formula
 
 \[
   \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
   \]
 
+
+\subsubsection{Predictions for GLMM}
+
+
+-----------------PREDICTIONS FOR GLMM-------------------
 <<>>=
-summary(xmpl.steps.df$ruggedness)
-mydata = data.frame(ruggedness=seq(0,205,1))
-mydata$wrugg = exp(xmpl.logit.fit$coefficients[3] * mydata$ruggedness  + 
-                xmpl.logit.fit$coefficients[4] * mydata$ruggedness^2 + 
-                xmpl.logit.fit$coefficients[5] * median(xmpl.steps.df$distroad) +
-                xmpl.logit.fit$coefficients[6] * (median(xmpl.steps.df$distroad))^2)
-plot(mydata$ruggedness,mydata$wrugg,type="l", lwd=2)
-mydata$wrugg = exp(xmpl.logit.fit$coefficients[2] +
-                xmpl.logit.fit$coefficients[3] * mydata$ruggedness  + 
-                xmpl.logit.fit$coefficients[4] * mydata$ruggedness^2 + 
-                xmpl.logit.fit$coefficients[5] * median(xmpl.steps.df$distroad) +
-                xmpl.logit.fit$coefficients[6] * (median(xmpl.steps.df$distroad))^2)
-lines(mydata$ruggedness,mydata$wrugg,type="l",col="green", lwd=2)
+# predictions for glmm
+
+#plot(predict(xmpl.glmm.fit.sc, type="response"))
+summary(xmpl.glmm.fit.sc)
+
+mean(xmpl.steps.df$ruggedness)
+sd(xmpl.steps.df$ruggedness)
+
+summary(scale(xmpl.steps.df$ruggedness))
+
+rm(mydata)
+mydata = data.frame(ruggedness=seq(-1.5,15,0.1))
+#mydata = data.frame(ruggedness=scale(xmpl.steps.df$ruggedness))
+
+mydata$wruggforest = exp(              
+              xmpl.glmm.fit.sc@beta[3] * mydata$ruggedness  + 
+              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness^2 + 
+              xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
+              xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
+
+mydata$wruggopen = exp(
+              xmpl.glmm.fit.sc@beta[2] +
+              xmpl.glmm.fit.sc@beta[3] * mydata$ruggedness  + 
+              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness^2 + 
+              xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
+              xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
+
+
+#plot(mydata$ruggedness, mydata$wruggforest, type="l", col="darkgreen", lwd=2)
+#lines(mydata$ruggedness, mydata$wruggopen, type="l", col="green", lwd=2)
+
+## rescaling
+
+
+mydata$ruggednessResc <- (mydata$ruggedness * sd(xmpl.steps.df$ruggedness) + mean(xmpl.steps.df$ruggedness))
+
+
+#head(mydata)
+#str(mydata)
+#mydata$ruggednessResc
+
+plot(mydata$ruggednessResc, mydata$wruggforest, type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250))
+lines(mydata$ruggednessResc, mydata$wruggopen, type="l", col="green", lwd=2)
+
+
 #abline(h=1,lty=2,col="wheat4")
 
 @
+
+
+\subsubsection{Predictions for MCLOGIT}
+
+-----------------PREDICTIONS FOR MCLOGIT-------------------
+<<>>=
+#predictions for mclogit
+
+summary(xmpl.steps.df$ruggedness)
+summary(xmpl.logit.fit)
+#plot(predict(xmpl.logit.fit))
+
+mydata = data.frame(ruggedness=seq(0,250,1))
+
+mydata$wruggforest = exp(xmpl.logit.fit$coefficients[2] * mydata$ruggedness  + 
+                xmpl.logit.fit$coefficients[3] * mydata$ruggedness^2 + 
+                xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
+                xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
+
+mydata$wruggopen = exp(xmpl.logit.fit$coefficients[1] +
+                xmpl.logit.fit$coefficients[2] * mydata$ruggedness  + 
+                xmpl.logit.fit$coefficients[3] * mydata$ruggedness^2 + 
+                xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
+                xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
+
+plot(mydata$ruggedness,mydata$wruggforest, type="l", col="darkgreen", lwd=2, ylim=c(0,1))
+lines(mydata$ruggedness,mydata$wruggopen,type="l", col="green", lwd=2)
+#abline(h=1,lty=2,col="wheat4")
+
+@
+
+
+
+
+
+# save models -----------------------
+<<>>=
+save(pippo, file="pippo.Rdata")
+pippo <- load("pippo.Rdata")
+
+@
+
+
 
 
 \newpage
