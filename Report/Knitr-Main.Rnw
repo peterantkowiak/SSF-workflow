@@ -110,7 +110,7 @@ We will start with the \emph{Waypoint data} because these need to transformed a 
 
 Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
 
-<<echo=FALSE, warning=FALSE, message=FALSE>>=
+<< warning=FALSE, message=FALSE>>=
 
 ## for implementing SSF
 
@@ -139,7 +139,7 @@ install.packages("effects")
 
 Loading packages:
 
-<<echo=FALSE, warning=FALSE, message=FALSE>>=
+<< warning=FALSE, message=FALSE>>=
 
 library(hab)
 library(adehabitatMA)
@@ -194,7 +194,7 @@ xmpl = read.csv("UTMsREDUCED.csv", head=T)
 \subsection{Creating a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
 The functions used along the rest of the toolchain can only process data that are stored as objects of class "SpatialPointsDataFrame". This object class stores the coordinates separately and can be created using the according function from package "sp". 
 
-<<echo=FALSE, warning=FALSE, message=FALSE>>=
+<< warning=FALSE, message=FALSE>>=
 library(sp)
 
 xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")],
