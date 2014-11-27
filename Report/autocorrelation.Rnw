@@ -32,6 +32,7 @@
 
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 % \SweaveOpts{concordance=TRUE}
 
 
@@ -46,7 +47,7 @@ options(replace.assign=TRUE, width=90)
 
 \subsection{Testing for Autocorrelation}%
 
-To understand the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
+To ``understand'' the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
 
 To test for autocorrelation, the ltraj object needs to be of type 1 or consist of constant time lags. As our time lags are not constant, we transform our trajectory into type 1 by using a simple \texttt{typeII2typeI} function.
 
