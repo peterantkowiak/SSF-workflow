@@ -603,9 +603,24 @@ Predictions from the GLMM do not work yet. Values get infinite.
 \[
   \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
   \]
-\
 
+<<>>=
+summary(xmpl.steps.df$ruggedness)
+mydata = data.frame(ruggedness=seq(0,205,1))
+mydata$wrugg = exp(xmpl.logit.fit$coefficients[3] * mydata$ruggedness  + 
+                xmpl.logit.fit$coefficients[4] * mydata$ruggedness^2 + 
+                xmpl.logit.fit$coefficients[5] * median(xmpl.steps.df$distroad) +
+                xmpl.logit.fit$coefficients[6] * (median(xmpl.steps.df$distroad))^2)
+plot(mydata$ruggedness,mydata$wrugg,type="l", lwd=2)
+mydata$wrugg = exp(xmpl.logit.fit$coefficients[2] +
+                xmpl.logit.fit$coefficients[3] * mydata$ruggedness  + 
+                xmpl.logit.fit$coefficients[4] * mydata$ruggedness^2 + 
+                xmpl.logit.fit$coefficients[5] * median(xmpl.steps.df$distroad) +
+                xmpl.logit.fit$coefficients[6] * (median(xmpl.steps.df$distroad))^2)
+lines(mydata$ruggedness,mydata$wrugg,type="l",col="green", lwd=2)
+#abline(h=1,lty=2,col="wheat4")
 
+@
 
 
 \newpage
