@@ -381,6 +381,7 @@ head(xmpl.steps)
 @
 
 
+\subsection{Different distributions as an option for rdSteps}
 
 
 
