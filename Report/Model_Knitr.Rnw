@@ -547,17 +547,21 @@ pippo <- load("pippo.Rdata")
 
 
 <<>>=
+library(psych)
 summary(xmpl.glmm.fit.sc)
 
 #predictions for ruggedness (highw kept to median)
-summary(cscR.all$ruggedness)
-mydata = data.frame(ruggedness=seq(0,193,1))
-mydata$wrugg = exp(mc_quad$coefficients[1] +
-                      mc_quad$coefficients[2] * mydata$ruggedness  + 
-                      mc_quad$coefficients[3] * mydata$ruggedness^2 + 
-                      mc_quad$coefficients[4] * median(cscR.all$distroad) + 
-                      mc_quad$coefficients[5] * (median(cscR.all$distroad))^2)
-plot(mydata$ruggedness,mydata$wrugg,type="l", col="darkgreen", lwd=2)
+summary(xmpl.steps.df$ruggedness)
+mydata = data.frame(ruggedness=seq(0,205,1))
+mydata$wrugg = exp(
+              xmpl.glmm.fit.sc@beta[1] +
+              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness  + 
+              xmpl.glmm.fit.sc@beta[5] * mydata$ruggedness^2 + 
+              xmpl.glmm.fit.sc@beta[6] * median(xmpl.steps.df$distroad) + 
+              xmpl.glmm.fit.sc@beta[7] * (median(xmpl.steps.df$distroad))^2)
+
+plot(mydata$ruggedness, mydata$wrugg, type="l", col="darkgreen", lwd=2)
+
 mydata$wrugg = exp(mc_quad$coefficients[1] + mc_quad$coefficients[3] +
                       mc_quad$coefficients[2] * mydata$ruggedness  + 
                       mc_quad$coefficients[3] * mydata$ruggedness^2 + 
