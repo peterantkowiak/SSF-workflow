@@ -74,8 +74,11 @@ options(replace.assign=TRUE, width=80)
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
 
+\subsection{Purpose and applications of SSFs}
+
 In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual each observation is connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions and the target species. The SSF than calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. Non of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as \texttt{xmpl}).\\
 
+\subsection{Our SSF workflow in R}
 
 Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and potential options to conduct a SSF. This tutorial will guide you through each step and gives brief instructions on how to implement the functions and what to consider beforehand.
 To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
@@ -110,7 +113,7 @@ We will start with the \emph{Waypoint data} because these need to transformed a 
 
 Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
 
-<<echo=FALSE, warning=FALSE, message=FALSE>>=
+<< warning=FALSE, message=FALSE>>=
 
 ## for implementing SSF
 
@@ -139,7 +142,7 @@ install.packages("effects")
 
 Loading packages:
 
-<<echo=FALSE, warning=FALSE, message=FALSE>>=
+<< warning=FALSE, message=FALSE>>=
 
 library(hab)
 library(adehabitatMA)
@@ -162,12 +165,12 @@ library(effects)
 \subsection{Loading Waypoint Data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
 
 The data for the analysis should be saved in a simple *.csv file format. The table should have column headings in the first line and for each observation include at least the four following values: 
-\begin{enumerate}
+\begin{itemize}
 \item{x-coordinate (easting)}
 \item{y-coordinate (northing)}
 \item{date and/or time}
 \item{animal ID}
-\end{enumerate}
+\end{itemize}
 
 \noindent Note that the coordinates need to be provided in the same coordinate system and spatial projection as the raster data.
 
@@ -194,7 +197,7 @@ xmpl = read.csv("UTMsREDUCED.csv", head=T)
 \subsection{Creating a Spatial Points Data Frame}%------------------------------------------------------------------------------------------------------
 The functions used along the rest of the toolchain can only process data that are stored as objects of class "SpatialPointsDataFrame". This object class stores the coordinates separately and can be created using the according function from package "sp". 
 
-<<echo=FALSE, warning=FALSE, message=FALSE>>=
+<< warning=FALSE, message=FALSE>>=
 library(sp)
 
 xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")],
@@ -311,6 +314,8 @@ xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 
 \noindent There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
+
+\subsection{Distinguish different behaviors: Broken stick model and autocorrelation}
 
 
 \subsection{Creating Random Steps}
@@ -467,9 +472,9 @@ xmpl.steps.spdf$distroad <- distroad.extr[,2]
 unique(landcover.extr[,2])
 # Re-classifying landcover:
 xmpl.steps.spdf$landcover <- as.factor(
-    ifelse(landcover.extr[,2] == 0,"NA",
+    ifelse(landcover.extr[,2] == 0,NA,
     ifelse(landcover.extr[,2] < 5, "forest", 
-    ifelse(landcover.extr[,2] < 8, "open","NA"))))   
+    ifelse(landcover.extr[,2] < 8, "open",NA))))   
 @
 \noindent Now your final dataset should be ready for analysis. Examine it:  
 <<>>=
