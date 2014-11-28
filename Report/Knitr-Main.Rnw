@@ -658,7 +658,7 @@ mydata$ruggednessResc <- (mydata$ruggedness * sd(xmpl.steps.df$ruggedness) + mea
 #str(mydata)
 #mydata$ruggednessResc
 
-plot(mydata$ruggednessResc, mydata$wruggforest, type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250))
+plot(mydata$ruggednessResc, mydata$wruggforest, main="GLMM predictions for ruggedness", type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250), xlab="ruggedness", ylab="W")
 lines(mydata$ruggednessResc, mydata$wruggopen, type="l", col="green", lwd=2)
 
 
@@ -690,7 +690,7 @@ mydata$wruggopen = exp(xmpl.logit.fit$coefficients[1] +
                 xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
                 xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
 
-plot(mydata$ruggedness,mydata$wruggforest, type="l", col="darkgreen", lwd=2, ylim=c(0,1))
+plot(mydata$ruggedness,mydata$wruggforest, main="MCLOGIT predictions for ruggedness", type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlab="ruggedness", ylab="W")
 lines(mydata$ruggedness,mydata$wruggopen,type="l", col="green", lwd=2)
 #abline(h=1,lty=2,col="wheat4")
 
