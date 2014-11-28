@@ -235,10 +235,21 @@ xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
 \item{\texttt{rel.angle} (angle between previous and actual trajectory)}
 \end{itemize}
 
-\noindent 
+
 <<>>=
-str(xmpl.ltr, width=80)
+str(xmpl.ltr)
 @
+
+\noindent To work with one of the tables only you can use []. This is still an ``ltraj'' object. For example:
+<<>>=
+xmpl.ltr[2]
+@
+
+\noindent If you want to have a look at all the data stored for one single individual, or ``use'' it as a data frame you can use [[]]. If you assign it to a name, it is automatically converted and ready to use:
+<<>>=
+xmpl.df.10286 = xmpl.ltr[[1]]
+@
+
 
 \noindent To get a visual impression of your data you can plot the trajectory for all or for one particular animal:
 
