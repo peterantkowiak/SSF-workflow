@@ -1,5 +1,9 @@
 \subsection{Creating Random Steps}
 
+angles and distances from your observed data to get random steps. The angle is taken from the previous trajectory to the actual one while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain three observed positions to create random steps for one relocation. The first and the last relocations only contribute to the calculation but don't have their ``own'' random steps as there is no previous trajectory an angle could be calculated from. Neither there is an endpoint to draw a distance. This means that the number of poins with random steps is lower as your actual recorded relocations.
+but first have to convert our ``ltraj'' object back to a data frame by using \texttt{ld}.
+
+
 \noindent Now that your telemetry data are cleaned and split into bursts, you can proceed to the next big step: Drawing the random steps. The aim of this chapter is to generate realistic alternative steps that the animal might have taken so you can later compare them with the actually visited location. The ``hab'' package includes the very useful \texttt{rdSteps} function that can read data frames with spatial trajectories, generate random steps from a given distribution and add those steps to the data frame. We will demonstrate the usage of this function with all required arguments and give hints to some extended options.
 The \texttt{rdSteps} function reads the following arguments:
 
@@ -15,7 +19,7 @@ xmpl.cut.df <- ld(xmpl.cut)
 Choosing the number of random steps to generate is certainly not the most important decision when running an SSF, but it is not completely arbitrary either. The number of alternative steps needs to be sufficiently high for producing meaningful results, especially if your species of interest depends on rather rare habitats scattered over the landscape. On the other hand, large numbers of random points can inflate your dataset and lead to long computing times without really changing the results \cite{thurfjell2014applications}. In previous studies, the number of random steps ranged from 2 to 200. As our xmpl dataset is fairly large, we chose 10 - a medium number of random steps.\\
 
 \item{\textbf{rand.dis} = the random distributions for step lengths and turning angles}\\
-
+Per default (\texttt{rand.dis = NULL}) the angle and distance for each random step are drawn from the observed values you provide in \texttt{x}. We use this handy option because it saves us the trouble to create distributions separately. For some reasons you might still choose to use different distributions: If your dataset is small, using the observed values might lead to circularities. You might also already have good distributions from other studies and want use them. To import distributions from other datasets, set \texttt{rand.dist = YourDataSet}.\\
 
 \item{\textbf{only.others} = include or exclude the current individual when drawing length and angle}\\
 
@@ -36,49 +40,36 @@ plot(xmpl.cut.df$dist, xmpl.cut.df$rel.angle)
 \label{fig:cor_1}
 \end{figure}
 
-The distribution of points indicates a correlation for longer steps and doing only small turning angles (around 1).
+The distribution of points indicates a correlation: For small turning angles (around 1) steps are longer than for big turning angles. To take into account for this, we will draw angle and step length simultaneously (\texttt{simult = T}).\\
 
 
-}\\
+\item{\textbf{distMax} = set an upper limit for step length and turning angle}\\
+We stick to infinity as the default value here to include all steps.\\
 
 
-In the previous paragraphs we demonstrated how to use the rdSteps function with the default options and how to decide whether to draw angle and stepwidth simultaneously. Besides these necessary settings, the rdSteps function can be tweaked with a set of additional options. You can adjust the following options:
-\begin{itemize}
-\item{Number of random steps}
-\item{Distributions for drawing random steps}
+\item{\textbf{reproducible} = make results reproducible or not.}\\
+By choosing \textt{reproducible = TRUE} we set a seed to get reproducible random steps.\\
+
 \end{itemize}
 
 
-\\
-
-
-
-angles and distances from your observed data to get random steps. The angle is taken from the previous trajectory to the actual one while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain three observed positions to create random steps for one relocation. The first and the last relocations only contribute to the calculation but don't have their ``own'' random steps as there is no previous trajectory an angle could be calculated from. Neither there is an endpoint to draw a distance. This means that the number of poins with random steps is lower as your actual recorded relocations.
-but first have to convert our ``ltraj'' object back to a data frame by using \texttt{ld}.
-
-
-
-
-
-
-\noindent The plot shows a correlation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply \texttt{rdSteps}.  
+\noindent For the example dataset run the \texttt{rdSteps} function as follows:
 
 <<echo=TRUE, eval=TRUE>>=
   
 xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,  
                       distMax = Inf, reproducible = TRUE, only.others = FALSE) 
-          # use simult = FALSE if your data is not correlated
+
 @
 
-\noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from this set include \texttt{only.others = TRUE}.
-\noindent All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
+
+\noindent All in all, \texttt{rdSteps} is a very powerful function that computes a lot of useful things for you. To view them, execute: 
 
 <<>>=
 head(xmpl.steps)
 @
 
 \noindent The table still includes your ``cat id'', ``burst id'', the ``rel.angle'' and ``dist'' of your observed positions. Furthermore, the ``case'' is provided as categories of 0 and 1 for available and used. The ``strata'' marks all 10 random steps and the visited location so you can later tell your function what to compare.  
-Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. For latter you need to implement more code because we did not use this option in our tutorial (see the grey box in Figure~\ref{fig:Flowchart}).\\
 Now only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step (``dx'' and ``dy''). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
 
 <<>>=
@@ -93,11 +84,7 @@ head(xmpl.steps)
 @
 
 
-\subsection{Different distributions as an option for rdSteps}
-
-!!!!!!!!!!!!!!!NEEDS FURTHER EXPLANATION!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-Different options to extend the rdSteps function
+Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. For latter you need to implement more code because we did not use this option in our tutorial (see the grey box in Figure~\ref{fig:Flowchart}).\\
 
 
 
