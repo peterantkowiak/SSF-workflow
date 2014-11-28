@@ -331,21 +331,74 @@ foo = function(dt) { return(dt> (3800*3))}
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
 
-\noindent Note: We still keep data with different time lags (< 3:10 h). As this is an irregular type II trajectory, it might cause problems with different functions (e.g. checking for autocorrelation). A constant time lag is necessary to have comparable trajectories for further analyses. There are functions to convert it into a regular one, look at the \texttt{adehabitatLT} tutorial by C. Calenge \cite{0.3.162014}, the help section to get more information or define an explicit time lag in the function above. 
+\noindent Note: We still keep data with different time lags (but not more than 3:10 h). As this is an irregular type II trajectory, it might cause problems with different functions (e.g. checking for autocorrelation). A constant time lag is necessary to have comparable trajectories for further analyses. There are functions to convert it into a regular one, look at the \texttt{adehabitatLT} tutorial by C. Calenge \cite{0.3.162014}, the help section to get more information or define an explicit time lag in the function above. 
 A nice way to take care of our problem with minor delays of the relocations, which might be caused by the time the GPS needs to relocate, is to round. You can first look for missing time values and replace them via setting a reference date. After that you can round time values which slightly differ from the desired one using the function \texttt{sett0}. This however should NOT be used to convert a completely irregular trajectory into a regular one but compensate for minor descrepancies. Detailed instructions on how to do that can also be found in the totorial by Calenge. \cite{0.3.162014}\\
 
 
 \noindent In general there are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
+\subsection{``ltraj'' diagnostics}
 
-\subsection{Distinguish different behaviors: Broken stick model and autocorrelation}
-NEEDS EXPLANATION!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-Autocorrelation between dist or angle means homogenous behaviour
+After defining your `` bursts'', there are already some options to check your created ``ltraj'' object. Those are described in the tutorial ``Analysis of Animal Movements in R: the \texttt{adehabitatLT} Package'' by clement Calenge \cite{Package2011}. As our dataset was revised already and missing values have been removed, we decided not to interpolate, we seperated all sequences according to the time lag. We therefore only give suggestions what could have been done additionaly but might result in a better output depending on your research question.
+
+\subsubsection{Viewing missing values}
+\noindent Depending on the wheather, the location of the animal or technical reasons, there might be missing relocations in your dataset. A first option is therefore to check for your ``ltraj'' object for missing values. A simple function helps you here:
+
+<<diag_1, echo = TRUE, def = "pdf", fig.show='hide' >>=
+adehabitatLT:::plotNAltraj(xmpl.ltr[1])
+@
+
+\begin{figure}[!htbp]
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{diag_1.pdf}
+\caption{Showing all NAs in your dataset. In our case missing values have been removed already.}
+\label{fig:diag_1}
+\end{figure}
+
+This plot shows where your dataset has missing values but as our data does not include any NAs, there is only one straight line. \\
+
+
+\subsubsection{Replace and round time}
+
+A first step for interpolating your dataset would be replacing the NAs in your \texttt{date} column by creating new ones with the \texttt{setNA} function. For that, you need to define a reference date. By doing that, you create a lot of ``relocations'' with NAs in the coordinates column.
+
+The next step would be to round time values which slightly differ from the desired one using the function \texttt{sett0}. This however should NOT be used to convert a completely irregular trajectory into a regular one but compensate for minor descrepancies. 
+
+
+\subsubsection{Testing for Autocorrelation}%
+
+To ``understand'' the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
+
+To test for autocorrelation, the ltraj object needs to be of type I or consist of constant time lags. As our time lags are not constant, we transform our trajectory into type I by using a simple \texttt{typeII2typeI} function.
+
+<<>>=
+xmpl.ltr.t1 <- typeII2typeI(xmpl.cut)
+@
+
+The new format does not include any information concerning time and date:
+<<>>=
+head(xmpl.ltr.t1)
+@
+
+
+To test the three linear parameters (\texttt{dist, dx, dy}), the independence test of Wald and Wolfowitz (1994) can be used. It tests the sequential autocorrelation in a vector. It can be implemented as \texttt{wawotest.ltraj} for each burst in a \texttt{ltraj} object. This function removes all NAs before running the test \cite{Package2011}.
+
+
+<<eval=FALSE>>=
+wawotest(xmpl.ltr.t1) 
+@
+\noindent The functions returns parameters to test for correlation for every burst (827 in our case!, this is why we did not let it run). The p-Values indicate the correlation but as our time lag is not constant, the interpretation does not make much sense. 
+
+To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. Here, the ltraj object needs to be regular. Similar tests can be done for angular parameters. For further information check out the tutorial by Clement Calenge \cite{Package2011}.
+
+
+\subsubsection{Distinguish different behaviors}
+It is possible to divide a trajectory into segments characterized by a homogenous behaviour. You can either use a ``Broken Stick Model'', the method of ``Gueguen'' or the method of ``Lavielle'' \cite{Package2011}. 
 
 \subsection{Creating Random Steps}
 
-\noindent Given your final bursts we now randomly draw angles and distances from your observed data to get random steps. The angle is taken from the previous trajectory to the actual one while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain three observed positions to create random steps for one relocation. The first and the last relocations only contribute to the calculation but don't have their ``own'' random steps as there is no previous trajectory an angle could be calculated from. Neither there is an endpoint to draw a distance. This means that the number of poins with random steps is lower as your actual recorded relocations.
+\noindent Now that we have created our final bursts (see Chapter ~ref\section{Creating Bursts}) we now randomly draw angles and distances from the observed data to get random steps. The angle is taken from the previous trajectory to the actual one while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain three observed positions to create random steps for one relocation. The first and the last relocations only contribute to the calculation but don't have their ``own'' random steps as there is no previous trajectory an angle could be calculated from. Neither there is an endpoint to draw a distance. This means that the number of poins with random steps is lower as your actual recorded relocations.
 Before applying the function \texttt{rdSteps} you might want to check for correletaion between turning angle and distance. In case your individuals tend to move long distances by turning only in small angles (e.g. a species migrating) but stop for several days for feeding you want to pick the distance and the angle as pairs. If no correlation is found you can pick both variables independently.
 To check for this we use the \texttt{plot} function but first have to convert our ``ltraj'' object back to a data frame by using \texttt{ld}.
 
@@ -382,9 +435,12 @@ xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,
 \noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from this set include \texttt{only.others = TRUE}.
 \noindent All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
 
+\begin{small}
 <<>>=
 head(xmpl.steps)
 @
+\end{small}
+
 
 \noindent The table still includes your ``cat id'', ``burst id'', the ``rel.angle'' and ``dist'' of your observed positions. Furthermore, the ``case'' is provided as categories of 0 and 1 for available and used. The ``strata'' marks all 10 random steps and the visited location so you can later tell your function what to compare.  
 Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. For latter you need to implement more code because we did not use this option in our tutorial (see the grey box in Figure~\ref{fig:Flowchart}).\\
@@ -397,9 +453,11 @@ xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
   
 \noindent After running this chapter you get your final ``SpatialPointDataFrame'' to use with the selection function.
 
+\begin{small}
 <<>>=
 head(xmpl.steps)
 @
+\end{small}
 
 
 \subsection{Different distributions as an option for rdSteps}
@@ -432,10 +490,9 @@ library(sp)
 \noindent The source files for the raster data can be stored in the working directory or loaded by specifying the exact path. The \texttt{raster()} function is a universal and very powerful tool for loading all kinds of raster data. For reading shapefiles, use the \texttt{readOGR()} function. Below is an example of how to read a set of raster layers.
 <<>>=
 # First, make sure that your working directory is still 
-# the one specified earlier:
+# the one specified earlier or set your path:
 # getwd()
 
-# Now read the layers (in our case the layers are stored in a different place):
 ruggedness <- raster("P:/SSF PROJECT/NEW GIS LAYERS/tri1") 
 landcover <- raster("P:/SSF PROJECT/NEW GIS LAYERS/lc_30") 
 canopycover <- raster("P:/SSF PROJECT/NEW GIS LAYERS/cc_abmt") 
@@ -507,9 +564,13 @@ xmpl.steps.spdf$landcover <- as.factor(
     ifelse(landcover.extr[,2] < 8, "open",NA))))   
 @
 \noindent Now your final dataset should be ready for analysis. Examine it:  
+
+\begin{small}
 <<>>=
 head(xmpl.steps.spdf)
 @
+\end{small}
+
 
 \subsection{Possible extensions to the extract function}
 
@@ -518,7 +579,7 @@ When extracting the environmental covariates, the most straightforward approach 
 
 \subsection{Checking for Multicollinearity} % -------------------------------------------------------------------------------------------------------------------------------------------
 
-\noindent Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for the correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the ``Spatial Points Data Frame'' into a data frame. Furthermore the column \texttt{landcover} needs to be changed from ``facotor'' into ``numeric''. 
+\noindent Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for the correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the ``Spatial Points Data Frame'' into a data frame. Furthermore the column \texttt{landcover} needs to be changed from ``factor'' into ``numeric''. 
 
 
 <<>>=
@@ -535,9 +596,11 @@ Z$landcover <- as.numeric(
 
 cor(Z, use="pairwise.complete.obs")
 
+@
 
-#creating a nice plot
 
+\noindent Just to get a better overview we created a nice plot by using the following function.
+<<>>=
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
 {
     usr <- par("usr"); on.exit(par(usr))
@@ -567,7 +630,7 @@ pairs(Z, lower.panel=panel.smooth,
 @
 
 \begin{figure}[!htbp]
-\captionsetup{width=1\textwidth}
+\captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=1\textwidth]{pairs.pdf}
 \caption{Beautiful plot to examine correlations and the structure of each parameter. The lower panel shows the scatter plots for each combination, the upper panel provides the correlation coefficients and the diagonal panel shows a histogram for each parameter.}
@@ -589,7 +652,7 @@ We will test for effects of ruggedness, canopy cover, land cover, distance to ro
 
 \noindent Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
 
-In a second step, we will use one of the fitted models to generate predictions and plot them.
+\noindent In a second step, we will use one of the fitted models to generate predictions and plot them.
 
 
 \subsection{Generalized Linear Mixed Model}%------------------------------
@@ -610,10 +673,14 @@ xmpl.glmm.fit <- glmer(case ~
     distroad + I(distroad^2) + 
     (1|id/strata),
     family = binomial, data=xmpl.steps.df)
-
-summary(xmpl.glmm.fit)
-
 @
+
+\begin{small}
+<<>>=
+summary(xmpl.glmm.fit)
+@
+\end{small}
+
 \noindent The model does not run and we get error messages suggesting us to scale the variables. 
 Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
 \[
@@ -632,9 +699,14 @@ xmpl.glmm.fit.sc <- glmer(case ~
     scale(distroad) + I(scale(distroad)^2) + 
     (1|id/strata),
     family = binomial, data=xmpl.steps.df)
+@
 
+
+\begin{small}
+<<>>=
 summary(xmpl.glmm.fit.sc)
 @
+\end{small}
 
 
 <<model_1, echo=TRUE, dev="pdf", fig.show="hide">>=
@@ -680,11 +752,13 @@ xmpl.logit.fit <-
 
 #random=~1|id,
 #disthighway + I(disthighway^2),
-
-summary(xmpl.logit.fit)
-
 @
 
+\begin{small}
+<<>>=
+summary(xmpl.logit.fit)
+@
+\end{small}
 
 \subsection{Predictions}
 
