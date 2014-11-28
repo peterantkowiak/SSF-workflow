@@ -234,6 +234,7 @@ xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
 \item{\texttt{rel.angle} (angle between previous and actual trajectory)}
 \end{itemize}
 
+\noindent 
 <<>>=
 str(xmpl.ltr, width=80)
 @
