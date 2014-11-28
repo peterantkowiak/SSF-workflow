@@ -44,7 +44,6 @@
 %------------------------------------------------------------------------------------------------------
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
 
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
@@ -83,7 +82,7 @@ options(replace.assign=TRUE, width=80)
 
 \noindent Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and potential options to conduct a SSF. This tutorial will guide you through each step and gives brief instructions on how to implement the functions and what to consider beforehand.
 To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
-We will start with the \emph{Waypoint data} because these need to be transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point, \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
+We will start with the \emph{Waypoint data} because these need to be transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point, \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written. \newpage
 
 
 \begin{figure} 
@@ -204,8 +203,8 @@ names(xmpl)
 \noindent After storing the data in a ``Spatial Points Data Frame'', you now need to connect the single points and turn them into a set of trajectories. This operation is carried out by the function \texttt{as.ltraj} from the``hab'' package and produces objects of class ``ltraj''. There are two different types of trajectories. For \textbf{Type I} the time is not known or not taken into account. \textbf{Type II} is characterized by a timestamp. If the time lag between the different locations is the same, it is called ``regular'', if not ``irregular''.
 The function \texttt{as.ltraj} requires at least three arguments to work:
 \begin{enumerate}
-\item{``xy'' (x- and y- coordinates for each point)}
-\item{``date'' (timestamp for each point, given as POSIXct class)}
+\item{``x'' and ``y'' (x- and y- coordinates for each point)}
+\item{``date'' (timestamp for each point, given as ``POSIXct'' class)}
 \item{``id'' (the animal id)}
 \end{enumerate}
 
@@ -223,16 +222,16 @@ xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
 @
 \noindent Two comments to the function used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the ``hab'' package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the \texttt{xmpl.spdf@coords} promt which works for any ``SPDF'' object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called \texttt{cat}. If this differs in your dataset and you should change the prompt accordingly. The \texttt{id} creates subsets in your data set which you can see in the structure below.
 
-\noindent You now may want to have a closer look at the created ``ltraj'' object. Display its structure with by executing \texttt{str(xmpl.ltr)}. The ``ltraj'' object is a list containing seven different dataframes, each for one individual, which we defined with the \texttt{id}. In each dataframe all information is stored for every single observation of the individual: 
+\noindent You now may want to have a closer look at the created ``ltraj'' object. Display its structure by executing \texttt{str(xmpl.ltr)}. The ``ltraj'' object is a list containing seven different dataframes, each for one individual, which we defined with the \texttt{id}. In each dataframe all information is stored for every single observation of the individual: 
 \begin{itemize}
-\item{``x'' and ``y'' (x- and y- coordinates for each point)}
-\item{``date'' (timestamp for each point, given as POSIXct class)}
-\item{``dx'' and ``dy'' (changes in x- and y- values)}
-\item{``dist'' (length of trajectory)}
-\item{``dt'' (time between relocations in s)}
-\item{``R2n'' (squared net displacement between current relocation and first relocation)}
-\item{``abs.angle'' (absolute angle of trajectory)}
-\item{``rel.angle'' (angle between previous and actual trajectory)}
+\item{\texttt{x} and ``y'' (x- and y- coordinates for each point)}
+\item{\texttt{date} (timestamp for each point, given as POSIXct class)}
+\item{\texttt{dx} and ``dy'' (changes in x- and y- values)}
+\item{\texttt{dist} (length of trajectory)}
+\item{\texttt{dt} (time between relocations in s)}
+\item{\texttt{R2n} (squared net displacement between current relocation and first relocation)}
+\item{\texttt{abs.angle} (absolute angle of trajectory)}
+\item{\texttt{rel.angle} (angle between previous and actual trajectory)}
 \end{itemize}
 
 <<>>=
