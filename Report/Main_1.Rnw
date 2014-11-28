@@ -109,17 +109,14 @@ We will start with the \emph{Waypoint data} because these need to be transformed
 
 << eval=FALSE, warning=FALSE, message=FALSE>>=
   
-  ## for implementing SSF
-  install.packages("hab")
+## for implementing SSF
+install.packages("hab")
 install.packages("hab", repos = "http://ase-research.org/R/") # regular
 install.packages("hab", repos = "http://ase-research.org/R/",
-                 type = "source")                             # for self-compiling
-@
+                 type = "source")  # for self-compiling
   
   
-  
-  << eval=FALSE, warning=FALSE, message=FALSE>>=
-  install.packages("adehabitatHR") # dealing with home ranges
+install.packages("adehabitatHR") # dealing with home ranges
 install.packages("adehabitatHS") # habitat selection
 install.packages("adehabitatLT") # trajectories
 install.packages("adehabitatMA") # maps
@@ -136,7 +133,7 @@ install.packages("mclogit")
 install.packages("lme4")
 install.packages("effects")
 @
-  \nointend Keep fingers off the \texttt{adehabitat} package! It is outdated and replaced by four different packages designed for different analyses.
+\noindent Keep fingers off the \texttt{adehabitat} package! It is outdated and replaced by four different packages designed for different analyses.
 
 \noindent Loading packages:
   
@@ -245,16 +242,19 @@ xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
 \end{itemize}
 
 
+\begin{tiny}
 <<>>=
 str(xmpl.ltr)
 @
+\end{tiny}
 
-\noindent To work with one of the tables only you can use []. This is still an ``ltraj'' object. For example:
+
+\noindent To work with one of the tables only you can use \texttt{[ ]}. This is still an ``ltraj'' object. For example:
 <<>>=
 xmpl.ltr[2]
 @
 
-\noindent If you want to have a look at all the data stored for one single individual, or ``use'' it as a data frame you can use [[]]. If you assign it to a name, it is automatically converted and ready to use:
+\noindent If you want to have a look at all the data stored for one single individual, or ``use'' it as a data frame you can use \texttt{[[ ]]}. If you assign it to a name, it is automatically converted and ready to use:
 <<>>=
 xmpl.df.10286 = xmpl.ltr[[1]]
 @
@@ -350,7 +350,7 @@ Before applying the function \texttt{rdSteps} you might want to check for correl
 To check for this we use the \texttt{plot} function but first have to convert our ``ltraj'' object back to a data frame by using \texttt{ld}.
 
 <<>>=
-# ld is a quick way to create a data frame from an ltraj object
+# ld is another quick way to create a data frame from an ltraj object
 xmpl.cut.df <- ld(xmpl.cut)  
    
 @
@@ -365,7 +365,7 @@ plot(xmpl.cut.df$dist, xmpl.cut.df$rel.angle)
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.6\textwidth]{cor_1.pdf}
-\caption{Testing for correlation of the observed turning angle and step length. The y-axis shows the difference in the turning angle. The shape indicates a correlation for longer steps and doing only small turning angles (around 1).}
+\caption{Testing for correlation of the observed turning angle and step length. The y-axis shows the difference in the turning angle. The shape indicates a correlation for longer steps and doing only small turning angles (from -1 to 1).}
 \label{fig:cor_1}
 \end{figure}
 
@@ -553,30 +553,41 @@ panel.hist <- function(x, ...)
     y <- h$counts; y <- y/max(y)
     rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
 }
+@
 
 
+<<pairs, echo=TRUE, dev='pdf', fig.show='hide'>>=
 pairs(Z, lower.panel=panel.smooth,
       upper.panel=panel.cor,diag.panel=panel.hist)
 @
+
+\begin{figure}[!htbp]
+\captionsetup{width=1\textwidth}
+\centering
+\includegraphics[width=1\textwidth]{pairs.pdf}
+\caption{Beautiful plot to examine correlations and the structure of each parameter. The lower panel shows the scatter plots for each combination, the upper panel provides the correlation coefficients and the diagonal panel shows a histogram for each parameter.}
+\label{fig:pairs}
+\end{figure}
+
+
 
 \noindent As you can see, the canopycover and the landcover are highly correlated. The correlation coefficient for the distance to roads and the distance to highways is very high as well. For our further analysis we therefore only use landcover and the distance to roads.
 
 
 \section{Final SSF Model}
 
-There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. Thurfjell et al. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The \texttt{lme4} package and the \texttt{mclogit} package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression \texttt{(mclogit)} and a generalized linear mixed model \texttt{(lme4)}. 
+There are several options to analyze the generated data. As Thurfjell et al. 2014 \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. Thurfjell et al. 2014 \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The \texttt{lme4} package and the \texttt{mclogit} package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression \texttt{(mclogit)} and a generalized linear mixed model \texttt{(lme4)}. 
 We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation:
 \[
-\displaystyle case ~ 
-ruggedness + ruggedness^2 + disthighway + disthighway^2 + distroad + distroad^2 + landcover
+\displaystyle case ~ ruggedness + ruggedness^2 + disthighway + disthighway^2 + distroad + distroad^2 + landcover
 \]
 
-Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
+\noindent Both models should produce rather similar outputs. Certainly, you are free to implement any type of model you find more elaborate or more suitable.
 
 In a second step, we will use one of the fitted models to generate predictions and plot them.
 
 
-\subsection{generalized linear mixed model}%------------------------------
+\subsection{Generalized Linear Mixed Model}%------------------------------
 
 family binomial (with a binomial distribution of error)
 nested random effect for ID and strata
@@ -598,14 +609,14 @@ xmpl.glmm.fit <- glmer(case ~
 summary(xmpl.glmm.fit)
 
 @
-The model does not run and we get error messages suggesting us to scale the variables. 
+\noindent The model does not run and we get error messages suggesting us to scale the variables. 
 Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
 \[
 \displaystyle f(x) = (x - mean)/SD(x)
 \]
 
 
-<<echo=TRUE, eval=TRUE>>=
+<<echo=TRUE, eval=TRUE, message=FALSE, warning=FALSE>>=
 
 library(lme4)
 library(effects)
@@ -617,16 +628,23 @@ xmpl.glmm.fit.sc <- glmer(case ~
     (1|id/strata),
     family = binomial, data=xmpl.steps.df)
 
-
 summary(xmpl.glmm.fit.sc)
-
-plot(allEffects(xmpl.glmm.fit.sc))
-
 @
 
 
+<<model_1, echo=TRUE, dev="pdf", fig.show="hide">>=
+plot(allEffects(xmpl.glmm.fit.sc))
+@
 
-\subsection{mixed conditional logistic regression}%---------------------------
+\begin{figure}[!htbp]
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{model_1.pdf}
+\caption{Effects plot of the GLMM.}
+\label{fig:model_1}
+\end{figure}
+
+\subsection{Mixed Conditional Logistic Regression}%---------------------------
 
 The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
 Here is how to implement it in R:
@@ -641,7 +659,8 @@ xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
 
 #xmpl.steps.spdf$id <- as.integer(xmpl.steps.spdf$id)
 
-# column "case" indicates whether a site was visited or not. "strata" indicates the burst number and "id" the individual animal.
+# column "case" indicates whether a site was visited or not. 
+# "strata" indicates the burst number and "id" the individual animal.
 
 # The actual logistic model:
 xmpl.logit.fit <- 
@@ -651,7 +670,8 @@ xmpl.logit.fit <-
     distroad + I(distroad^2), random=~1|id,
     data = xmpl.steps.df, start.theta=1000)
  
-## when including random effects we run into problems. We get the error message that the data do not have enough residual variance.
+## when including random effects we run into problems. 
+# We get the error message that the data do not have enough residual variance.
 
 #random=~1|id,
 #disthighway + I(disthighway^2),
@@ -670,12 +690,9 @@ Formula
   \]
 
 
-\subsubsection{Predictions for GLMM}
+To see the results of your analysis you have to write final predictions of the habitat selection. We first provide the code for each model and then show you the plot.
 
-
------------------PREDICTIONS FOR GLMM-------------------
 <<>>=
-# predictions for glmm
 
 #plot(predict(xmpl.glmm.fit.sc, type="response"))
 summary(xmpl.glmm.fit.sc)
@@ -715,21 +732,31 @@ mydata$ruggednessResc <- (mydata$ruggedness * sd(xmpl.steps.df$ruggedness) + mea
 #head(mydata)
 #str(mydata)
 #mydata$ruggednessResc
+@
 
-plot(mydata$ruggednessResc, mydata$wruggforest, main="GLMM predictions for ruggedness", type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250), xlab="ruggedness", ylab="W", las=1)
+
+<<pred_1, echo=TRUE, dev="pdf", fig.show="hide">>=
+plot(mydata$ruggednessResc, mydata$wruggforest, 
+     main="GLMM predictions for ruggedness", type="l", 
+     col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250), 
+     xlab="ruggedness", ylab="W", las=1)
 lines(mydata$ruggednessResc, mydata$wruggopen, type="l", col="green", lwd=2)
-
-
-#abline(h=1,lty=2,col="wheat4")
 
 @
 
 
+\begin{figure}[!htbp]
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{pred_1.pdf}
+\caption{Prediction from the GLMM.}
+\label{fig:pred_1}
+\end{figure}
+
+
 \subsubsection{Predictions for MCLOGIT}
 
------------------PREDICTIONS FOR MCLOGIT-------------------
 <<>>=
-#predictions for mclogit
 
 summary(xmpl.steps.df$ruggedness)
 summary(xmpl.logit.fit)
@@ -747,23 +774,28 @@ mydata$wruggopen = exp(xmpl.logit.fit$coefficients[1] +
                 xmpl.logit.fit$coefficients[3] * mydata$ruggedness^2 + 
                 xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
                 xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
+@
 
-plot(mydata$ruggedness,mydata$wruggforest, main="MCLOGIT predictions for ruggedness", type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlab="ruggedness", ylab="W", las=1)
+
+<<pred_2, echo=TRUE, dev="pdf", fig.show="hide">>=
+plot(mydata$ruggedness,mydata$wruggforest, 
+     main="MCLOGIT predictions for ruggedness", 
+     type="l", col="darkgreen", lwd=2, ylim=c(0,1), 
+     xlab="ruggedness", ylab="W", las=1)
 lines(mydata$ruggedness,mydata$wruggopen,type="l", col="green", lwd=2)
-#abline(h=1,lty=2,col="wheat4")
-
 @
 
 
 
 
+\begin{figure}[!htbp]
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{pred_2.pdf}
+\caption{Prediction from the MCLOGIT.}
+\label{fig:pred_2}
+\end{figure}
 
-# save models -----------------------
-<<>>=
-save(pippo, file="pippo.Rdata")
-pippo <- load("pippo.Rdata")
-
-@
 
 
 
