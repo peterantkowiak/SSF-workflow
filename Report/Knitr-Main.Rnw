@@ -82,7 +82,7 @@ options(replace.assign=TRUE, width=80)
 
 \noindent Figure~\ref{fig:Flowchart} provides an overview of all necessary steps and potential options to conduct a SSF. This tutorial will guide you through each step and gives brief instructions on how to implement the functions and what to consider beforehand.
 To conduct a SSF using this tutorial we need you to store your initial data  in two independant datasets: \begin{enumerate} \item {A raster file of your spatial attributes (\emph{Raster data})} and \item{GPS locations of your individuals assigned with a time stamp (\emph{Waypoint data})}. \end{enumerate} 
-We will start with the \emph{Waypoint data} because these need to be transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point, \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written.   
+We will start with the \emph{Waypoint data} because these need to be transformed a couple of times to be able to work with them. You can find the single steps on the right site of Figure~\ref{fig:Flowchart}. While there are many options to adjust your \emph{Waypoint data} the \emph{Raster data} describing your spatial attributes needs not much of change. Once you created random steps for your observed positions you can extract the spatial attributes for each of those positions by using the function \texttt{extract}. At this point, \emph{Waypoint} and \emph{Raster data} will be combined and your final model can be written. \newpage
 
 
 \begin{figure} 
@@ -192,7 +192,7 @@ xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")],
 @
 \noindent In the \texttt{coords} argument of the function you should specify the ``x'' and ``y'' values for your dataset. In our example, we simply assign the two coordinate columns of the example dataset, but you can read the coordinates from a separate file if you want.\\
 
-\noindent To see, what information is stored in the data frame, use the \textt{names} command:
+\noindent To see, what information is stored in the data frame, use the \texttt{names} command:
 
 << warning=FALSE, message=FALSE>>=
 names(xmpl)
@@ -200,11 +200,11 @@ names(xmpl)
 
 
 \subsection{Creating an ``ltraj'' object}%------------------------------------------------------------------------------------------------------
-\noindent After storing the data in a ``Spatial Points Data Frame'', you now need to connect the single points and turn them into a set of trajectories. This operation is carried out by the function \texttt{as.ltraj} from the``hab'' package and produces objects of class ``ltraj''.
+\noindent After storing the data in a ``Spatial Points Data Frame'', you now need to connect the single points and turn them into a set of trajectories. This operation is carried out by the function \texttt{as.ltraj} from the``hab'' package and produces objects of class ``ltraj''. There are two different types of trajectories. For \textbf{Type I} the time is not known or not taken into account. \textbf{Type II} is characterized by a timestamp. If the time lag between the different locations is the same, it is called ``regular'', if not ``irregular''.
 The function \texttt{as.ltraj} requires at least three arguments to work:
 \begin{enumerate}
-\item{``xy'' (x- and y- coordinates for each point)}
-\item{``date'' (timestamp for each point, given as POSIXct class)}
+\item{``x'' and ``y'' (x- and y- coordinates for each point)}
+\item{``date'' (timestamp for each point, given as ``POSIXct'' class)}
 \item{``id'' (the animal id)}
 \end{enumerate}
 
@@ -222,16 +222,16 @@ xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
 @
 \noindent Two comments to the function used: By typing \texttt{hab:::as.ltraj} you tell R to use the \texttt{as.ltraj} function from the ``hab'' package which is speed optimized against its \texttt{adehabitatLT} sibling. Unlike the \texttt{xmpl.spdf@coords} promt which works for any ``SPDF'' object, the \texttt{xmpl.spdf\$cat} prompt is specific to your dataset. In the example dataset, animal ID's are stored as an integer vector called \texttt{cat}. If this differs in your dataset and you should change the prompt accordingly. The \texttt{id} creates subsets in your data set which you can see in the structure below.
 
-\noindent You now may want to have a closer look at the created ``ltraj'' object. Display its structure with by executing \texttt{str(xmpl.ltr)}. The ``ltraj'' object is a list containing seven different dataframes, each for one individual, which we defined with the \texttt{id}. In each dataframe all information is stored for every single observation of the individual: 
+\noindent You now may want to have a closer look at the created ``ltraj'' object. Display its structure by executing \texttt{str(xmpl.ltr)}. The ``ltraj'' object is a list containing seven different dataframes, each for one individual, which we defined with the \texttt{id}. In each dataframe all information is stored for every single observation of the individual: 
 \begin{itemize}
-\item{``x'' and ``y'' (x- and y- coordinates for each point)}
-\item{``date'' (timestamp for each point, given as POSIXct class)}
-\item{``dx'' and ``dy'' (changes in x- and y- values)}
-\item{``dist'' (length of trajectory)}
-\item{``dt'' (time between relocations in s)}
-\item{``R2n'' (????????)}
-\item{``abs.angle'' (absolute angle of trajectory)}
-\item{``rel.angle'' (angle between previous and actual trajectory)}
+\item{\texttt{x} and ``y'' (x- and y- coordinates for each point)}
+\item{\texttt{date} (timestamp for each point, given as POSIXct class)}
+\item{\texttt{dx} and ``dy'' (changes in x- and y- values)}
+\item{\texttt{dist} (length of trajectory)}
+\item{\texttt{dt} (time between relocations in s)}
+\item{\texttt{R2n} (squared net displacement between current relocation and first relocation)}
+\item{\texttt{abs.angle} (absolute angle of trajectory)}
+\item{\texttt{rel.angle} (angle between previous and actual trajectory)}
 \end{itemize}
 
 <<>>=
@@ -280,7 +280,7 @@ plot(xmpl.ltr, id=10289)
 \noindent The function \texttt{cutltraj} splits the given bursts of your ``ltraj'' object into smaller bursts according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class ``ltraj'' with the same attribute \texttt{id} to one unique burst. 
 
 
-\noindent To find out if there are missing values and to get an overview of the time lags between the relocations, you can plot \texttt{dt} of your ``ltraj'' object. For that, you need to define the time interval you are looking at \cite{0.3.162014}.
+\noindent To find out if there are missing values and to get an overview of the time lags between the relocations, you can plot the changes of your trajectory over time \texttt{dt}. For that, you need to define the time interval you are looking at \cite{0.3.162014}.
 
 \noindent In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. As \texttt{dt}, the time between successive relocations, is measured in seconds, we need to convert it into 3 hours.
 
@@ -309,6 +309,7 @@ foo = function(dt) { return(dt> (3800*3))}
 <<>>=
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
+\noindent Note the Warning Message! As many recordings are missing we are losing a lot of data.
 
 \noindent There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
@@ -316,13 +317,13 @@ xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 \subsection{Distinguish different behaviors: Broken stick model and autocorrelation}
 NEEDS EXPLANATION!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Autocorrelation between dist or angle means homogenous behaviour
 
 \subsection{Creating Random Steps}
 
-\noindent Given your final bursts we now randomly draw angles and distances from your observed data to get random steps. The angle is taken from the previous observed position111111111 your starting point of the random step while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain of three observed positions. 
+\noindent Given your final bursts we now randomly draw angles and distances from your observed data to get random steps. The angle is taken from the previous trajectory to the actual one while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain three observed positions to create random steps for one relocation. The first and the last relocations only contribute to the calculation but don't have their ``own'' random steps as there is no previous trajectory an angle could be calculated from. Neither there is an endpoint to draw a distance. This means that the number of poins with random steps is lower as your actual recorded relocations.
 Before applying the function \texttt{rdSteps} you might want to check for correletaion between turning angle and distance. In case your individuals tend to move long distances by turning only in small angles (e.g. a species migrating) but stop for several days for feeding you want to pick the distance and the angle as pairs. If no correlation is found you can pick both variables independently.
-To check for this we use the \texttt{plot} function but first have to convert our ltraj object back to a data frame by using \texttt{ld}.
-
+To check for this we use the \texttt{plot} function but first have to convert our ``ltraj'' object back to a data frame by using \texttt{ld}.
 
 <<>>=
 # ld is a quick way to create a data frame from an ltraj object
@@ -334,7 +335,7 @@ xmpl.cut.df <- ld(xmpl.cut)
 <<cor_1, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(xmpl.cut.df$dist, xmpl.cut.df$rel.angle)
 @
-The result of this code chunk is shown in Figure~\ref{fig:cor_1}.
+\noindent The result of this code chunk is shown in Figure~\ref{fig:cor_1}.
 
 \begin{figure}[!htbp]
 \captionsetup{width=0.8\textwidth}
@@ -345,7 +346,7 @@ The result of this code chunk is shown in Figure~\ref{fig:cor_1}.
 \end{figure}
 
 
-\noindent The plot shows a correleation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply \texttt{rdSteps}.  
+\noindent The plot shows a correlation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply \texttt{rdSteps}.  
 
 <<>>=
   
@@ -354,27 +355,24 @@ xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,
           # use simult = FALSE if your data is not correlated
 @
 
-\noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from than set \texttt{only.others = TRUE}.
-All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
+\noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from this set include \texttt{only.others = TRUE}.
+\noindent All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
 
 <<>>=
 head(xmpl.steps)
 @
 
-\noindent The table still includes your "cat id", "burst id", the "rel.angle" and "dist" of your observed positions. Furthermore, the "case" is provided as categories of 0 and 1 for available and used. The "strata" marks all 10 random steps and the one observed location, so you can later tell your function what to compare.  
-Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. For letter you need to implement more code because we did not use this option in our tutorial (see the grey box in Figure~\ref{fig:Flowchart}).\
-Only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step ("dx" and "dy"). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
+\noindent The table still includes your ``cat id'', ``burst id'', the ``rel.angle'' and ``dist'' of your observed positions. Furthermore, the ``case'' is provided as categories of 0 and 1 for available and used. The ``strata'' marks all 10 random steps and the visited location so you can later tell your function what to compare.  
+Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. For latter you need to implement more code because we did not use this option in our tutorial (see the grey box in Figure~\ref{fig:Flowchart}).\\
+Now only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step (``dx'' and ``dy''). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
 
 <<>>=
-
 xmpl.steps$new_x <- xmpl.steps$x + xmpl.steps$dx
 xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
-
 @
-
-\noindent Thereby, the ???rst observed position will be overwritten as the ???rst random step. That is necessary because there is no random step to compare the ???rst observed position with (angle could not be calculated!). Also the last observed position will be lost for similar reasons (distance could not be calculated!). 
   
-\noindent After running this chapter you get your final SpatialPointDataFrame to use with the selection function.
+\noindent After running this chapter you get your final ``SpatialPointDataFrame'' to use with the selection function.
+
 <<>>=
 head(xmpl.steps)
 @
@@ -382,14 +380,16 @@ head(xmpl.steps)
 
 \subsection{Different distributions as an option for rdSteps}
 
+!!!!!!!!!!!!!!!NEEDS FURTHER EXPLANATION!!!!!!!!!!!!!!!!!!!!!!!!!!
+\\
 
 
 \section{Processing Spatial Covariates}%----------------------------------------------------------------------------------------------------------------------------
-\noindent This section explains the handling of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (ESRI *.adf or georeferenced *.tif). These should have the same coordinate system as your telemetry data and should (for time reasons) already be clipped to your study area and. For instructions how to do this in R, please read the GIS instructions from the other group ;)   
+\noindent This section explains the handling of spatial parameters that will be tested for selection by the target species. You should store these data in raster files (ESRI *.adf or georeferenced *.tif). These should have the same coordinate system as your telemetry data and should (for time reasons) already be clipped to your study area. For instructions how to do this in R, please read the GIS instructions from the other group ;)   
 
 \subsection{Load Raster Data (ESRI, *.tif, (*.shp))}%------------------------------------------------------------------------------------------------------
 
-\noindent With a simple function stored in the package \textbf{raster} you are able to upload any raster file into R. Examplarily we use raster data on the following parameters for the study area:
+\noindent With a simple function stored in the package \texttt{raster} you are able to upload any raster file into R. Examplarily we use raster data on the following parameters for the study area:
 \begin{itemize}
 \item{ruggedness of the terrain}
 \item{land cover}
@@ -434,8 +434,14 @@ plot(distroad)
 
 
 \subsection{Raster Extraction}
-\noindent Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the trajectories with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame, extracting the raster values and combining them to the final dataset.
-\noindent Converting \texttt{xmpl.steps} into a SpatialPointsDataFrame:
+\noindent Now that you have generated the random steps and loaded the raster data, you can take the next step and actually connect the observed and potential points with the spatial covariates. There are different functions that can do this. When choosing one, you need to consider that raster files are large and juggling with them occupies lots of memory and computing power. For this reason we suggest using the \texttt{extract()} function that allows for querying single pixel values without loading the whole source file into working memory. The code for compiling the final dataset involves three steps: 
+\begin{itemize}
+\item{Converting the \texttt{xmpl.steps} data frame into a Spatial Points Data frame}
+\item{extracting the raster values}
+\item{combining them to the final dataset}
+\end{itemize}
+
+\noindent Converting \texttt{xmpl.steps} into a ``SpatialPointsDataFrame'':
 <<>>= 
 xmpl.steps.spdf <- SpatialPointsDataFrame(coords = 
                                           xmpl.steps[,c("new_x","new_y")], 
@@ -457,7 +463,7 @@ landcover.extr <- extract(landcover, xmpl.steps.spdf,
 @
 \noindent The extraction is done separately for each layer. The option \texttt{method = 'simple'} extracts value from nearest cell whereas \texttt{method = 'bilinear'} interpolates from the four nearest cells. You can adjust this option according to the resolution of your dataset and ecological considerations. \texttt{df=T} returns the result as a data frame and \texttt{sp=F} ensures that the output is not added to the original dataset right away. 
 
-\noindent Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called "w001001". Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
+\noindent Automatically adding the extracted values to the original dataset sounds like a handy option. For two reasons we do not use it here: Firstly, we want to set the column names manually for not ending up with several columns called ``w001001''. Secondly, our data include a categorial covariate (landcover) that we want to reclassify and flag as a factor.
 
 \noindent This is the code for compiling the final dataset:
 <<>>= 
@@ -483,8 +489,7 @@ head(xmpl.steps.spdf)
 
 \subsection{Checking for Multicollinearity} % -------------------------------------------------------------------------------------------------------------------------------------------
 
-\noindent Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the Spatial Points Data Frame into a data frame. 
-
+\noindent Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for the correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the Spatial Points Data Frame into a data frame. 
 
 <<>>=
 xmpl.steps.df = as.data.frame(xmpl.steps.spdf)
@@ -496,17 +501,14 @@ Z = cbind(ruggedness,canopycover,disthighway,distroad,landcover)
 detach(xmpl.steps.df)
 
 cor(Z)
-
 @
 
-\noindent As you can see, the canopycover and the landcover are highly correlated. The correlation coefficient for the distance to roads and the distance to highways is very high as well. 
+\noindent As you can see, the canopycover and the landcover are highly correlated. The correlation coefficient for the distance to roads and the distance to highways is very high as well. For our further analysis we therefore only use landcover and the distance to roads.
 
 
 \section{Final SSF Model}
 
-\section{NEW - Final SSF Model - NEW}
-
-There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The lme4 package and the mclogit package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression (mclogit) and a generalized linear mixed model (lme4). 
+There are several options to analyze the generated data. As \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. Thurfjell et al. \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The \texttt{lme4} package and the \texttt{mclogit} package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression \texttt{(mclogit)} and a generalized linear mixed model \texttt{(lme4)}. 
 We will test for effects of ruggedness, canopy cover, land cover, distance to road and distance to highway. The geographic covariates will be included as quadratic terms, resulting in the equation:
 \[
 \displaystyle case ~ 
