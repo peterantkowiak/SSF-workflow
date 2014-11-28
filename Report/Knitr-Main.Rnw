@@ -299,7 +299,7 @@ plot(xmpl.ltr, id=10289)
 <<time_seq, echo=TRUE, dev="pdf", fig.show="hide">>=
 plotltr(xmpl.ltr, "dt/3600/3")
 @
-\noindent The result of this code chunk is shown in Figure~\ref{fig:time_seq}. The relocations which are 3 hours apart, are plottet at value 1 on the y-axis, if one relocation is missing (time lag of 6 hours) the relocation gets the value 2. As you can see, there are a lot of relocations missing. To keep the time lag constant, we now want to split the existing bursts (individuals) into ``sub-bursts'' where the time lag is bigger than 3 hours. A constant time lag is necessary to have comparable trajectories for further analyses.
+\noindent The result of this code chunk is shown in Figure~\ref{fig:time_seq}. 
 
 \begin{figure}[!htbp]
 \captionsetup{width=0.8\textwidth}
@@ -309,8 +309,7 @@ plotltr(xmpl.ltr, "dt/3600/3")
 \label{fig:time_seq}
 \end{figure}
 
-\noindent To cut our data at our desired interval, we need a function which defines \texttt{dt}. Because we want to keep relocations which are only a few minutes ``wrong'', we added 10 extra minutes.\\
-\noindent Note: We still keep data with different time lags (< 3:10 h). As this is an irregular type II trajectory, it might cause problems with different functions (e.g. checking for autocorrelation). There are functions to convert it into a regular one, look at the \texttt{adehabitatLT} tutorial by C. Calenge \cite{0.3.162014}, the help section to get more information or define an explicit time lag in the function below. Because this however might lead to a massive loss of data, we didn't do that. 
+\noindent The relocations which are 3 hours apart, are plottet at value 1 on the y-axis, if one relocation is missing (time lag of 6 hours) the relocation gets the value 2. As you can see, there are a lot of relocations missing. To keep the time lag constant, we now want to split the existing bursts (individuals) into ``sub-bursts'' where the time lag is bigger than 3 hours. To cut our data at our desired interval, we need a function which defines \texttt{dt}. Because we want to keep relocations which are only a few minutes ``wrong'', we added 10 extra minutes.\\
 
 <<>>=
 foo = function(dt) { return(dt> (3800*3))} 
@@ -321,9 +320,12 @@ foo = function(dt) { return(dt> (3800*3))}
 <<>>=
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
-\noindent Note the Warning Message! As many recordings are missing we are losing a lot of data.
 
-\noindent There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
+\noindent Note: We still keep data with different time lags (< 3:10 h). As this is an irregular type II trajectory, it might cause problems with different functions (e.g. checking for autocorrelation). A constant time lag is necessary to have comparable trajectories for further analyses. There are functions to convert it into a regular one, look at the \texttt{adehabitatLT} tutorial by C. Calenge \cite{0.3.162014}, the help section to get more information or define an explicit time lag in the function above. 
+A nice way to take care of our problem with minor delays of the relocations, which might be caused by the time the GPS needs to relocate, is to round. You can first look for missing time values and replace them via setting a reference date. After that you can round time values which slightly differ from the desired one using the function \texttt{sett0}. This however should NOT be used to convert a completely irregular trajectory into a regular one but compensate for minor descrepancies. Detailed instructions on how to do that can also be found in the totorial by Calenge. \cite{0.3.162014}\\
+
+
+\noindent In general there are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
 
 \subsection{Distinguish different behaviors: Broken stick model and autocorrelation}
