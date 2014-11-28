@@ -58,7 +58,7 @@ options(replace.assign=TRUE, width=80)
 
 \title{A tutorial for implementing Step Selection Function in R}
 
-\author{P. Antkowiak\thanks{M.Sc. programme "GIS und Umweltmodellierung" at University of Freiburg} \and H. Tripke\thanks{M.Sc. programme "Wildlife, Biodiversity and Vegetation" at University of Freiburg} \and C. Wilhelm\thanks{M.Sc. programme "Wildlife, Biodiversity and Vegetation" at University of Freiburg}}
+\author{P. Antkowiak\thanks{M.Sc. programme ``GIS und Umweltmodellierung'' at University of Freiburg} \and H. Tripke\thanks{M.Sc. programme ``Wildlife, Biodiversity and Vegetation'' at University of Freiburg} \and C. Wilhelm\thanks{M.Sc. programme ``Wildlife, Biodiversity and Vegetation'' at University of Freiburg}}
 % for more control, multiple affiliations, line breaks and alike, use the authblk package!!
 
 \date{\today} % !!use package isodate for more control of date formatting!!
@@ -489,18 +489,50 @@ head(xmpl.steps.spdf)
 
 \subsection{Checking for Multicollinearity} % -------------------------------------------------------------------------------------------------------------------------------------------
 
-\noindent Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for the correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the Spatial Points Data Frame into a data frame. 
+\noindent Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for the correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the ``Spatial Points Data Frame'' into a data frame. Furthermore the column \texttt{landcover} needs to be changed from ``facotor'' into ``numeric''. 
+
 
 <<>>=
-xmpl.steps.df = as.data.frame(xmpl.steps.spdf)
 
-attach(xmpl.steps.df)
- 
-Z = cbind(ruggedness,canopycover,disthighway,distroad,landcover) 
+xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
 
-detach(xmpl.steps.df)
+Z <- subset(xmpl.steps.df, select=c(ruggedness,canopycover,disthighway,distroad))
 
-cor(Z)
+Z$landcover <- as.numeric(
+    ifelse(xmpl.steps.df$landcover == "forest",0,
+    ifelse(xmpl.steps.df$landcover == "open", 1,NA)))
+
+#head(Z)
+
+cor(Z, use="pairwise.complete.obs")
+
+
+#creating a nice plot
+
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    r <- abs(cor(x, y,use="pairwise.complete.obs"))
+    txt <- format(c(r, 0.123456789), digits = digits)[1]
+    txt <- paste0(prefix, txt)
+    if(missing(cex.cor)) cex.cor <- 0.8/strwidth(txt)
+    text(0.5, 0.5, txt, cex = cex.cor * r)
+}
+
+panel.hist <- function(x, ...)
+{
+    usr <- par("usr"); on.exit(par(usr))
+    par(usr = c(usr[1:2], 0, 1.5) )
+    h <- hist(x, plot = FALSE)
+    breaks <- h$breaks; nB <- length(breaks)
+    y <- h$counts; y <- y/max(y)
+    rect(breaks[-nB], 0, breaks[-1], y, col = "cyan", ...)
+}
+
+
+pairs(Z, lower.panel=panel.smooth,
+      upper.panel=panel.cor,diag.panel=panel.hist)
 @
 
 \noindent As you can see, the canopycover and the landcover are highly correlated. The correlation coefficient for the distance to roads and the distance to highways is very high as well. For our further analysis we therefore only use landcover and the distance to roads.
