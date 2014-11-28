@@ -44,6 +44,7 @@
 %------------------------------------------------------------------------------------------------------
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 %%%%%%%%%%%%% this bit is new to Knitr: %%%%%%%%%%%%%%%%%%%%%
 <<setup, include=FALSE, cache=FALSE, echo=F>>=
@@ -192,7 +193,7 @@ xmpl.spdf = SpatialPointsDataFrame(coords = xmpl[,c("easting","northing")],
 @
 \noindent In the \texttt{coords} argument of the function you should specify the ``x'' and ``y'' values for your dataset. In our example, we simply assign the two coordinate columns of the example dataset, but you can read the coordinates from a separate file if you want.\\
 
-\noindent To see, what information is stored in the data frame, use the \textt{names} command:
+\noindent To see, what information is stored in the data frame, use the \texttt{names} command:
 
 << warning=FALSE, message=FALSE>>=
 names(xmpl)
@@ -200,7 +201,7 @@ names(xmpl)
 
 
 \subsection{Creating an ``ltraj'' object}%------------------------------------------------------------------------------------------------------
-\noindent After storing the data in a ``Spatial Points Data Frame'', you now need to connect the single points and turn them into a set of trajectories. This operation is carried out by the function \texttt{as.ltraj} from the``hab'' package and produces objects of class ``ltraj''.
+\noindent After storing the data in a ``Spatial Points Data Frame'', you now need to connect the single points and turn them into a set of trajectories. This operation is carried out by the function \texttt{as.ltraj} from the``hab'' package and produces objects of class ``ltraj''. There are two different types of trajectories. For \textbf{Type I} the time is not known or not taken into account. \textbf{Type II} is characterized by a timestamp. If the time lag between the different locations is the same, it is called ``regular'', if not ``irregular''.
 The function \texttt{as.ltraj} requires at least three arguments to work:
 \begin{enumerate}
 \item{``xy'' (x- and y- coordinates for each point)}
@@ -229,7 +230,7 @@ xmpl.ltr <- hab:::as.ltraj(xy = xmpl.spdf@coords, date = date,
 \item{``dx'' and ``dy'' (changes in x- and y- values)}
 \item{``dist'' (length of trajectory)}
 \item{``dt'' (time between relocations in s)}
-\item{``R2n'' (????????)}
+\item{``R2n'' (squared net displacement between current relocation and first relocation)}
 \item{``abs.angle'' (absolute angle of trajectory)}
 \item{``rel.angle'' (angle between previous and actual trajectory)}
 \end{itemize}
@@ -280,7 +281,7 @@ plot(xmpl.ltr, id=10289)
 \noindent The function \texttt{cutltraj} splits the given bursts of your ``ltraj'' object into smaller bursts according to a specified criterion. In contrast, the function \texttt{bindltraj} combines the bursts of an object of class ``ltraj'' with the same attribute \texttt{id} to one unique burst. 
 
 
-\noindent To find out if there are missing values and to get an overview of the time lags between the relocations, you can plot \texttt{dt} of your ``ltraj'' object. For that, you need to define the time interval you are looking at \cite{0.3.162014}.
+\noindent To find out if there are missing values and to get an overview of the time lags between the relocations, you can plot the changes of your trajectory over time \texttt{dt}. For that, you need to define the time interval you are looking at \cite{0.3.162014}.
 
 \noindent In our example, the locations of the cougars were recorded every 3 hours, starting at 3 AM. The location at midnight is always missing. As \texttt{dt}, the time between successive relocations, is measured in seconds, we need to convert it into 3 hours.
 
@@ -309,6 +310,7 @@ foo = function(dt) { return(dt> (3800*3))}
 <<>>=
 xmpl.cut <- cutltraj(xmpl.ltr, "foo(dt)", nextr = TRUE)
 @
+\noindent Note the Warning Message! As many recordings are missing we are losing a lot of data.
 
 \noindent There are two options of cutting the trajectory depending on nextr. If it is set as FALSE, the burst stops before the first relocation matching the criterion. if it is set as TRUE, it stops after. \cite{0.3.162014}
 
