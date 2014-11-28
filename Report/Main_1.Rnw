@@ -76,15 +76,18 @@ options(replace.assign=TRUE, width=80)
 
 \subsection{Purpose and applications of SSFs}
 
-\noindent In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual are connected by a linear segment. These segments are considered as steps. The fix rate of the GPS locations that influence the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions, the target species and its behaviour. Then random steps are calculated by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat, which could have been chosen, within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}. \\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. Moreover, many packages for analyzing animal movements are provided in R. None of these packages is designed for doing a SSF only or is at least missing fundamental steps. For example, the \texttt{adehabitatLT} has many features for analyzing your telemetry data (note that reading the help from 2011 is very much recommendend by us \cite{Package2011}!) but is missing any function to convert random steps. Another problem we faced when exploring the available packages in R was that some of them are lacking detailed descriptions on how to use their examples. The data for these examples is well prepared but for an user, who is freshly starting with SSF, it is hard to understand the structure of these data.\\ Therefore, the aim of this tutorial is to collect all these functions necessary to conduct a SSF and order and describe them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as ``xmpl''). Since the study design is fundemental to successfully implement SSFs, we recommend to read  Thurfjell et al. (2014) \cite{thurfjell2014applications}, who provide different options and suggestions for conducting SSFs, before starting your own study.\\
+\noindent In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual are connected by a linear segment. These segments are considered as steps. The fix rate of the GPS locations that influence the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions, the target species and its behaviour. Then random steps are calculated by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat, which could have been chosen, within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}. For an easier understanding of the terminology we use, we have created Figure~\ref{fig:Burst}  which explains the most important terms.\\ 
 
-\begin{figure} 
+\begin{figure} [!htpb]
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.8\textwidth]{explain_a_burst.png} 
-\caption{Animal movements in an environment. Theses data are already separated into bursts of not more than 3h 10min intervals. This prohibits to combine positions uncared of missing data points. These bursts provide the angle and distance to calculate random steps from. Thereby, strata and case have to be defined.}
+\caption{Animal movements from A to B. Theses data are already separated into bursts of not more than 3h 10min intervals. This prohibits to combine positions uncared of missing data points. These bursts provide the angle and distance to calculate random steps from. Thereby, strata and case have to be defined.}
 \label{fig:Burst}
 \end{figure}
+
+
+So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. Moreover, many packages for analyzing animal movements are provided in R. None of these packages is designed for doing a SSF only or is at least missing fundamental steps. For example, the \texttt{adehabitatLT} has many features for analyzing your telemetry data (note that reading the help from 2011 is very much recommendend by us \cite{Package2011}!) but is missing any function to convert random steps. Another problem we faced when exploring the available packages in R was that some of them are lacking detailed descriptions on how to use their examples. The data for these examples is well prepared but for an user, who is freshly starting with SSF, it is hard to understand the structure of these data.\\ Therefore, the aim of this tutorial is to collect all these functions necessary to conduct a SSF and order and describe them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as ``xmpl''). Since the study design is fundemental to successfully implement SSFs, we recommend to read  Thurfjell et al. (2014) \cite{thurfjell2014applications}, who provide different options and suggestions for conducting SSFs, before starting your own study.\\
 
 
 \subsection{Our SSF workflow in R}
@@ -396,44 +399,72 @@ To identify at which scales autocorrelation occurs, an autocorrelation function 
 \subsubsection{Distinguish different behaviors}
 It is possible to divide a trajectory into segments characterized by a homogenous behaviour. You can either use a ``Broken Stick Model'', the method of ``Gueguen'' or the method of ``Lavielle'' \cite{Package2011}. 
 
+%-------------------------------------
 \subsection{Creating Random Steps}
 
-\noindent Now that we have created our final bursts (see Chapter ~ref\section{Creating Bursts}) we now randomly draw angles and distances from the observed data to get random steps. The angle is taken from the previous trajectory to the actual one while the distance is taken from the starting point to the next observed position. This means that each burst should at least contain three observed positions to create random steps for one relocation. The first and the last relocations only contribute to the calculation but don't have their ``own'' random steps as there is no previous trajectory an angle could be calculated from. Neither there is an endpoint to draw a distance. This means that the number of poins with random steps is lower as your actual recorded relocations.
-Before applying the function \texttt{rdSteps} you might want to check for correletaion between turning angle and distance. In case your individuals tend to move long distances by turning only in small angles (e.g. a species migrating) but stop for several days for feeding you want to pick the distance and the angle as pairs. If no correlation is found you can pick both variables independently.
-To check for this we use the \texttt{plot} function but first have to convert our ``ltraj'' object back to a data frame by using \texttt{ld}.
 
+
+
+\noindent Now that your telemetry data are cleaned and split into bursts, you can proceed to the next big step: Drawing the random steps. The aim of this chapter is to generate realistic alternative steps that the animal might have taken so you can later compare them with the actually visited location. The ``hab'' package includes the very useful \texttt{rdSteps} function that can read data frames with spatial trajectories, generate random steps from a given distribution and add those steps to the data frame. We will demonstrate the usage of this function with all required arguments and give hints to some extended options.
+The \texttt{rdSteps} function reads the following arguments:
+
+\begin{itemize}
+
+\item{\textbf{x} = your trajectory data}\\
+The data can be a ltraj object or a data frame. The function \texttt{ld} is a quick way to create a data frame from an ltraj object:
 <<>>=
-# ld is another quick way to create a data frame from an ltraj object
 xmpl.cut.df <- ld(xmpl.cut)  
-   
 @
 
+\item{\textbf{nrs} = the number of random steps to draw for each observed step}\\
+Choosing the number of random steps to generate is certainly not the most important decision when running an SSF, but it is not completely arbitrary either. The number of alternative steps needs to be sufficiently high for producing meaningful results, especially if your species of interest depends on rather rare habitats scattered over the landscape. On the other hand, large numbers of random points can inflate your dataset and lead to long computing times without really changing the results \cite{thurfjell2014applications}. In previous studies, the number of random steps ranged from 2 to 200. As our xmpl dataset is fairly large, we chose 10 - a medium number of random steps.\\
+
+\item{\textbf{rand.dis} = the random distributions for step lengths and turning angles}\\
+Per default (\texttt{rand.dis = NULL}) the angle and distance for each random step are drawn from the observed values you provide in \texttt{x}. We use this handy option because it saves us the trouble to create distributions separately. For some reasons you might still choose to use different distributions: If your dataset is small, using the observed values might lead to circularities. You might also already have good distributions from other studies and want use them. To import distributions from other datasets, set \texttt{rand.dist = YourDataSet}.\\
+
+\item{\textbf{only.others} = include or exclude the current individual when drawing length and angle}\\
+
+
+\item{\textbf{simult} = draw step lengths and turning angles simultaneously or not}\\
+Before setting this parameter, you might want to check for correletaion between turning angle and distance. Such might occur if your individuals tend to turn only in small angles when moving long distances (e.g. a species migrating) but on the other hand turn a lot and move slowly when feeding. If distance and angle correlate, you want to draw them as pairs. If no correlation is found you can pick both variables independently.
+To check for correlation, simply \texttt{plot} distance versus angle (code below, result shown in Figure~\ref{fig:cor_1}).
 
 <<cor_1, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(xmpl.cut.df$dist, xmpl.cut.df$rel.angle)
 @
-\noindent The result of this code chunk is shown in Figure~\ref{fig:cor_1}.
 
 \begin{figure}[!htbp]
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.6\textwidth]{cor_1.pdf}
-\caption{Testing for correlation of the observed turning angle and step length. The y-axis shows the difference in the turning angle. The shape indicates a correlation for longer steps and doing only small turning angles (from -1 to 1).}
+\caption{Testing for correlation of the observed turning angle and step length. The y-axis shows the difference in the turning angle.}
 \label{fig:cor_1}
 \end{figure}
 
+The distribution of points indicates a correlation: For small turning angles (around 1) steps are longer than for big turning angles. To take into account for this, we will draw angle and step length simultaneously (\texttt{simult = T}).\\
 
-\noindent The plot shows a correlation of step length and turning angle and therefore the random steps should be taken as pairs (\texttt{simult = T}). Per default the angle and distance for each random step is drawn from the observed values you provide with \texttt{x}. If your random steps shall be taken from a different dataset you can do so by writting it in \texttt{rand.dist = YourDataSet}. Hereby, you can also specify a distribution for estimating angle and distance. In our case we stick to the same dataset and apply \texttt{rdSteps}.  
 
-<<>>=
+\item{\textbf{distMax} = set an upper limit for step length and turning angle}\\
+We stick to infinity as the default value here to include all steps.\\
+
+
+\item{\textbf{reproducible} = make results reproducible or not.}\\
+By choosing \textt{reproducible = TRUE} we set a seed to get reproducible random steps.\\
+
+\end{itemize}
+
+
+\noindent To generate random steps for the example dataset run the \texttt{rdSteps} function as follows:
+
+<<echo=TRUE, eval=TRUE>>=
   
 xmpl.steps <- rdSteps(x = xmpl.cut, nrs = 10, simult = T, rand.dis = NULL,  
                       distMax = Inf, reproducible = TRUE, only.others = FALSE) 
-          # use simult = FALSE if your data is not correlated
+
 @
 
-\noindent The function \texttt{rdSteps} uses some default settings which offer you options to modify your random steps. You can for example, easily change the number of steps taken from the observed data by defining \texttt{nrs} (default is 10) or if you only need steps shorter than a certain value specify \texttt{distMax} to that value (per default all steps are taken). By setting \textt{reproducible = TRUE} a seed is used to get reproducible random steps. If you want to exclude your current individual to draw angle and distance from this set include \texttt{only.others = TRUE}.
-\noindent All in all, \texttt{rdSteps} is very straight forward and computes a lot of useful things for you: 
+
+\noindent All in all, \texttt{rdSteps} is a very powerful function that computes a lot of useful things for you. To view them, execute: 
 
 \begin{small}
 <<>>=
@@ -441,10 +472,11 @@ head(xmpl.steps)
 @
 \end{small}
 
-
 \noindent The table still includes your ``cat id'', ``burst id'', the ``rel.angle'' and ``dist'' of your observed positions. Furthermore, the ``case'' is provided as categories of 0 and 1 for available and used. The ``strata'' marks all 10 random steps and the visited location so you can later tell your function what to compare.  
-Depending on your analysis you might want to compare only your observed positions with the endpoints of your random steps or you want to investigate in the selection of spatial attributes along the path. For latter you need to implement more code because we did not use this option in our tutorial (see the grey box in Figure~\ref{fig:Flowchart}).\\
-Now only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step (``dx'' and ``dy''). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
+When looking at the first column of the table you will notice that it only starts with the second point (10286.2). The first and the last relocations contribute to the calculation but do not have their ``own'' random steps. For the first point there is no previous step a turning angle could be calculated from, for the last point, no following endpoint is known. As a consequence, the number of points with random steps is lower than your actual recorded relocations.
+Furthermore, this means that each burst must at least contain three observed positions to create random steps for one relocation.\\ 
+
+Now, only new coordinates for your random points are missing. Instead two columns provide the differences of your x- and y- coordinates for each random step (``dx'' and ``dy''). To get new coordinates for your random steps we simply add these differences to your initial coordinates and create two new columns. 
 
 <<>>=
 xmpl.steps$new_x <- xmpl.steps$x + xmpl.steps$dx
@@ -458,12 +490,6 @@ xmpl.steps$new_y <- xmpl.steps$y + xmpl.steps$dy
 head(xmpl.steps)
 @
 \end{small}
-
-
-\subsection{Different distributions as an option for rdSteps}
-
-!!!!!!!!!!!!!!!NEEDS FURTHER EXPLANATION!!!!!!!!!!!!!!!!!!!!!!!!!!
-\\
 
 
 \section{Processing Spatial Covariates}%----------------------------------------------------------------------------------------------------------------------------
@@ -481,7 +507,7 @@ head(xmpl.steps)
 \end{itemize}
 
 \noindent For reading the raster data, three packages are required:
-<<echo=FALSE, message=FALSE, warning=FALSE>>=
+<<echo=TRUE, message=FALSE, warning=FALSE>>=
 library(raster)
 library(rgdal)
 library(sp)
@@ -574,7 +600,8 @@ head(xmpl.steps.spdf)
 
 \subsection{Possible extensions to the extract function}
 
-When extracting the environmental covariates, the most straightforward approach is to measure them at the endpoint of a step, just as we did in our example. For some ecological questions it might though be desirable to take into account for the habitat structures along the step as well. Some animals might for example not visit a suitable patch of habitat because it is surrounded by unfavorable or even impassable structures. Fortunately, the \texttt{extract} function is capable of not just extracting values from single points but also along lines. The input data need to be ``SpatialLines'' features which means that you would first have to convert the ``SpatialPoints'' from your dataset. Suitable functions are included in the ``sp'' package. The extracted values could then be accumulated (e.g. terrain ruggedness), averaged or checked for criteria (e.g. ``Does the step cross a cell classified as road?''). Implementing this feature might be a good aim for follow-up projects.
+When extracting the environmental covariates, the most straightforward approach is to measure them at the endpoint of a step, just as we did in our example. For some ecological questions it might though be desirable to analyze the selection of habitat structures along the step as well (see the grey box in Figure~\ref{fig:Flowchart}). Some animals might for example not visit a suitable patch of habitat because it is surrounded by unfavorable or even impassable structures. Fortunately, the \texttt{extract} function is capable of not just extracting values from single points but also along lines. The input data need to be ``SpatialLines'' features which means that you would first have to convert the ``SpatialPoints'' from your dataset. Suitable functions are included in the ``sp'' package. The extracted values could then be accumulated (e.g. terrain ruggedness), averaged or checked for criteria (e.g. ``Does the step cross a cell classified as road?''). Implementing this feature might be a good aim for follow-up projects.
+
 
 
 \subsection{Checking for Multicollinearity} % -------------------------------------------------------------------------------------------------------------------------------------------
@@ -591,8 +618,6 @@ Z <- subset(xmpl.steps.df, select=c(ruggedness,canopycover,disthighway,distroad)
 Z$landcover <- as.numeric(
     ifelse(xmpl.steps.df$landcover == "forest",0,
     ifelse(xmpl.steps.df$landcover == "open", 1,NA)))
-
-#head(Z)
 
 cor(Z, use="pairwise.complete.obs")
 
@@ -641,7 +666,7 @@ pairs(Z, lower.panel=panel.smooth,
 
 \noindent As you can see, the canopycover and the landcover are highly correlated. The correlation coefficient for the distance to roads and the distance to highways is very high as well. For our further analysis we therefore only use landcover and the distance to roads.
 
-
+%-------------------------------------------------------
 \section{Final SSF Model}
 
 There are several options to analyze the generated data. As Thurfjell et al. 2014 \cite{thurfjell2014applications} describe in their review of SSFs, conditional logistic regression has been the most commonly used procedure. Recently, researchers have tried to account for among-individual heterogeneity in their dataset. Thurfjell et al. 2014 \cite{thurfjell2014applications} recommend two R packages providing the necessary functionality: The \texttt{lme4} package and the \texttt{mclogit} package. For giving two simple examples, we will demonstrate data analysis with a mixed conditional logistic regression \texttt{(mclogit)} and a generalized linear mixed model \texttt{(lme4)}. 
@@ -656,13 +681,8 @@ We will test for effects of ruggedness, canopy cover, land cover, distance to ro
 
 
 \subsection{Generalized Linear Mixed Model}%------------------------------
-
-family binomial (with a binomial distribution of error)
-nested random effect for ID and strata
-...where the random effect takes the form of (1|id/strata).
-
-structure of pseudo replication: id, stratum
-
+Generalized Linear Mixed Models are rather complex. As they are not the main subject of this tutorial, we will not go into detail here. 
+For analyzing our dataset, you need to use the \texttt{glmer} function from the ``lme4'' package. Your error distribution needs to be binomial and you should include nested random effects for ID and strata to get the right structure of pseudo replication. The code looks as follows: 
 
 
 <<echo=TRUE, eval=FALSE>>=
@@ -675,11 +695,6 @@ xmpl.glmm.fit <- glmer(case ~
     family = binomial, data=xmpl.steps.df)
 @
 
-\begin{small}
-<<>>=
-summary(xmpl.glmm.fit)
-@
-\end{small}
 
 \noindent The model does not run and we get error messages suggesting us to scale the variables. 
 Using the function \texttt{scale()} we center and scale the data so we get comparable values for each predictor. The according equation is: 
@@ -687,7 +702,7 @@ Using the function \texttt{scale()} we center and scale the data so we get compa
 \displaystyle f(x) = (x - mean)/SD(x)
 \]
 
-
+Integrated into the code, the scaled model looks like this:
 <<echo=TRUE, eval=TRUE, message=FALSE, warning=FALSE>>=
 
 library(lme4)
@@ -708,6 +723,8 @@ summary(xmpl.glmm.fit.sc)
 @
 \end{small}
 
+The model output indicates significant effects for land cover and ruggedness of terrain.
+If you want to plot all effects:
 
 <<model_1, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(allEffects(xmpl.glmm.fit.sc))
@@ -722,24 +739,12 @@ plot(allEffects(xmpl.glmm.fit.sc))
 \end{figure}
 
 \subsection{Mixed Conditional Logistic Regression}%---------------------------
-
-The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
-Here is how to implement it in R:
+Alternatively, the data can be analyzed with a logistic regression. The conventional logistic regression models do not take into account that in wildlife telemetry data observations are not independent but rather linked. If for example the selection differs among individual animals, the model may be flawed by pseudo replication. The mixed conditional logistic regression allows for specifying a random effects structure and thereby is capable of handling matched observations from different animals. 
+The arguments and especially the random effects are specified a bit different than in the GLMM. Here is how to implement the MCLogit in R:
 
 <<>>=
 library(mclogit)
-# Trasform dataset to a data frame
-xmpl.steps.df <- as.data.frame(xmpl.steps.spdf)
 
-# Recall the column names of the dataset:
-#head(xmpl.steps.df)
-
-#xmpl.steps.spdf$id <- as.integer(xmpl.steps.spdf$id)
-
-# column "case" indicates whether a site was visited or not. 
-# "strata" indicates the burst number and "id" the individual animal.
-
-# The actual logistic model:
 xmpl.logit.fit <- 
     mclogit(cbind(case, strata) ~ 
     landcover +
@@ -747,11 +752,6 @@ xmpl.logit.fit <-
     distroad + I(distroad^2), random=~1|id,
     data = xmpl.steps.df, start.theta=1000)
  
-## when including random effects we run into problems. 
-# We get the error message that the data do not have enough residual variance.
-
-#random=~1|id,
-#disthighway + I(disthighway^2),
 @
 
 \begin{small}
@@ -760,20 +760,20 @@ summary(xmpl.logit.fit)
 @
 \end{small}
 
-\subsection{Predictions}
 
-Formula
+\subsection{Predictions}
+After having fitted the models, you can now calculate and plot some predictions.
+With the regression coefficients (\beta) and the input data (x), you can calculate predictions using the following formula:
 
 \[
   \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
   \]
 
 
-To see the results of your analysis you have to write final predictions of the habitat selection. We first provide the code for each model and then show you the plot.
+
 
 <<>>=
 
-#plot(predict(xmpl.glmm.fit.sc, type="response"))
 summary(xmpl.glmm.fit.sc)
 
 mean(xmpl.steps.df$ruggedness)
@@ -783,7 +783,6 @@ summary(scale(xmpl.steps.df$ruggedness))
 
 rm(mydata)
 mydata = data.frame(ruggedness=seq(-1.5,15,0.1))
-#mydata = data.frame(ruggedness=scale(xmpl.steps.df$ruggedness))
 
 mydata$wruggforest = exp(              
               xmpl.glmm.fit.sc@beta[3] * mydata$ruggedness  + 
