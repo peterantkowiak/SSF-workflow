@@ -1,10 +1,73 @@
-########### Plot NAs ------------------------
+\subsection{ltraj diagnostics}
+\subsubsection{Viewing missing values}
+\noindent For examining your created ltraj a first option is to check for missing values. A simple function helps you here:
 
-For examining your created ltraj a first option is to check for missing values. A simple function helps you here:
-
-<<>>=
+<<diag_1, echo = TRUE, def = "pdf", fig.show='hide' >>=
 adehabitatLT:::plotNAltraj(xmpl.ltr[1])
 @
 
-In our case all missing values were already removed from the dataset. In case you need to remove missing values use function \texttt{}  was already 
+\begin{figure}[!htbp]
+\captionsetup{width=0.6\textwidth}
+\centering
+\includegraphics[width=0.6\textwidth]{diag_1.pdf}
+\caption{Showing all NAs in your dataset. In our case missing values have been removed already.}
+\label{fig:diag_1}
+\end{figure}
+
+
+\subsubsection{Rediscretizing in space}
+
+If you want to run your analysis with all your data but you need equal steps for 
+<<diag_2, echo=TRUE, def="pdf", fig.show='hide'>>=
+par(mfrow=c(1,2))
+plot(xmpl.ltr, id=10289)
+xmpl.ltr.redis <- redisltraj(xmpl.ltr, 10000)
+plot(xmpl.ltr.redis, id=10289)
+par(mfrow=c(1,1))
+@
+
+\begin{figure}[!htbp]
+\captionsetup{width=1\textwidth}
+\centering
+\includegraphics[width=1\textwidth]{diag_2.pdf}
+\caption{On the left the observed positions of individual ''10289'' are shown. On the right, we modified them to separate the same path into equal steps of 10 km.}
+\label{fig:diag_2}
+\end{figure}
+
+
+\subsubsection{Testing for Autocorrelation}%
+
+To ``understand'' the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
+
+To test for autocorrelation, the ltraj object needs to be of type I or consist of constant time lags. As our time lags are not constant, we transform our trajectory into type I by using a simple \texttt{typeII2typeI} function.
+
+<<eval=FALSE>>=
+xmpl.ltr.t1 <- typeII2typeI(xmpl.cut)
+@
+
+The new format does not include any information concerning time and date:
+<<>>=
+head(xmpl.ltr.t1)
+@
+
+
+To test the three linear parameters (\texttt{dist, dx, dy}), the independence test of Wald and Wolfowitz (1994) can be used. It tests the sequential autocorrelation in a vector. It can be implemented as \texttt{wawotest.ltraj} for each burst in a \texttt{ltraj} object. This function removes all NAs before running the test. \cite{Package2011}
+
+
+<<eval=FALSE>>=
+wawotest(xmpl.ltr.t1) 
+@
+\noindent The functions returns parameters to test for correklation for every burst (827 in our case!). The p-Values indicate the correlation but as our time lag is not constant, the interpretation does not make much sense. 
+
+To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. Here, the ltraj object needs to be regular. Similar tests can be done for angular parameters. For further information check out the tutorial by Clement Calenge \cite{Package2011}.
+
+
+
+
+
+
+
+
+
+
 
