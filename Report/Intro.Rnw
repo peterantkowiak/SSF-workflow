@@ -74,9 +74,9 @@ options(replace.assign=TRUE, width=80)
 
 \section{Introduction}%------------------------------------------------------------------------------------------------------
   
-  \subsection{Purpose and applications of SSFs}
+\subsection{Purpose and applications of SSFs}
 
-\noindent In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual are connected by a linear segment. These segments are considered as steps. The time intervals influencing the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions, the target species and its behaviour. The SSF then calculates random steps by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat, which could have been chosen, within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}.\\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. However, more and more packages for analyzing animal movements are provided in R. None of these packages is designed for doing a SSF only but quite a number provide already helpful functions to perform single steps of the Selection Function. Therefore, the aim of this tutorial is to collect all functions necessary to conduct a SSF and order them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as ``xmpl'').\\
+\noindent In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual are connected by a linear segment. These segments are considered as steps. The fix rate of the GPS locations that influence the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions, the target species and its behaviour. Then random steps are calculated by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat, which could have been chosen, within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}. \\ So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. Moreover, many packages for analyzing animal movements are provided in R. None of these packages is designed for doing a SSF only or is at least missing fundamental steps. For example, the \texttt{adehabitatLT} has many features for analyzing your telemetry data (note that reading the help from 2011 is very much recommendend by us \cite{Package2011}!) but is missing any function to convert random steps. Another problem we faced when exploring the available packages in R was that some of them are lacking detailed descriptions on how to use their examples. The data for these examples is well prepared but for an user, who is freshly starting with SSF, it is hard to understand the structure of these data.\\ Therefore, the aim of this tutorial is to collect all these functions necessary to conduct a SSF and order and describe them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as ``xmpl''). Since the study design is fundemental to successfully implement SSFs, we recommend to read  Thurfjell et al. (2014) \cite{thurfjell2014applications}, who provide different options and suggestions for conducting SSFs, before starting your own study.\\
 
 \begin{figure} 
 \captionsetup{width=0.8\textwidth}
@@ -98,14 +98,14 @@ We will start with the \emph{Waypoint data} because these need to be transformed
 \captionsetup{width=1\textwidth}
 \centering
 \includegraphics[width=1\textwidth]{Flowchart.pdf} % our perfect workflow!
-  \caption{Stepwise conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the function applied while the blue boxes provide the type of object or data. In light grey optional steps are highlighted that are not implemented in this tutorial.}
+  \caption{Stepwise conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the function applied while the blue boxes provide the type of object or data. In light grey optional steps are highlighted that are not implemented in this tutorial but should be considered by doing SSF.}
 \label{fig:Flowchart}
 \end{figure}
 
 
 \subsection{Installing and loading Packages}
 
-\noindent Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. Some of them require others so that you have to add all these to your library:
+\noindent Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. For faster processing the \texttt{install.packages} function is deactivated.\\
   
   << eval=FALSE, warning=FALSE, message=FALSE>>=
   
@@ -116,7 +116,7 @@ install.packages("hab", repos = "http://ase-research.org/R/",
                  type = "source")                             # for self-compiling
 @
   
-  \noindent Keep fingers off the \texttt{adehabitat} package! It is outdated and replaced by four different packages designed for different analyses:
+
   
   << eval=FALSE, warning=FALSE, message=FALSE>>=
   install.packages("adehabitatHR") # dealing with home ranges
@@ -136,7 +136,7 @@ install.packages("mclogit")
 install.packages("lme4")
 install.packages("effects")
 @
-  \noindent For faster processing the \texttt{install.packages} function is deactivated.\\
+\nointend Keep fingers off the \texttt{adehabitat} package! It is outdated and replaced by four different packages designed for different analyses.
 
 \noindent Loading packages:
   
