@@ -511,6 +511,11 @@ xmpl.steps.spdf$landcover <- as.factor(
 head(xmpl.steps.spdf)
 @
 
+\subsection{Possible extensions to the extract function}
+
+When extracting the environmental covariates, the most straightforward approach is to measure them at the endpoint of a step, just as we did in our example. For some ecological questions it might though be desirable to take into account for the habitat structures along the step as well. Some animals might for example not visit a suitable patch of habitat because it is surrounded by unfavorable or even impassable structures. Fortunately, the \texttt{extract} function is capable of not just extracting values from single points but also along lines. The input data need to be ``SpatialLines'' features which means that you would first have to convert the ``SpatialPoints'' from your dataset. Suitable functions are included in the ``sp'' package. The extracted values could then be accumulated (e.g. terrain ruggedness), averaged or checked for criteria (e.g. ``Does the step cross a cell classified as road?''). Implementing this feature might be a good aim for follow-up projects.
+
+
 \subsection{Checking for Multicollinearity} % -------------------------------------------------------------------------------------------------------------------------------------------
 
 \noindent Before including all environmental factors in your analysis, you should check if two or even more variables are exact or highly correlated. The threshold for the correlation coefficiant is 0.7 or higher. To create a correlation matrix, we first need to convert the ``Spatial Points Data Frame'' into a data frame. Furthermore the column \texttt{landcover} needs to be changed from ``facotor'' into ``numeric''. 
