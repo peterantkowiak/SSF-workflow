@@ -1,0 +1,10 @@
+########### Plot NAs ------------------------
+
+For examining your created ltraj a first option is to check for missing values. A simple function helps you here:
+
+<<>>=
+adehabitatLT:::plotNAltraj(xmpl.ltr[1])
+@
+
+In our case all missing values were already removed from the dataset. In case you need to remove missing values use function \texttt{}  was already 
+
