@@ -1,6 +1,51 @@
-This is BibTeX, Version 0.99dThe top-level auxiliary file: Main_1.aux
+This is BibTeX, Version 0.99d (TeX Live 2014/dev)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Main_1.aux
 The style file: plain.bst
 Database file #1: References.bib
-Warning--empty booktitle in 0.3.162014
-Warning--empty booktitle in Package2011
+Warning--entry type for "0.3.162014" isn't style-file defined
+--line 4 of file References.bib
+Warning--entry type for "Package2011" isn't style-file defined
+--line 61 of file References.bib
+You've used 4 entries,
+            2118 wiz_defined-function locations,
+            517 strings with 4444 characters,
+and the built_in function-call counts, 914 in all, are:
+= -- 82
+> -- 39
+< -- 0
++ -- 16
+- -- 12
+* -- 47
+:= -- 164
+add.period$ -- 10
+call.type$ -- 4
+change.case$ -- 17
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 34
+empty$ -- 84
+format.name$ -- 12
+if$ -- 188
+int.to.chr$ -- 0
+int.to.str$ -- 4
+missing$ -- 1
+newline$ -- 21
+num.names$ -- 8
+pop$ -- 26
+preamble$ -- 1
+purify$ -- 14
+quote$ -- 0
+skip$ -- 28
+stack$ -- 0
+substring$ -- 23
+swap$ -- 5
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 16
+warning$ -- 0
+while$ -- 9
+width$ -- 5
+write$ -- 40
 (There were 2 warnings)

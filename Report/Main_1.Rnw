@@ -58,7 +58,7 @@ options(replace.assign=TRUE, width=80)
 
 \title{A tutorial for implementing Step Selection Function in R}
 
-\author{P. Antkowiak\thanks{M.Sc. programme ``GIS und Umweltmodellierung'' at University of Freiburg} \and H. Tripke\thanks{M.Sc. programme ``Wildlife, Biodiversity and Vegetation'' at University of Freiburg} \and C. Wilhelm\thanks{M.Sc. programme ``Wildlife, Biodiversity and Vegetation'' at University of Freiburg}}
+\author{Peter Antkowiak\thanks{M.Sc. programme ``GIS und Umweltmodellierung'' at University of Freiburg} \and Henriette Tripke\thanks{M.Sc. programme ``Wildlife, Biodiversity and Vegetation'' at University of Freiburg} \and Carolin Wilhelm\thanks{M.Sc. programme ``Wildlife, Biodiversity and Vegetation'' at University of Freiburg}}
 % for more control, multiple affiliations, line breaks and alike, use the authblk package!!
 
 \date{\today} % !!use package isodate for more control of date formatting!!
@@ -78,16 +78,16 @@ options(replace.assign=TRUE, width=80)
 
 \noindent In addition to Resources Selection Functions (RSF) another powerful tool for evaluating data on animal movements and habitat selection are Step Selection Functions (SSF). The latter are used to estimate resource selection by comparing observed habitat use with available structures. Given GPS locations of a collared individual are connected by a linear segment. These segments are considered as steps. The fix rate of the GPS locations that influence the step length should be choosen carefully (i.e. by conducting a pilot study) to meet the requirements of the study questions, the target species and its behaviour. Then random steps are calculated by taking measured angle and distance along steps and using the observed positions as starting points. These alternative steps represent the available habitat, which could have been chosen, within a realistic step length of the observed positions. Finally, we can compare spatial attributes on  both and test for effects that explain habitat selection by animals \cite{thurfjell2014applications}. For an easier understanding of the terminology we use, we have created Figure~\ref{fig:Burst}  which explains the most important terms.\\ 
 
-\begin{figure} [!htpb]
+\begin{figure} [!htbp]
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.8\textwidth]{explain_a_burst.png} 
-\caption{Animal movements from A to B. Theses data are already separated into bursts of not more than 3h 10min intervals. This prohibits to combine positions uncared of missing data points. These bursts provide the angle and distance to calculate random steps from. Thereby, strata and case have to be defined.}
+\caption{Animal movements from A to B. We will use the depicted terms throughout the tutorial.}
 \label{fig:Burst}
 \end{figure}
 
 
-So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that works with a GIS\footnote{www.spatialecology.com/gme/}. Moreover, many packages for analyzing animal movements are provided in R. None of these packages is designed for doing a SSF only or is at least missing fundamental steps. For example, the \texttt{adehabitatLT} has many features for analyzing your telemetry data (note that reading the help from 2011 is very much recommendend by us \cite{Package2011}!) but is missing any function to convert random steps. Another problem we faced when exploring the available packages in R was that some of them are lacking detailed descriptions on how to use their examples. The data for these examples is well prepared but for an user, who is freshly starting with SSF, it is hard to understand the structure of these data.\\ Therefore, the aim of this tutorial is to collect all these functions necessary to conduct a SSF and order and describe them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as ``xmpl''). Since the study design is fundemental to successfully implement SSFs, we recommend to read  Thurfjell et al. (2014) \cite{thurfjell2014applications}, who provide different options and suggestions for conducting SSFs, before starting your own study.\\
+So far, SSF models were mainly done using Geospatial Modelling Environment (GME) that only works with a GIS software\footnote{www.spatialecology.com/gme/}. However, many packages for analyzing animal movements are provided in R. None of these packages is designed for doing a SSF only or is at least missing fundamental steps. For example, the \texttt{adehabitatLT} has many features for analyzing your telemetry data (We highly recommend reading the help file from 2011 \footnote{http://cran.r-project.org/web/packages/adehabitatLT/vignettes/adehabitatLT.pdf}) but is missing any function to generate random steps. Another problem we faced when exploring the available packages in R was that some of them are lacking detailed descriptions on how to use their examples. The data for these examples is well prepared but for a user new to using SSFs, it is hard to understand the structure of these data.\\ The aim of this tutorial is to collect all the functions necessary to conduct a SSF and order and describe them in a  way that intuitively makes you understand how to run a SSF with your own data. Each step will be explained using an exemplary dataset of GPS locations collected from seven Cougars (\textit{Puma concolor}) in the year 2010 (in the following adressed as ``xmpl''). Since the study design is fundemental to successfully implement SSFs, we recommend to read  Thurfjell et al. (2014) \cite{thurfjell2014applications}, who provide different options and suggestions for conducting SSFs, before starting your own study.\\
 
 
 \subsection{Our SSF workflow in R}
@@ -100,15 +100,15 @@ We will start with the \emph{Waypoint data} because these need to be transformed
 \begin{figure} 
 \captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=1\textwidth]{Flowchart.pdf} % our perfect workflow!
-  \caption{Stepwise conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the function applied while the blue boxes provide the type of object or data. In light grey optional steps are highlighted that are not implemented in this tutorial but should be considered by doing SSF.}
+\includegraphics[width=1\textwidth]{Flowchart.pdf} 
+  \caption{Stepwise conducting a Step Selection Function using existing R-packages. The yellow boxes show the name of the function applied while the blue boxes provide the type of object or data. In light grey optional steps are highlighted that are not implemented in this tutorial but should be considered when doing SSF.}
 \label{fig:Flowchart}
 \end{figure}
 
 
 \subsection{Installing and loading Packages}
 
-\noindent Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. For faster processing the \texttt{install.packages} function is deactivated.\\
+\noindent Before you can actually start using this tutorial for conducting SSF you need to install a bunch of packages in R. (For faster processing the \texttt{install.packages} function is deactivated in the source file.) \\
 
 << eval=FALSE, warning=FALSE, message=FALSE>>=
   
@@ -157,7 +157,6 @@ library(effects)
   
 
 
-
 \section{Processing the Waypoint Data}
 
 \subsection{Loading Waypoint Data (*.csv, ESRI)}%------------------------------------------------------------------------------------------------------
@@ -184,7 +183,7 @@ library(effects)
 
 \noindent Use the following commands to set your working directory and read the data:
 <<>>=
-setwd("P:/Henriette/BestPracticeR/SSF-workflow/Code")
+setwd("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/SSF-Workflow/Report/")
 xmpl = read.csv("UTMsREDUCED.csv", head=T)
 @
 
@@ -263,12 +262,11 @@ xmpl.df.10286 = xmpl.ltr[[1]]
 @
 
 
-\noindent To get a visual impression of your data you can plot the trajectory for all or for one particular animal:
+\noindent To get a visual impression of your data you can plot the trajectory for all or for one particular animal (Figure~\ref{fig:ltraj_plot}):
 
 <<ltraj_plot, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(xmpl.ltr)
 @
-\noindent The result of this code chunk is shown in Figure~\ref{fig:ltraj_plot}.
 
 \begin{figure}[!htbp]
 \captionsetup{width=0.8\textwidth}
@@ -284,11 +282,10 @@ unique(xmpl.spdf$cat)
     
 @
 
-\noindent You can then look at the trajectory of a single individual only.
+\noindent You can then look at the trajectory of a single individual only (Figure~\ref{fig:ind_plot}).
 <<ind_plot, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(xmpl.ltr, id=10289)
 @
-\noindent The result of this code chunk is shown in Figure~\ref{fig:ind_plot}.
 
 \begin{figure}[!htbp]
 \captionsetup{width=0.6\textwidth}
@@ -312,7 +309,6 @@ plot(xmpl.ltr, id=10289)
 <<time_seq, echo=TRUE, dev="pdf", fig.show="hide">>=
 plotltr(xmpl.ltr, "dt/3600/3")
 @
-\noindent The result of this code chunk is shown in Figure~\ref{fig:time_seq}. 
 
 \begin{figure}[!htbp]
 \captionsetup{width=0.8\textwidth}
@@ -322,7 +318,7 @@ plotltr(xmpl.ltr, "dt/3600/3")
 \label{fig:time_seq}
 \end{figure}
 
-\noindent The relocations which are 3 hours apart, are plottet at value 1 on the y-axis, if one relocation is missing (time lag of 6 hours) the relocation gets the value 2. As you can see, there are a lot of relocations missing. To keep the time lag constant, we now want to split the existing bursts (individuals) into ``sub-bursts'' where the time lag is bigger than 3 hours. To cut our data at our desired interval, we need a function which defines \texttt{dt}. Because we want to keep relocations which are only a few minutes ``wrong'', we added 10 extra minutes.\\
+\noindent In Figure~\ref{fig:time_seq}, the relocations that are 3 hours apart, are plottet at value 1 on the y-axis, if one relocation is missing (time lag of 6 hours) the relocation gets the value 2. As you can see, there are a lot of relocations missing. To keep the time lag constant, we now want to split the existing bursts (individuals) into ``sub-bursts'' where the time lag is bigger than 3 hours. To cut our data at our desired interval, we need a function which defines \texttt{dt}. Because we want to keep relocations which are only a few minutes ``wrong'', we added 10 extra minutes.\\
 
 <<>>=
 foo = function(dt) { return(dt> (3800*3))} 
@@ -359,33 +355,33 @@ adehabitatLT:::plotNAltraj(xmpl.ltr[1])
 \label{fig:diag_1}
 \end{figure}
 
-This plot shows where your dataset has missing values but as our data does not include any NAs, there is only one straight line. \\
+\noindent Figure~\ref{fig:diag_1} shows where your dataset has missing values but as our data does not include any NAs, there is only one straight line. \\
 
 
 \subsubsection{Replace and round time}
 
 A first step for interpolating your dataset would be replacing the NAs in your \texttt{date} column by creating new ones with the \texttt{setNA} function. For that, you need to define a reference date. By doing that, you create a lot of ``relocations'' with NAs in the coordinates column.
 
-The next step would be to round time values which slightly differ from the desired one using the function \texttt{sett0}. This however should NOT be used to convert a completely irregular trajectory into a regular one but compensate for minor descrepancies. 
+\noindent The next step would be to round time values which slightly differ from the desired one using the function \texttt{sett0}. This however should NOT be used to convert a completely irregular trajectory into a regular one but compensate for minor descrepancies. 
 
 
 \subsubsection{Testing for Autocorrelation}%
 
-To ``understand'' the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
+\noindent To ``understand'' the movement patterns of an animal, is it essential to check the parameters stored in the trajectory (dist, dx, dy, angle) for autocorrelation. A positive autocorrelation means, that values closer to each other tend to be more similar.
 
-To test for autocorrelation, the ltraj object needs to be of type I or consist of constant time lags. As our time lags are not constant, we transform our trajectory into type I by using a simple \texttt{typeII2typeI} function.
+\noindent To test for autocorrelation, the ltraj object needs to be of type I or consist of constant time lags. As our time lags are not constant, we transform our trajectory into type I by using a simple \texttt{typeII2typeI} function.
 
 <<>>=
 xmpl.ltr.t1 <- typeII2typeI(xmpl.cut)
 @
 
-The new format does not include any information concerning time and date:
+\noindent The new format does not include any information concerning time and date:
 <<>>=
 head(xmpl.ltr.t1)
 @
 
 
-To test the three linear parameters (\texttt{dist, dx, dy}), the independence test of Wald and Wolfowitz (1994) can be used. It tests the sequential autocorrelation in a vector. It can be implemented as \texttt{wawotest.ltraj} for each burst in a \texttt{ltraj} object. This function removes all NAs before running the test \cite{Package2011}.
+\noindent To test the three linear parameters (\texttt{dist, dx, dy}), the independence test of Wald and Wolfowitz (1994) can be used. It tests the sequential autocorrelation in a vector. It can be implemented as \texttt{wawotest.ltraj} for each burst in a \texttt{ltraj} object. This function removes all NAs before running the test \cite{Package2011}.
 
 
 <<eval=FALSE>>=
@@ -393,7 +389,7 @@ wawotest(xmpl.ltr.t1)
 @
 \noindent The functions returns parameters to test for correlation for every burst (827 in our case!, this is why we did not let it run). The p-Values indicate the correlation but as our time lag is not constant, the interpretation does not make much sense. 
 
-To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. Here, the ltraj object needs to be regular. Similar tests can be done for angular parameters. For further information check out the tutorial by Clement Calenge \cite{Package2011}.
+\noindent To identify at which scales autocorrelation occurs, an autocorrelation function (ACF) can be used. Here, the ltraj object needs to be regular. Similar tests can be done for angular parameters. For further information check out the tutorial by Clement Calenge \cite{Package2011}.
 
 
 \subsubsection{Distinguish different behaviors}
@@ -519,11 +515,16 @@ library(sp)
 # the one specified earlier or set your path:
 # getwd()
 
-ruggedness <- raster("P:/SSF PROJECT/NEW GIS LAYERS/tri1") 
-landcover <- raster("P:/SSF PROJECT/NEW GIS LAYERS/lc_30") 
-canopycover <- raster("P:/SSF PROJECT/NEW GIS LAYERS/cc_abmt") 
-disthighway <- raster("P:/SSF PROJECT/NEW GIS LAYERS/disthwy")
-distroad <- raster("P:/SSF PROJECT/NEW GIS LAYERS/distsmrd")
+ruggedness <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1") 
+#/NEW GIS LAYERS/tri1
+landcover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30")
+#/NEW GIS LAYERS/lc_30
+canopycover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt")
+#/NEW GIS LAYERS/cc_abmt
+disthighway <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy")
+#/NEW GIS LAYERS/disthwy
+distroad <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd")
+#/NEW GIS LAYERS/distsmrd
 
 # It is enough to load the whole folder were your *.adf files are 
 # stored in. The function raster() finds the needed files itself. 
@@ -624,7 +625,7 @@ cor(Z, use="pairwise.complete.obs")
 @
 
 
-\noindent Just to get a better overview we created a nice plot by using the following function.
+\noindent Just to get a better overview we created a nice plot (Figure~\ref{fig:pairs}) by using the following function.
 <<>>=
 panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...)
 {
@@ -649,7 +650,7 @@ panel.hist <- function(x, ...)
 @
 
 
-<<pairs, echo=TRUE, dev='pdf', fig.show='hide'>>=
+<<pairs, echo=TRUE, dev='png', fig.show='hide'>>=
 pairs(Z, lower.panel=panel.smooth,
       upper.panel=panel.cor,diag.panel=panel.hist)
 @
@@ -657,7 +658,7 @@ pairs(Z, lower.panel=panel.smooth,
 \begin{figure}[!htbp]
 \captionsetup{width=0.8\textwidth}
 \centering
-\includegraphics[width=1\textwidth]{pairs.pdf}
+\includegraphics[width=0.8\textwidth]{pairs.png}
 \caption{Beautiful plot to examine correlations and the structure of each parameter. The lower panel shows the scatter plots for each combination, the upper panel provides the correlation coefficients and the diagonal panel shows a histogram for each parameter.}
 \label{fig:pairs}
 \end{figure}
@@ -724,16 +725,16 @@ summary(xmpl.glmm.fit.sc)
 \end{small}
 
 The model output indicates significant effects for land cover and ruggedness of terrain.
-If you want to plot all effects:
+If you want to plot all effects (Figure~\ref{fig:model_1}):
 
 <<model_1, echo=TRUE, dev="pdf", fig.show="hide">>=
 plot(allEffects(xmpl.glmm.fit.sc))
 @
 
 \begin{figure}[!htbp]
-\captionsetup{width=0.6\textwidth}
+\captionsetup{width=1\textwidth}
 \centering
-\includegraphics[width=0.6\textwidth]{model_1.pdf}
+\includegraphics[width=1\textwidth]{model_1.pdf}
 \caption{Effects plot of the GLMM.}
 \label{fig:model_1}
 \end{figure}
@@ -761,64 +762,66 @@ summary(xmpl.logit.fit)
 \end{small}
 
 
-\subsection{Predictions}
+\subsection{Predictions for GLMM}
 After having fitted the models, you can now calculate and plot some predictions.
-With the regression coefficients (\beta) and the input data (x), you can calculate predictions using the following formula:
+With the regression coefficients (beta) and the input data (x), you can calculate predictions using the following formula:
 
 \[
   \displaystyle w(x) = exp(\beta 1 * x1 + \beta 2 * x2 + ... + \beta p * xp)
   \]
 
-
-
+In our regression models, we found significance for landcover and ruggedness. For this reason we will use them here and calculate predictions for ruggedness, differentiated by landcover = forest vs. open. 
+To do so, we first need to fix the other parameters. In the model equation, we set the distance to road and its squared effect to their median. To receive predictions for landcover = forest, the ``landcoveropen'' estimate is left out in the first place.
+As ruggedness is the parameter to estimate, it should vary along a vector corresponding to the range of real ruggedness levels. Predicting for all observed ruggedness values would take too much time given our 54,351 data points. Instead we look up minimum and maximum values of the scaled ruggedness values and generate a corresponding but smaller vector.
 
 <<>>=
+min(scale(xmpl.steps.df$ruggedness))
+max(scale(xmpl.steps.df$ruggedness))
+@
 
-summary(xmpl.glmm.fit.sc)
+\noindent Based on these values, generate the following data frame:
+<<>>=
+GLMMpreds = data.frame(ruggedness=seq(-1.5,15,0.1))
+@
 
-mean(xmpl.steps.df$ruggedness)
-sd(xmpl.steps.df$ruggedness)
+\noindent Calculating the predictions for selection in relation to ruggedness in the forest:
+<<>>=
+GLMMpreds$wruggforest <- exp(              
+        xmpl.glmm.fit.sc@beta[3] * GLMMpreds$ruggedness  + 
+        xmpl.glmm.fit.sc@beta[4] * GLMMpreds$ruggedness^2 + 
+        xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
+        xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
+@
 
-summary(scale(xmpl.steps.df$ruggedness))
+\noindent To calculate the predictions for selection in relation to ruggedness in the open, you need to include the corresponding estimate (beta 2) in the equation:
+<<>>=
+GLMMpreds$wruggopen <- exp(
+        xmpl.glmm.fit.sc@beta[2] +
+        xmpl.glmm.fit.sc@beta[3] * GLMMpreds$ruggedness  + 
+        xmpl.glmm.fit.sc@beta[4] * GLMMpreds$ruggedness^2 + 
+        xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
+        xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
 
-rm(mydata)
-mydata = data.frame(ruggedness=seq(-1.5,15,0.1))
-
-mydata$wruggforest = exp(              
-              xmpl.glmm.fit.sc@beta[3] * mydata$ruggedness  + 
-              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness^2 + 
-              xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
-              xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
-
-mydata$wruggopen = exp(
-              xmpl.glmm.fit.sc@beta[2] +
-              xmpl.glmm.fit.sc@beta[3] * mydata$ruggedness  + 
-              xmpl.glmm.fit.sc@beta[4] * mydata$ruggedness^2 + 
-              xmpl.glmm.fit.sc@beta[5] * median(scale(xmpl.steps.df$distroad)) + 
-              xmpl.glmm.fit.sc@beta[6] * median((scale(xmpl.steps.df$distroad))^2))
-
-
-#plot(mydata$ruggedness, mydata$wruggforest, type="l", col="darkgreen", lwd=2)
-#lines(mydata$ruggedness, mydata$wruggopen, type="l", col="green", lwd=2)
-
-## rescaling
-
-
-mydata$ruggednessResc <- (mydata$ruggedness * sd(xmpl.steps.df$ruggedness) + mean(xmpl.steps.df$ruggedness))
-
-
-#head(mydata)
-#str(mydata)
-#mydata$ruggednessResc
 @
 
 
+\noindent Before plotting the predictions, you need to rescale the x-vector. You can do so by multiplying with the standard deviation of the orignial ruggedness values and adding their mean:
+<<>>=
+mean(xmpl.steps.df$ruggedness)
+sd(xmpl.steps.df$ruggedness)
+
+GLMMpreds$ruggednessResc <- (GLMMpreds$ruggedness * sd(xmpl.steps.df$ruggedness) + mean(xmpl.steps.df$ruggedness))
+
+@
+
+\noindent Finally, you are ready to plot the predictions (Figure~\ref{fig:pred_1}):
 <<pred_1, echo=TRUE, dev="pdf", fig.show="hide">>=
-plot(mydata$ruggednessResc, mydata$wruggforest, 
-     main="GLMM predictions for ruggedness", type="l", 
-     col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250), 
+
+plot(GLMMpreds$ruggednessResc, GLMMpreds$wruggforest, 
+     type="l", col="darkgreen", lwd=2, ylim=c(0,1), xlim=c(0,250), 
      xlab="ruggedness", ylab="W", las=1)
-lines(mydata$ruggednessResc, mydata$wruggopen, type="l", col="green", lwd=2)
+lines(GLMMpreds$ruggednessResc, GLMMpreds$wruggopen, type="l", col="green", lwd=2)
+legend("topright",legend=c("forest","open"), col=c("darkgreen","green"), lwd=2)
 
 @
 
@@ -827,42 +830,49 @@ lines(mydata$ruggednessResc, mydata$wruggopen, type="l", col="green", lwd=2)
 \captionsetup{width=0.6\textwidth}
 \centering
 \includegraphics[width=0.6\textwidth]{pred_1.pdf}
-\caption{Prediction from the GLMM.}
+\caption{GLMM predictions for selection in relation to ruggedness.}
 \label{fig:pred_1}
 \end{figure}
 
+\noindent The plot nicely shows that cougars prefer flat terrain and avoid very rugged areas. Furthermore they prefer forest-covered areas over open areas.
 
-\subsubsection{Predictions for MCLOGIT}
 
+%-----------------------------------------
+\subsection{Predictions for MCLOGIT}
+
+\noindent Predicting values with the MCLOGIT model works pretty similar to the GLMM. Looking up minimum and maximum values, now for the unscaled ruggedness. Then generating the data frame:
 <<>>=
 
-summary(xmpl.steps.df$ruggedness)
-summary(xmpl.logit.fit)
-#plot(predict(xmpl.logit.fit))
+min(xmpl.steps.df$ruggedness)
+max(xmpl.steps.df$ruggedness)
 
-mydata = data.frame(ruggedness=seq(0,250,1))
-
-mydata$wruggforest = exp(xmpl.logit.fit$coefficients[2] * mydata$ruggedness  + 
-                xmpl.logit.fit$coefficients[3] * mydata$ruggedness^2 + 
-                xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
-                xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
-
-mydata$wruggopen = exp(xmpl.logit.fit$coefficients[1] +
-                xmpl.logit.fit$coefficients[2] * mydata$ruggedness  + 
-                xmpl.logit.fit$coefficients[3] * mydata$ruggedness^2 + 
-                xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
-                xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
+MCLOGpreds = data.frame(ruggedness=seq(0,250,1))
 @
 
+\noindent Calculating predictions for both forested and open areas:
+<<>>=
+MCLOGpreds$wruggforest = exp(
+        xmpl.logit.fit$coefficients[2] * MCLOGpreds$ruggedness  + 
+        xmpl.logit.fit$coefficients[3] * MCLOGpreds$ruggedness^2 + 
+        xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
+        xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
 
+MCLOGpreds$wruggopen = exp(
+        xmpl.logit.fit$coefficients[1] +
+        xmpl.logit.fit$coefficients[2] * MCLOGpreds$ruggedness  + 
+        xmpl.logit.fit$coefficients[3] * MCLOGpreds$ruggedness^2 + 
+        xmpl.logit.fit$coefficients[4] * median(xmpl.steps.df$distroad) +
+        xmpl.logit.fit$coefficients[5] * (median(xmpl.steps.df$distroad))^2)
+@
+
+\noindent As the data were not scaled in the MCLOGIT model, no rescaling is necessary and you can proceed to plotting (Figure~\ref{fig:pred_2}) right away:
 <<pred_2, echo=TRUE, dev="pdf", fig.show="hide">>=
-plot(mydata$ruggedness,mydata$wruggforest, 
-     main="MCLOGIT predictions for ruggedness", 
+plot(MCLOGpreds$ruggedness,MCLOGpreds$wruggforest, 
      type="l", col="darkgreen", lwd=2, ylim=c(0,1), 
      xlab="ruggedness", ylab="W", las=1)
-lines(mydata$ruggedness,mydata$wruggopen,type="l", col="green", lwd=2)
+lines(MCLOGpreds$ruggedness,MCLOGpreds$wruggopen,type="l", col="green", lwd=2)
+legend("topright",legend=c("forest","open"), col=c("darkgreen","green"), lwd=2)
 @
-
 
 
 
@@ -870,25 +880,26 @@ lines(mydata$ruggedness,mydata$wruggopen,type="l", col="green", lwd=2)
 \captionsetup{width=0.6\textwidth}
 \centering
 \includegraphics[width=0.6\textwidth]{pred_2.pdf}
-\caption{Prediction from the MCLOGIT.}
+\caption{MCLOGIT predictions for selection in relation to ruggedness.}
 \label{fig:pred_2}
 \end{figure}
 
+\noindent The plot of the MCLOGIT model looks pretty similar to the GLMM. That is what we hoped for.
+
+\noindent We hope you had some fun with our tutorial and got some new ideas to develop further!
 
 
-
-
-\newpage
 \section{Acknowledgements}
-Don't forget to thank TeX and R and other opensource communities if you use their products! The correct way to cite R is shown when typing ``\texttt{citation()}'', and ``\texttt{citation("mgcv")}'' for packages.
+Many thanks to the TeX and R communities \cite{RCoreTeam2014} and all the helpful online tutorial writers!
+We explicitly want to thank Mathieu Basille for the useful \texttt{rdSteps} function from his ``hab'' package \footnote{https://github.com/basille/hab} that is not in the official R repositories any more.
 
-Special thanks to \ding{164} \ding{170} Simone \ding{170}\ding{170}\ding{170} \ding{164}\ding{165}\ding{95}! You were our best team member! \ding{96}
+Special thanks goes to our best team mate Simone \ding{170} \ding{96}!
 
-Save Models!
+
 \newpage
 \section{Appendix}
 
-Session Info:
+For reproducibility, our R Session Info:
 <<echo=FALSE>>=
 sessionInfo()
 @
