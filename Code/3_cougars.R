@@ -7,8 +7,7 @@ require(adehabitatLT)
 
 # load data and create SPDF -----------------------------------------------
 
-cougars <- read.csv("P:/SSF PROJECT/UTMsREDUCED.csv", head=T)
-cougars <- read.csv("C:/Users/Henia/Desktop/SSF-workflow/Code/UTMsREDUCED.csv", head=T)
+cougars <- read.csv("C:/Users/Test/SSF-workflow/Code/UTMsREDUCED.csv", head=T)
 
 head(cougars)
 
