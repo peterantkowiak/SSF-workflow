@@ -45,20 +45,13 @@ require(rgdal)
 
 # Loading the waypoint data -------------------------------------------------
 
-require(sp)
 
-# cougars = read.csv("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/UTMsREDUCED.csv", head=T)
-cougars = read.csv("C:/Users/Henia/Documents/Uni/Sem_09/01 Best Practice/UTMsREDUCED.csv", head=T) 
+cougars <- read.csv("C:/Users/Test/SSF-workflow/Code/UTMsREDUCED.csv", head=T)
 
 head(cougars)
 
 
 # create SPDF -----------------------------------------------
-
-# cougars <- read.csv("P:/SSF PROJECT/UTMsREDUCED.csv", head=T)
-# cougars <- read.csv("C:/Users/Henia/Desktop/SSF-workflow/Code/UTMsREDUCED.csv", head=T)
-
-head(cougars)
 
 require(sp)
 
@@ -93,7 +86,7 @@ cougarsLTR <- hab:::as.ltraj(XY, date, id = cougarsDF[,1])
  # safe the table we need for the ltraj
 couLTR <- ld(cougarsLTR)
 
-write.table(couLTR, file = "C:/Users/Henia/Desktop/SSF-workflow/Code/couLTR.csv", sep = " ", dec = ".") 
+write.table(couLTR, file = "C:/Users/Test/SSF-workflow/Code/couLTR.csv", sep = " ", dec = ".") 
  
 plot(cougarsLTR)
 str(cougarsLTR)
@@ -189,7 +182,7 @@ cougars.steps.c$new_y <- cougars.steps.c$y + cougars.steps.c$dy
 head(cougars.steps.c)
  names(cougars.steps.c)
  
- write.table(cougars.steps.c, file = "C:/Users/Henia/Desktop/SSF-workflow/Code/cougars.steps.c.csv", sep = " ", dec = ".") 
+ write.table(cougars.steps.c, file = "C:/Users/Test/SSF-workflow/Code/cougars.steps.c.csv", sep = " ", dec = ".") 
 
  
 
@@ -208,33 +201,26 @@ require(sp)
 #?raster
 getwd()
 #setwd("/home/Peter/")
-
-# ruggedness <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/tri1/w001001.adf") 
-rugged <- raster("C:/Users/Henia/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/tri1/w001001.adf") 
+ 
+rugged <- raster("C:/Users/Test/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/tri1/w001001.adf") 
 
 # plot(ruggedness) # outcomment this if you just quickly want to run the script. Takes a minute to process.
 
-
-# landcover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/lc_30/w001001.adf")
-landco <- raster("C:/Users/Henia/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/lc_30/w001001.adf")
+landco <- raster("C:/Users/Test/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/lc_30/w001001.adf")
 
 # plot(landcover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
-
-
-# canopycover <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/cc_abmt/w001001.adf") 
-canopyco <- raster("C:/Users/Henia/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/cc_abmt/w001001.adf") 
+ 
+canopyco <- raster("C:/Users/Test/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/cc_abmt/w001001.adf") 
 
 # plot(canopycover) # outcomment this if you just quickly want to run the script. Takes a minute to process.
 
-
-# disthighway <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/disthwy/w001001.adf") 
-disthiway <- raster("C:/Users/Henia/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/disthwy/w001001.adf") 
+disthiway <- raster("C:/Users/Test/Documents/Uni/Sem_09/01 Best Practice/NEW GIS LAYERS/disthwy/w001001.adf") 
 
 # plot(disthighway) # outcomment this if you just quickly want to run the script. Takes a minute to process.
 
 
 # due to correlation of the last two parameters i leave one out
-# distroad <- raster("/home/Peter/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf") 
+# distroad <- raster("/home/Test/Dokumente/uni/WS_14_15/Best Practice R/Dataset/NEW GIS LAYERS/distsmrd/w001001.adf") 
 # plot(distroad) # outcomment this if you just quickly want to run the script. Takes a minute to process.
 
 
